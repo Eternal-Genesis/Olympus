@@ -4,26 +4,21 @@ import {
   signOut
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-// Mostrar el correo del usuario
+// Mostrar datos del usuario
 onAuthStateChanged(auth, (user) => {
-  const emailSpan = document.getElementById("user-email");
-
-  if (user) {
-    emailSpan.textContent = user.email;
-  } else {
-    // Si no hay usuario, redirige a la bienvenida
+  if (!user) {
     window.location.href = "bienvenida.html";
+    return;
   }
+
+  document.getElementById("user-name").textContent = user.displayName || "Sin nombre";
+  document.getElementById("user-email").textContent = user.email;
+  document.getElementById("user-uid").textContent = user.uid;
 });
 
-// Cerrar sesión
-const logoutBtn = document.getElementById("logout");
-logoutBtn.addEventListener("click", () => {
+// Botón cerrar sesión
+document.getElementById("logout").addEventListener("click", () => {
   signOut(auth)
-    .then(() => {
-      window.location.href = "bienvenida.html";
-    })
-    .catch((error) => {
-      console.error("Error al cerrar sesión:", error);
-    });
+    .then(() => window.location.href = "bienvenida.html")
+    .catch(err => console.error("Error al cerrar sesión:", err));
 });
