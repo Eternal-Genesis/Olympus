@@ -23,14 +23,15 @@ body {
 
 /* Título OLYMPUS estilizado */
 .navbar-left .logo {
-  font-family: 'Impact', 'Arial Black', sans-serif;
-  font-size: 2.6rem;
-  font-weight: bold;
+  font-family: system-ui, sans-serif;
+  font-size: 2.4rem;  /* Tamaño */
+  font-weight: 900;   /* Grosor */
   color: #00f0ff;
   text-shadow: 0 0 8px #00f0ff;
   text-transform: uppercase;
   margin: 0;
 }
+
 
 
 /* Menú principal */
