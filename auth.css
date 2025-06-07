@@ -1,4 +1,4 @@
-/* Fondo y estructura general */
+/* Fondo y estructura */
 body {
   margin: 0;
   padding: 0;
@@ -11,23 +11,24 @@ body {
   min-height: 100vh;
 }
 
-/* Contenedor del formulario */
+/* Contenedor */
 .auth-container {
   background-color: #1e1e1e;
   padding: 2rem;
   border-radius: 10px;
-  box-shadow: 0 0 20px rgba(0, 240, 255, 0.1);
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.08);
   max-width: 400px;
   width: 100%;
   text-align: center;
 }
 
+/* Título */
 .auth-container h1 {
   margin-bottom: 1.5rem;
   font-size: 1.8rem;
 }
 
-/* Campos del formulario */
+/* Inputs */
 form input {
   width: 100%;
   padding: 0.75rem;
@@ -43,7 +44,7 @@ form input:focus {
   outline: 2px solid #00f0ff;
 }
 
-/* Botones */
+/* Botones principales */
 form button {
   width: 100%;
   padding: 0.75rem;
@@ -55,15 +56,30 @@ form button {
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.3s ease;
+  margin-bottom: 0.75rem;
 }
 
 form button:hover {
   background-color: #00cfe0;
 }
 
-.alternar {
-  margin: 1rem 0;
+/* Separador */
+.separador {
+  margin: 1rem 0 0.75rem 0;
+  font-size: 0.9rem;
   opacity: 0.7;
+}
+
+/* Botón de Google */
+.google-btn {
+  background-color: #ffffff;
+  color: #333333;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.15);
+  font-weight: 600;
+}
+
+.google-btn:hover {
+  background-color: #e7e7e7;
 }
 
 /* Mensaje de error */
