@@ -5,38 +5,41 @@
   align-items: center;
   background-color: #121212;
   color: #f1f1f1;
-  padding: 1rem 2rem;
+  padding: 0.75rem 1.5rem; /* Reducido para evitar exceso de alto */
   font-family: 'Segoe UI', sans-serif;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
-/* Título Olympus */
+/* Título Olympus estilizado */
 .navbar-left .logo {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #ffffff;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #00f0ff; /* Neon cyan */
+  text-shadow: 0 0 8px #00f0ff;
+  margin: 0;
 }
 
-/* Navegación derecha */
+/* Menú principal */
 .navbar-right .nav-menu {
   list-style: none;
   display: flex;
-  gap: 2rem;
+  gap: 1.2rem; /* Menor separación horizontal */
   margin: 0;
   padding: 0;
 }
 
-/* Ítems principales */
+/* Ítems del menú */
 .nav-item {
   position: relative;
 }
 
-/* Enlaces principales */
+/* Enlaces y títulos de menú */
 .nav-item > a,
 .dropdown-title {
   color: #f1f1f1;
   text-decoration: none;
-  font-size: 1rem;
+  font-size: 1.05rem;
+  font-weight: 600; /* Más grueso */
   cursor: pointer;
   transition: color 0.3s;
 }
@@ -52,16 +55,17 @@
   top: 100%;
   left: 0;
   background-color: #1e1e1e;
-  border-radius: 8px;
-  padding: 0.5rem 0;
+  border-radius: 6px;
+  padding: 0.4rem 0;
   display: none;
   flex-direction: column;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
   z-index: 1000;
+  min-width: 150px;
 }
 
 .dropdown-menu li {
-  padding: 0.5rem 1rem;
+  padding: 0.4rem 1rem;
 }
 
 .dropdown-menu li a {
@@ -69,6 +73,7 @@
   text-decoration: none;
   font-size: 0.95rem;
   display: block;
+  font-weight: 500;
 }
 
 .dropdown-menu li a:hover {
