@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ingresar a Olympus</title>
+  <link rel="stylesheet" href="auth.css" />
+  <script defer src="auth.js"></script>
+</head>
+<body>
+  <main class="auth-container">
+    <h1>Ingresar a Olympus</h1>
+    <form id="auth-form">
+      <input type="email" id="email" placeholder="Correo electrónico" required />
+      <input type="password" id="password" placeholder="Contraseña" required />
+      <button type="submit" id="login">Iniciar Sesión</button>
+      <p class="alternar">o</p>
+      <button type="button" id="register">Crear Cuenta</button>
+    </form>
+    <p id="mensaje-error"></p>
+  </main>
+</body>
+</html>
