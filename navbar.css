@@ -34,21 +34,37 @@
   position: relative;
 }
 
-/* Enlaces y títulos de menú */
+/* Enlaces y títulos de menú con subrayado animado */
 .nav-item > a,
 .dropdown-title {
+  position: relative;
+  display: inline-block;
   color: #f1f1f1;
   text-decoration: none;
   font-size: 1.05rem;
   font-weight: 800;
-  text-transform: uppercase; /* ← ESTO AGREGA MAYÚSCULAS */
+  text-transform: uppercase;
   cursor: pointer;
-  transition: color 0.3s;
+  padding-bottom: 4px;
 }
 
-.nav-item > a:hover,
-.dropdown-title:hover {
-  color: #00bcd4;
+/* Línea inferior invisible por defecto */
+.nav-item > a::after,
+.dropdown-title::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  width: 0;
+  background-color: #00f0ff; /* neón */
+  transition: width 0.3s ease;
+}
+
+/* Al pasar el mouse, se anima la línea */
+.nav-item > a:hover::after,
+.dropdown-title:hover::after {
+  width: 100%;
 }
 
 /* Menú desplegable */
