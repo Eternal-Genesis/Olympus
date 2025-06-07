@@ -214,59 +214,63 @@ body.light-mode .dropdown-menu li a::after {
   background-color: #0077aa;
 }
 
-/* === ÍCONO DE AYUDA CON TOOLTIP === */
+/* === ÍCONO DE AYUDA DISCRETO === */
+.dropdown-menu li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.4rem 1rem;
+  position: relative;
+}
+
 .tooltip-icon {
-  display: inline-block;
-  margin-left: 6px;
-  width: 18px;
-  height: 18px;
+  margin-left: 12px;
+  width: 16px;
+  height: 16px;
   background-color: #00f0ff;
   color: #121212;
   border-radius: 50%;
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   font-weight: bold;
   text-align: center;
-  line-height: 18px;
+  line-height: 16px;
   cursor: pointer;
   position: relative;
-  transition: background-color 0.3s, color 0.3s;
-  box-shadow: 0 0 4px #00f0ff88;
+  flex-shrink: 0;
 }
 
-/* Tooltip oculto por defecto */
+/* Tooltip oculto */
 .tooltip-icon::after {
   content: attr(data-tooltip);
   position: absolute;
-  bottom: 130%;
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: 120%;
+  right: 50%;
+  transform: translateX(50%);
   background-color: #2a2a2a;
   color: #f1f1f1;
-  padding: 6px 10px;
-  border-radius: 6px;
+  padding: 5px 8px;
+  border-radius: 5px;
+  font-size: 0.7rem;
   white-space: nowrap;
-  font-size: 0.75rem;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.2s ease;
   z-index: 1000;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.4);
 }
 
-/* Mostrar tooltip al pasar el mouse */
+/* Mostrar al pasar el mouse */
 .tooltip-icon:hover::after {
   opacity: 1;
 }
 
-/* Modo claro adaptado */
+/* Modo claro */
 body.light-mode .tooltip-icon {
   background-color: #0077aa;
   color: #ffffff;
-  box-shadow: 0 0 4px #0077aa88;
 }
 
 body.light-mode .tooltip-icon::after {
   background-color: #ffffff;
   color: #1a1a1a;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
 }
