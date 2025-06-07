@@ -41,8 +41,8 @@
   display: inline-block;
   color: #f1f1f1;
   text-decoration: none;
-  font-size: 1.6rem; /* ← Tamaño */
-  font-weight: 600; /* ← Grosor */
+  font-size: 1.4rem; /* ← Tamaño */
+  font-weight: 700; /* ← Grosor */
   text-transform: uppercase;
   cursor: pointer;
   padding-bottom: 4px;
