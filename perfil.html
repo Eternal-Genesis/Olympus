@@ -11,15 +11,19 @@
   <header id="navbar"></header>
 
   <main class="perfil-container">
-    <h1>Tu Perfil</h1>
+    <div class="perfil-card">
+      <h1 class="perfil-nombre">
+        <span id="user-name">Usuario</span>
+        <span id="premium-badge" class="badge-premium" style="display: none;">Cuenta Premium</span>
+      </h1>
+      <p class="perfil-email" id="user-email">correo@example.com</p>
 
-    <div class="perfil-info">
-      <p><strong>Nombre:</strong> <span id="user-name">Cargando...</span></p>
-      <p><strong>Correo:</strong> <span id="user-email">Cargando...</span></p>
-      <p><strong>ID:</strong> <span id="user-uid">Cargando...</span></p>
+      <div class="perfil-acciones">
+        <button id="toggle-tema" class="btn-tema">Cambiar Tema</button>
+        <button id="pagar-premium" class="btn-premium" style="display: none;">Hacerse Premium</button>
+        <button id="logout" class="btn-logout">Cerrar Sesión</button>
+      </div>
     </div>
-
-    <button id="logout" class="btn-logout">Cerrar Sesión</button>
   </main>
 
   <script src="navbar.js"></script>
