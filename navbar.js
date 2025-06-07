@@ -16,16 +16,16 @@ document.addEventListener("DOMContentLoaded", () => {
       // Inserta el navbar
       navbarContainer.innerHTML = data;
 
-      // Crear y agregar el div del rayo al body
-      const rayo = document.createElement("div");
-      rayo.id = "rayo-electrico";
-      document.body.appendChild(rayo);
+      // Crear y agregar el flash al body
+      const flash = document.createElement("div");
+      flash.id = "flash";
+      document.body.appendChild(flash);
 
       // Detectar el logo (OLYMPUS)
       const logo = document.querySelector(".logo");
       if (!logo) return;
 
-      // Aplicar tema guardado
+      // Aplicar tema guardado si lo hay
       const temaGuardado = localStorage.getItem("tema");
       if (temaGuardado === "claro") {
         document.body.classList.add("light-mode");
@@ -37,10 +37,17 @@ document.addEventListener("DOMContentLoaded", () => {
         const esClaro = document.body.classList.toggle("light-mode");
         localStorage.setItem("tema", esClaro ? "claro" : "oscuro");
 
-        // Activar animación del rayo
-        rayo.classList.remove("rayo-animado");
-        void rayo.offsetWidth; // Fuerza reflow
-        rayo.classList.add("rayo-animado");
+        // DESCARGA ELÉCTRICA VISUAL
+        // Vibración
+        document.body.classList.add("shake");
+        setTimeout(() => {
+          document.body.classList.remove("shake");
+        }, 500);
+
+        // Flash blanco
+        flash.classList.remove("flash-activo");
+        void flash.offsetWidth; // Fuerza reflow
+        flash.classList.add("flash-activo");
       });
     })
     .catch(error => {
