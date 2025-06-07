@@ -5,24 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Olympus – Panel Principal</title>
 
+  <!-- Seguridad: redirigir si no está autenticado -->
   <script type="module">
-  import { auth } from "./firebase.js";
-  import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { auth } from "./firebase.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-  onAuthStateChanged(auth, (user) => {
-    if (!user) {
-      window.location.href = "bienvenida.html";
-    }
-  });
-</script>
-
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Olympus – Panel Principal</title>
-
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.href = "bienvenida.html";
+      }
+    });
+  </script>
+  
   <!-- Fuente Inter moderna y suave -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800&display=swap" rel="stylesheet" />
 
