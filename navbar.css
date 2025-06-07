@@ -97,8 +97,8 @@
   display: inline-block;
   color: #ccc;
   text-decoration: none;
-  font-size: 0.8rem; /* Tamaño */
-  font-weight: 600;   /* Grosor */
+  font-size: 1rem; /* Tamaño */
+  font-weight: 700; /* Grosor */
   text-transform: uppercase;
   padding-bottom: 4px;
   font-family: 'Segoe UI', sans-serif;
@@ -121,8 +121,8 @@
 }
 
 .dropdown-menu li a:hover {
-  background-color: #2a2a2a;
-  color: #00bcd4;
+  background-color: transparent;
+  color: inherit;
 }
 
 /* Mostrar menú al pasar mouse */
