@@ -97,10 +97,11 @@
   display: inline-block;
   color: #ccc;
   text-decoration: none;
-  font-size: 0.95rem;
-  font-weight: 600;
-  padding-bottom: 3px;
-  transition: none; /* ← No se transiciona color */
+  font-size: 1.2rem; /* Igual al menú principal */
+  font-weight: 800;   /* Igual al menú principal */
+  text-transform: uppercase; /* Igual al menú principal */
+  padding-bottom: 4px;
+  font-family: 'Segoe UI', sans-serif;
 }
 
 /* Línea animada bajo el texto */
