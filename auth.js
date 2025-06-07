@@ -6,7 +6,7 @@ import {
   signInWithPopup
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-// Elementos del formulario
+// Referencias del DOM
 const emailInput = document.getElementById("email");
 const passInput = document.getElementById("password");
 const loginBtn = document.getElementById("login");
@@ -14,18 +14,47 @@ const registerBtn = document.getElementById("register");
 const googleBtn = document.getElementById("google-login");
 const mensajeError = document.getElementById("mensaje-error");
 
-// Iniciar sesión con correo
+// Función de validación básica
+function validarCampos(email, password) {
+  if (!email || !password) {
+    mensajeError.textContent = "Por favor completa ambos campos.";
+    return false;
+  }
+  return true;
+}
+
+// Traduce errores comunes de Firebase
+function traducirError(errorCode) {
+  switch (errorCode) {
+    case "auth/invalid-email":
+      return "El correo no es válido.";
+    case "auth/missing-password":
+      return "Falta la contraseña.";
+    case "auth/wrong-password":
+      return "La contraseña es incorrecta.";
+    case "auth/user-not-found":
+      return "No existe una cuenta con ese correo.";
+    case "auth/email-already-in-use":
+      return "Ese correo ya está registrado.";
+    case "auth/weak-password":
+      return "La contraseña debe tener al menos 6 caracteres.";
+    default:
+      return "Ocurrió un error inesperado.";
+  }
+}
+
+// Iniciar sesión
 loginBtn.addEventListener("click", (e) => {
   e.preventDefault();
   const email = emailInput.value.trim();
   const password = passInput.value;
 
+  if (!validarCampos(email, password)) return;
+
   signInWithEmailAndPassword(auth, email, password)
-    .then(() => {
-      window.location.href = "index.html";
-    })
+    .then(() => window.location.href = "index.html")
     .catch(error => {
-      mensajeError.textContent = "Error al iniciar sesión: " + error.message;
+      mensajeError.textContent = traducirError(error.code);
     });
 });
 
@@ -34,12 +63,12 @@ registerBtn.addEventListener("click", () => {
   const email = emailInput.value.trim();
   const password = passInput.value;
 
+  if (!validarCampos(email, password)) return;
+
   createUserWithEmailAndPassword(auth, email, password)
-    .then(() => {
-      window.location.href = "index.html";
-    })
+    .then(() => window.location.href = "index.html")
     .catch(error => {
-      mensajeError.textContent = "Error al registrarse: " + error.message;
+      mensajeError.textContent = traducirError(error.code);
     });
 });
 
@@ -47,10 +76,8 @@ registerBtn.addEventListener("click", () => {
 googleBtn.addEventListener("click", () => {
   const provider = new GoogleAuthProvider();
   signInWithPopup(auth, provider)
-    .then(() => {
-      window.location.href = "index.html";
-    })
+    .then(() => window.location.href = "index.html")
     .catch(error => {
-      mensajeError.textContent = "Error con Google: " + error.message;
+      mensajeError.textContent = traducirError(error.code);
     });
 });
