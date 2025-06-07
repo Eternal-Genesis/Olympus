@@ -1,0 +1,50 @@
+body {
+  background-color: #121212;
+  color: #f1f1f1;
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Contenedor principal del panel */
+main {
+  padding: 3rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Título del panel */
+h1 {
+  text-align: center;
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 2.5rem;
+}
+
+/* Grid de accesos */
+.panel-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Tarjetas de acceso */
+.panel-link {
+  background-color: #1e1e1e;
+  border-radius: 10px;
+  padding: 2rem;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #f1f1f1;
+  text-decoration: none;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.panel-link:hover {
+  background-color: #2a2a2a;
+  color: #00f0ff;
+  transform: translateY(-4px);
+}
