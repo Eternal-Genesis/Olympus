@@ -1,0 +1,56 @@
+/* Fondo y estructura general */
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #121212;
+  color: #f1f1f1;
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+/* Contenedor centrado */
+.bienvenida-container {
+  text-align: center;
+  padding: 2rem;
+  max-width: 500px;
+}
+
+/* Título */
+.titulo {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.titulo span {
+  color: #00f0ff;
+  text-shadow: 0 0 6px #00f0ffaa;
+}
+
+/* Descripción */
+.descripcion {
+  font-size: 1.1rem;
+  opacity: 0.85;
+  margin-bottom: 2rem;
+}
+
+/* Botón */
+.btn-entrar {
+  background-color: #00f0ff;
+  color: #121212;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 0 8px #00f0ff88;
+}
+
+.btn-entrar:hover {
+  background-color: #00cfe0;
+}
