@@ -227,16 +227,17 @@ body.light-mode .dropdown-menu li a::after {
   margin-left: 12px;
   width: 16px;
   height: 16px;
-  background-color: #00f0ff;
-  color: #121212;
+  background-color: #ffffff33; /* blanco translúcido */
+  color: #ffffffcc;
   border-radius: 50%;
   font-size: 0.65rem;
   font-weight: bold;
   text-align: center;
   line-height: 16px;
-  cursor: pointer;
+  cursor: default;
   position: relative;
   flex-shrink: 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Tooltip oculto */
@@ -265,9 +266,10 @@ body.light-mode .dropdown-menu li a::after {
 
 /* Modo claro */
 body.light-mode .tooltip-icon {
-  background-color: #0077aa;
-  color: #ffffff;
+  background-color: #00000022;
+  color: #333333cc;
 }
+
 
 body.light-mode .tooltip-icon::after {
   background-color: #ffffff;
