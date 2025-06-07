@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Olympus – Panel Principal</title>
+  <link rel="stylesheet" href="navbar.css" />
+  <style>
+    body {
+      background-color: #121212;
+      color: #f1f1f1;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    main {
+      padding: 2rem;
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .panel-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+
+    .panel-link {
+      background-color: #1e1e1e;
+      padding: 1rem;
+      border-radius: 8px;
+      text-decoration: none;
+      color: #f1f1f1;
+      text-align: center;
+      font-weight: 500;
+      transition: background 0.3s;
+    }
+
+    .panel-link:hover {
+      background-color: #2a2a2a;
+      color: #00bcd4;
+    }
+  </style>
+</head>
+<body>
+  <header id="navbar"></header>
+
+  <main>
+    <h1>Panel Principal</h1>
+    <div class="panel-grid">
+      <a class="panel-link" href="avance.html">Avance</a>
+      <a class="panel-link" href="cuerpo.html">Cuerpo</a>
+      <a class="panel-link" href="mente.html">Mente</a>
+      <a class="panel-link" href="ecomyse.html">Ecomyse</a>
+      <a class="panel-link" href="ecopryse.html">Ecopryse</a>
+      <a class="panel-link" href="escritorio.html">Escritorio</a>
+      <a class="panel-link" href="formacion.html">Formación</a>
+      <a class="panel-link" href="comunidad.html">Comunidad</a>
+      <a class="panel-link" href="perfil.html">Cuenta</a>
+    </div>
+  </main>
+
+  <script src="navbar.js"></script>
+</body>
+</html>
