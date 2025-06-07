@@ -120,11 +120,6 @@
   width: 100%;
 }
 
-.dropdown-menu li a:hover {
-  background-color: transparent;
-  color: inherit;
-}
-
 /* Mostrar menú al pasar mouse */
 .nav-item.dropdown:hover .dropdown-menu {
   display: flex;
