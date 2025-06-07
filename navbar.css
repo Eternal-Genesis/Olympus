@@ -24,7 +24,7 @@ body {
 /* Título OLYMPUS estilizado */
 .navbar-left .logo {
   font-size: 2.5rem;
-  font-weight: 900;
+  font-weight: 1000;
   color: #00f0ff; /* Neon cyan */
   text-shadow: 0 0 8px #00f0ff;
   text-transform: uppercase; /* ← AHORA ESTÁ EN MAYÚSCULAS */
