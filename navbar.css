@@ -22,7 +22,7 @@
 
 /* Menú principal */
 .navbar-right {
-  transform: translateY(12px); /* ajustá px si querés más o menos */
+  transform: translateY(5px); /* ajustá px si querés más o menos */
 }
 
 .navbar-right .nav-menu {
