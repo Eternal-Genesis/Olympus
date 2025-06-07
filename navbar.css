@@ -131,7 +131,18 @@ body {
   width: 100%;
 }
 
-/* Mostrar menú al pasar mouse */
+/* Animación suave */
+.dropdown-menu {
+  opacity: 0;
+  transform: translateY(5px);
+  pointer-events: none;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Mostrar con transición */
 .nav-item.dropdown:hover .dropdown-menu {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
   display: flex;
 }
