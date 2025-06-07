@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bienvenido a Olympus</title>
+  <link rel="stylesheet" href="bienvenida.css" />
+</head>
+<body>
+  <main class="bienvenida-container">
+    <div class="contenido">
+      <h1 class="titulo">Bienvenido a <span>Olympus</span></h1>
+      <p class="descripcion">Tu espacio para crecer, organizarte y avanzar con claridad.</p>
+      <button class="btn-entrar">Entrar a Olympus</button>
+    </div>
+  </main>
+  <script>
+    document.querySelector(".btn-entrar").addEventListener("click", () => {
+      window.location.href = "auth.html"; // futura pantalla de login/registro
+    });
+  </script>
+</body>
+</html>
