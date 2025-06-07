@@ -14,9 +14,20 @@
       <button class="btn-entrar">Entrar a Olympus</button>
     </div>
   </main>
-  <script>
+
+  <script type="module">
+    import { auth } from "./firebase.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        window.location.href = "index.html";
+      }
+    });
+
+    // Redirige al login si no hay sesión
     document.querySelector(".btn-entrar").addEventListener("click", () => {
-      window.location.href = "auth.html"; // futura pantalla de login/registro
+      window.location.href = "auth.html";
     });
   </script>
 </body>
