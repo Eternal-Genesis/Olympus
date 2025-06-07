@@ -32,7 +32,9 @@ body {
   margin: 0;
 }
 
-
+.logo {
+  cursor: pointer;
+}
 
 /* Menú principal */
 .navbar-right {
