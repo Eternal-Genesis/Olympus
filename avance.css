@@ -1,0 +1,105 @@
+/* CONTENEDOR GENERAL */
+.avance-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+/* TITULOS */
+h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+}
+
+/* SECCIÓN DE HOY */
+.hoy .habitos-hoy {
+  display: grid;
+  gap: 1rem;
+}
+
+.habito-item {
+  background-color: #1e1e1e;
+  border-left: 5px solid #00f0ff;
+  padding: 1rem;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.habito-item.completado {
+  opacity: 0.6;
+  text-decoration: line-through;
+}
+
+/* OBJETIVOS */
+.objetivos-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lista-objetivos {
+  display: grid;
+  gap: 1rem;
+}
+
+.objetivo-card {
+  background-color: #222;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+.objetivo-card h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.2rem;
+}
+
+/* ACCIONES RÁPIDAS */
+.acciones-rapidas {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* BOTONES */
+button {
+  background-color: #00f0ff;
+  color: #121212;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #00c3d6;
+}
+
+/* MODO CLARO */
+body.light-mode .habito-item {
+  background-color: #f0f0f0;
+  border-left-color: #0077aa;
+  color: #1a1a1a;
+}
+
+body.light-mode .objetivo-card {
+  background-color: #ffffff;
+}
+
+body.light-mode button {
+  background-color: #0077aa;
+  color: white;
+}
+
+body.light-mode button:hover {
+  background-color: #005e8a;
+}
