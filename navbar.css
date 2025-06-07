@@ -24,6 +24,7 @@
 .navbar-right .nav-menu {
   list-style: none;
   display: flex;
+  align-items: center;
   gap: 1.2rem; /* Menor separación horizontal */
   margin: 0;
   padding: 0;
@@ -46,6 +47,7 @@
   text-transform: uppercase;
   cursor: pointer;
   padding-bottom: 4px;
+  vertical-align: middle;
 }
 
 /* Línea inferior invisible por defecto */
