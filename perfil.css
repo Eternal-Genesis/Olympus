@@ -1,0 +1,58 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #121212;
+  color: #f1f1f1;
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.perfil-container {
+  max-width: 500px;
+  width: 100%;
+  padding: 2rem;
+  margin-top: 3rem;
+  text-align: center;
+}
+
+.perfil-container h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 2rem;
+  text-transform: uppercase;
+}
+
+.perfil-info {
+  background-color: #1e1e1e;
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.05);
+}
+
+.perfil-info p {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.perfil-info strong {
+  color: #00f0ff;
+}
+
+.btn-logout {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #121212;
+  background-color: #00f0ff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-logout:hover {
+  background-color: #00cfe0;
+}
