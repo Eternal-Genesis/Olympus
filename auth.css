@@ -95,3 +95,33 @@ form button:hover {
   color: #ff4444;
   font-size: 0.9rem;
 }
+
+.input-password {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-password input {
+  flex: 1;
+  padding-right: 2.5rem;
+}
+
+.input-password button {
+  position: absolute;
+  right: 0.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+.input-password svg {
+  width: 20px;
+  height: 20px;
+  transition: opacity 0.3s ease;
+}
+
+.input-password svg.oculto {
+  display: none;
+}
