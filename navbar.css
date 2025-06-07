@@ -21,6 +21,10 @@
 }
 
 /* Menú principal */
+.navbar-right {
+  transform: translateY(12px); /* ajustá px si querés más o menos */
+}
+
 .navbar-right .nav-menu {
   list-style: none;
   display: flex;
