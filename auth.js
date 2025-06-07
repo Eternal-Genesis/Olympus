@@ -81,3 +81,14 @@ googleBtn.addEventListener("click", () => {
       mensajeError.textContent = traducirError(error.code);
     });
 });
+
+const togglePasswordBtn = document.getElementById("toggle-password");
+const eyeIcon = document.getElementById("eye-icon");
+
+togglePasswordBtn.addEventListener("click", () => {
+  const isHidden = passInput.type === "password";
+  passInput.type = isHidden ? "text" : "password";
+
+  // Opcional: cambiar el color del ícono al mostrar
+  eyeIcon.setAttribute("fill", isHidden ? "#00f0ff" : "#aaa");
+});
