@@ -1,0 +1,82 @@
+/* Estilo general del navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #121212;
+  color: #f1f1f1;
+  padding: 1rem 2rem;
+  font-family: 'Segoe UI', sans-serif;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Título Olympus */
+.navbar-left .logo {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+/* Navegación derecha */
+.navbar-right .nav-menu {
+  list-style: none;
+  display: flex;
+  gap: 2rem;
+  margin: 0;
+  padding: 0;
+}
+
+/* Ítems principales */
+.nav-item {
+  position: relative;
+}
+
+/* Enlaces principales */
+.nav-item > a,
+.dropdown-title {
+  color: #f1f1f1;
+  text-decoration: none;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.nav-item > a:hover,
+.dropdown-title:hover {
+  color: #00bcd4;
+}
+
+/* Menú desplegable */
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  padding: 0.5rem 0;
+  display: none;
+  flex-direction: column;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+}
+
+.dropdown-menu li {
+  padding: 0.5rem 1rem;
+}
+
+.dropdown-menu li a {
+  color: #ccc;
+  text-decoration: none;
+  font-size: 0.95rem;
+  display: block;
+}
+
+.dropdown-menu li a:hover {
+  background-color: #2a2a2a;
+  color: #00bcd4;
+}
+
+/* Mostrar menú al pasar mouse */
+.nav-item.dropdown:hover .dropdown-menu {
+  display: flex;
+}
