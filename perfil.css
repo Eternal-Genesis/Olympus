@@ -4,59 +4,93 @@ body {
   background-color: #121212;
   color: #f1f1f1;
   font-family: 'Inter', sans-serif;
-}
-
-main {
-  padding: 2rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2rem;
 }
 
-.perfil-container {
-  max-width: 500px;
+main.perfil-container {
+  padding: 4rem 2rem;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.perfil-card {
+  background-color: #1e1e1e;
+  padding: 3rem;
+  border-radius: 12px;
+  box-shadow: 0 0 30px rgba(0, 240, 255, 0.08);
+  max-width: 480px;
   width: 100%;
   text-align: center;
 }
 
-.perfil-container h1 {
+.perfil-nombre {
   font-size: 2rem;
   font-weight: 800;
   text-transform: uppercase;
-  margin-bottom: 1.5rem;
+  margin-bottom: 0.5rem;
+  position: relative;
 }
 
-.perfil-info {
-  background-color: #1e1e1e;
-  padding: 1.5rem;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 240, 255, 0.05);
-  width: 100%;
-  text-align: left;
+.perfil-email {
+  font-size: 1.1rem;
+  color: #ccc;
+  margin-bottom: 2rem;
 }
 
-.perfil-info p {
-  margin: 0.5rem 0;
-  font-size: 1rem;
+.badge-premium {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  background-color: #ffd700;
+  color: #121212;
+  font-weight: bold;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  text-transform: uppercase;
 }
 
-.perfil-info strong {
-  color: #00f0ff;
+.perfil-acciones {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
-.btn-logout {
+.perfil-acciones button {
   padding: 0.75rem 1.5rem;
   font-size: 1rem;
   font-weight: bold;
-  color: #121212;
-  background-color: #00f0ff;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background 0.3s ease;
+}
+
+.btn-tema {
+  background-color: #2a2a2a;
+  color: #f1f1f1;
+}
+
+.btn-tema:hover {
+  background-color: #3a3a3a;
+}
+
+.btn-premium {
+  background-color: #00f0ff;
+  color: #121212;
+}
+
+.btn-premium:hover {
+  background-color: #00cfe0;
+}
+
+.btn-logout {
+  background-color: #ff4d4d;
+  color: #fff;
 }
 
 .btn-logout:hover {
-  background-color: #00cfe0;
+  background-color: #e63946;
 }
