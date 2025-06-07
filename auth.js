@@ -1,50 +1,37 @@
-// ⚠️ Asegurate de haber inicializado Firebase antes de este script
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { auth } from "./firebase.js";
 import {
-  getAuth,
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-// 🔐 Tu configuración de Firebase
-const firebaseConfig = {
-  apiKey: "TU_API_KEY",
-  authDomain: "TU_AUTH_DOMAIN",
-  projectId: "TU_PROJECT_ID",
-  storageBucket: "TU_STORAGE_BUCKET",
-  messagingSenderId: "TU_MESSAGING_SENDER_ID",
-  appId: "TU_APP_ID"
-};
-
-// Inicializar Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-
-// 🔁 Referencias al DOM
+// Elementos del formulario
 const emailInput = document.getElementById("email");
 const passInput = document.getElementById("password");
 const loginBtn = document.getElementById("login");
 const registerBtn = document.getElementById("register");
+const googleBtn = document.getElementById("google-login");
 const mensajeError = document.getElementById("mensaje-error");
 
-// Iniciar sesión
+// Iniciar sesión con correo
 loginBtn.addEventListener("click", (e) => {
   e.preventDefault();
-  const email = emailInput.value;
+  const email = emailInput.value.trim();
   const password = passInput.value;
 
   signInWithEmailAndPassword(auth, email, password)
     .then(() => {
-      window.location.href = "index.html"; // Redirige al panel
+      window.location.href = "index.html";
     })
     .catch(error => {
       mensajeError.textContent = "Error al iniciar sesión: " + error.message;
     });
 });
 
-// Registrar nueva cuenta
+// Crear cuenta
 registerBtn.addEventListener("click", () => {
-  const email = emailInput.value;
+  const email = emailInput.value.trim();
   const password = passInput.value;
 
   createUserWithEmailAndPassword(auth, email, password)
@@ -53,5 +40,17 @@ registerBtn.addEventListener("click", () => {
     })
     .catch(error => {
       mensajeError.textContent = "Error al registrarse: " + error.message;
+    });
+});
+
+// Iniciar sesión con Google
+googleBtn.addEventListener("click", () => {
+  const provider = new GoogleAuthProvider();
+  signInWithPopup(auth, provider)
+    .then(() => {
+      window.location.href = "index.html";
+    })
+    .catch(error => {
+      mensajeError.textContent = "Error con Google: " + error.message;
     });
 });
