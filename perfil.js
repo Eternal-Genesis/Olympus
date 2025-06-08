@@ -5,8 +5,11 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import {
   doc,
-  getDoc
+  getDoc,
+  updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+let userRef = null;
 
 // Verificar sesión y cargar datos
 onAuthStateChanged(auth, async (user) => {
@@ -19,10 +22,9 @@ onAuthStateChanged(auth, async (user) => {
     user.displayName || "Sin nombre";
   document.getElementById("user-email").textContent = user.email;
 
-  // Cargar membresía real desde Firestore
   try {
-    const ref = doc(db, "usuarios", user.uid);
-    const snap = await getDoc(ref);
+    userRef = doc(db, "usuarios", user.uid);
+    const snap = await getDoc(userRef);
 
     if (snap.exists()) {
       const data = snap.data();
@@ -48,6 +50,25 @@ onAuthStateChanged(auth, async (user) => {
   }
 });
 
+// Mostrar selector de membresía
+document.getElementById("pagar-premium").addEventListener("click", () => {
+  document.getElementById("selector-membresia").style.display = "block";
+});
+
+// Cambiar membresía
+document.querySelectorAll(".opcion").forEach((btn) => {
+  btn.addEventListener("click", async () => {
+    const tipoNuevo = btn.dataset.tipo;
+
+    if (userRef) {
+      await updateDoc(userRef, { membresia: tipoNuevo });
+
+      // Recargar para reflejar cambio
+      window.location.reload();
+    }
+  });
+});
+
 // Cambiar tema
 document.getElementById("toggle-tema").addEventListener("click", () => {
   document.body.classList.toggle("light-mode");
@@ -66,4 +87,3 @@ document.getElementById("logout").addEventListener("click", () => {
     .then(() => window.location.href = "bienvenida.html")
     .catch((error) => console.error("Error al cerrar sesión:", error));
 });
-
