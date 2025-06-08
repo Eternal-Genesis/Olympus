@@ -17,18 +17,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const progresoExp = document.getElementById("progresoExp");
   const cerrarSesionBtn = document.getElementById("cerrarSesion");
   const btnEditar = document.getElementById("btnEditar");
+  const botonesPlanes = document.querySelectorAll(".btn-plan");
 
   let modoEdicion = false;
 
   btnEditar.addEventListener("click", async () => {
     if (!modoEdicion) {
-      // Entrar en modo edición
       apodoInput.disabled = false;
       bioTextarea.disabled = false;
       btnEditar.textContent = "Guardar";
       modoEdicion = true;
     } else {
-      // Guardar y salir del modo edición
       apodoInput.disabled = true;
       bioTextarea.disabled = true;
       btnEditar.textContent = "Editar";
@@ -38,7 +37,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Contador de biografía
+  botonesPlanes.forEach(boton => {
+    boton.addEventListener("click", () => {
+      const plan = boton.parentElement.querySelector("h4").textContent;
+      if (plan === "Personal") return;
+      alert(`En el futuro podrás mejorar al plan: ${plan}`);
+    });
+  });
+
   const contador = document.createElement("div");
   contador.style.textAlign = "right";
   contador.style.fontSize = "0.8rem";
@@ -85,7 +91,8 @@ document.addEventListener("DOMContentLoaded", () => {
         apodo: "",
         biografia: "",
         foto: "",
-        exp: 0
+        exp: 0,
+        plan: "Personal"
       });
     } else {
       const datos = snap.data();
