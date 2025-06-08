@@ -31,10 +31,11 @@ main.perfil-container {
   position: relative;
 }
 
-.perfil-email {
+.perfil-email,
+.perfil-membresia {
   font-size: 1.1rem;
   color: #ccc;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
 }
 
 .badge-premium {
@@ -53,6 +54,7 @@ main.perfil-container {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  margin-top: 2rem;
 }
 
 .perfil-acciones button {
@@ -92,7 +94,7 @@ main.perfil-container {
   background-color: #e63946;
 }
 
-/* ===== Tema claro (modo light) ===== */
+/* ===== Tema claro ===== */
 body.light-mode {
   background-color: #f1f1f1;
   color: #121212;
@@ -104,7 +106,8 @@ body.light-mode .perfil-card {
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
-body.light-mode .perfil-email {
+body.light-mode .perfil-email,
+body.light-mode .perfil-membresia {
   color: #444;
 }
 
