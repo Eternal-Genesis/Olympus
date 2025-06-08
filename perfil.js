@@ -1,34 +1,50 @@
-import { auth } from "./firebase.js";
+import { auth, db } from "./firebase.js";
 import {
   onAuthStateChanged,
   signOut
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
+  doc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// Detectar cambios de sesión
-onAuthStateChanged(auth, (user) => {
+// Verificar sesión y cargar datos
+onAuthStateChanged(auth, async (user) => {
   if (!user) {
     window.location.href = "bienvenida.html";
     return;
   }
 
-  // Mostrar nombre o "Sin nombre"
   document.getElementById("user-name").textContent =
     user.displayName || "Sin nombre";
-
-  // Mostrar correo
   document.getElementById("user-email").textContent = user.email;
 
-  // Simular estado Premium
-  const esPremium = user.email.endsWith("@premium.com");
-  const badge = document.getElementById("premium-badge");
-  const btnPremium = document.getElementById("pagar-premium");
+  // Cargar membresía real desde Firestore
+  try {
+    const ref = doc(db, "usuarios", user.uid);
+    const snap = await getDoc(ref);
 
-  if (esPremium) {
-    badge.style.display = "inline-block";
-    btnPremium.style.display = "none";
-  } else {
-    badge.style.display = "none";
-    btnPremium.style.display = "inline-block";
+    if (snap.exists()) {
+      const data = snap.data();
+      const tipo = data.membresia || "personal";
+
+      document.getElementById("tipo-membresia").textContent =
+        tipo.charAt(0).toUpperCase() + tipo.slice(1);
+
+      const badge = document.getElementById("premium-badge");
+      const btnPremium = document.getElementById("pagar-premium");
+
+      if (tipo !== "personal") {
+        badge.style.display = "inline-block";
+        badge.textContent = `Cuenta ${tipo.charAt(0).toUpperCase() + tipo.slice(1)}`;
+        btnPremium.style.display = "none";
+      } else {
+        badge.style.display = "none";
+        btnPremium.style.display = "inline-block";
+      }
+    }
+  } catch (err) {
+    console.error("Error al cargar membresía:", err);
   }
 });
 
@@ -50,3 +66,4 @@ document.getElementById("logout").addEventListener("click", () => {
     .then(() => window.location.href = "bienvenida.html")
     .catch((error) => console.error("Error al cerrar sesión:", error));
 });
+
