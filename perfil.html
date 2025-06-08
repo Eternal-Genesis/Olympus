@@ -2,54 +2,43 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Perfil – Olympus</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Perfil</title>
   <link rel="stylesheet" href="navbar.css" />
   <link rel="stylesheet" href="perfil.css" />
 </head>
 <body>
-  <header id="navbar"></header>
+  <!-- Navbar se carga dinámicamente -->
+  <div id="navbar"></div>
 
-<main class="perfil-container">
-  <div class="perfil-card">
-    <h1 class="perfil-nombre">
-      <span id="user-name">Usuario</span>
-      <span id="premium-badge" class="badge-premium" style="display: none;">Cuenta Premium</span>
-    </h1>
-
-    <p class="perfil-email" id="user-email">correo@example.com</p>
-    <p class="perfil-membresia">Membresía: <strong id="tipo-membresia">Cargando...</strong></p>
-
-    <div class="perfil-acciones">
-      <button id="toggle-tema" class="btn-tema">Cambiar Tema</button>
-      <button id="pagar-premium" class="btn-premium" style="display: none;">Mejorar Membresía</button>
-      <button id="logout" class="btn-logout">Cerrar Sesión</button>
-    </div>
-  </div>
-
-  <!-- Selector de membresía -->
-  <div id="selector-membresia" class="selector-membresia" style="display: none;">
-    <h2>Elegí tu membresía</h2>
-    <div class="opciones">
-      <button class="opcion" data-tipo="personal">Personal</button>
-      <button class="opcion" data-tipo="negocio">Negocio</button>
-      <button class="opcion" data-tipo="empresa">Empresa</button>
-    </div>
-  </div>
-</main>
-  
-      <p class="perfil-email" id="user-email">correo@example.com</p>
-      <p class="perfil-membresia">Membresía: <strong id="tipo-membresia">Cargando...</strong></p>
-
-      <div class="perfil-acciones">
-        <button id="toggle-tema" class="btn-tema">Cambiar Tema</button>
-        <button id="pagar-premium" class="btn-premium" style="display: none;">Mejorar Membresía</button>
-        <button id="logout" class="btn-logout">Cerrar Sesión</button>
+  <main class="perfil-container">
+    <section class="perfil-card">
+      <div class="perfil-foto">
+        <img src="default-profile.png" alt="Foto de perfil" id="fotoPerfil" />
+        <input type="file" id="subirFoto" accept="image/*" />
       </div>
-    </div>
+
+      <div class="perfil-info">
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" placeholder="Tu nombre" maxlength="30"/>
+
+        <label for="apodo">Apodo (opcional):</label>
+        <input type="text" id="apodo" placeholder="Tu apodo" maxlength="20"/>
+
+        <label for="biografia">Biografía:</label>
+        <textarea id="biografia" placeholder="Contanos quién sos (máx 200 caracteres)" maxlength="200"></textarea>
+      </div>
+
+      <div class="perfil-exp">
+        <label>Experiencia:</label>
+        <div class="barra-exp">
+          <div class="progreso" style="width: 45%;">45 / 100</div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <script src="navbar.js"></script>
-  <script type="module" src="perfil.js"></script>
+  <script src="perfil.js"></script>
 </body>
 </html>
