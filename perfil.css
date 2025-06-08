@@ -260,6 +260,20 @@
   transition: background-color 0.3s ease;
 }
 
+.btn-plan:hover {
+  background-color: #00d4e0;
+}
+
+.plan-card.destacado {
+  border: 2px solid #00f0ff;
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.2);
+}
+
+.plan-card.neon {
+  border: 2px solid #00ffa6;
+  box-shadow: 0 0 15px rgba(0, 255, 166, 0.4);
+}
+
 .codigo-input {
   margin-top: 1rem;
   padding: 0.65rem 1rem;
@@ -285,14 +299,16 @@
   box-shadow: 0 0 10px rgba(0, 255, 166, 0.3);
 }
 
-
-.btn-plan:hover {
-  background-color: #00d4e0;
+.mensaje-codigo {
+  margin-top: 0.5rem;
+  color: #00ffa6;
+  font-size: 0.85rem;
+  text-align: center;
+  transition: opacity 0.3s ease;
 }
 
-.plan-card.destacado {
-  border: 2px solid #00f0ff;
-  box-shadow: 0 0 12px rgba(0, 240, 255, 0.2);
+.oculto {
+  display: none;
 }
 
 /* Responsive */
