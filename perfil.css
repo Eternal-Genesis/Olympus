@@ -1,6 +1,6 @@
-/* Contenedor general del perfil */
+/* Contenedor principal */
 .perfil-container {
-  max-width: 900px;
+  max-width: 1000px;
   margin: 3rem auto;
   padding: 2rem;
   background-color: #1a1a1a;
@@ -8,24 +8,25 @@
   box-shadow: 0 0 30px rgba(0, 240, 255, 0.08);
 }
 
-/* Tarjeta principal */
-.perfil-card {
+/* Cabecera del perfil */
+.perfil-header {
   display: flex;
-  flex-direction: column;
-  gap: 2.5rem;
+  flex-direction: row;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
 }
 
-/* Sección de la foto */
+/* Foto de perfil */
 .perfil-foto {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
 }
 
 .perfil-foto img {
-  width: 140px;
-  height: 140px;
+  width: 120px;
+  height: 120px;
   object-fit: cover;
   border-radius: 50%;
   border: 3px solid #00f0ff;
@@ -37,14 +38,14 @@
   transform: scale(1.05);
 }
 
-/* Botón para subir foto */
 .btn-subir-foto {
+  margin-top: 0.5rem;
   background-color: #00f0ff;
   color: #121212;
-  font-weight: 700;
-  font-size: 0.95rem;
-  padding: 0.6rem 1.2rem;
+  font-weight: bold;
+  padding: 0.4rem 1rem;
   border-radius: 6px;
+  font-size: 0.9rem;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
@@ -53,23 +54,33 @@
   background-color: #00d4e0;
 }
 
-/* Datos personales */
-.perfil-info .campo {
-  margin-bottom: 1.5rem;
+/* Datos del usuario */
+.perfil-datos {
+  flex: 1;
 }
 
-.perfil-info label {
+.perfil-datos h2 {
+  margin: 0 0 1rem;
+  font-size: 1.6rem;
+  color: #00f0ff;
+  text-shadow: 0 0 4px rgba(0, 240, 255, 0.5);
+}
+
+.campo {
+  margin-bottom: 1rem;
+}
+
+.campo label {
   display: block;
-  margin-bottom: 0.5rem;
-  font-weight: 700;
-  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
   color: #00f0ff;
 }
 
-.perfil-info input,
-.perfil-info textarea {
+.campo input,
+.campo textarea {
   width: 100%;
-  padding: 0.75rem 1rem;
+  padding: 0.7rem 1rem;
   border: none;
   border-radius: 8px;
   background-color: #2a2a2a;
@@ -78,18 +89,35 @@
   font-family: 'Inter', sans-serif;
   resize: none;
   box-shadow: inset 0 0 6px rgba(0, 240, 255, 0.15);
-  transition: box-shadow 0.3s ease, outline 0.3s ease;
 }
 
-.perfil-info input:focus,
-.perfil-info textarea:focus {
+.campo input:focus,
+.campo textarea:focus {
   outline: 2px solid #00f0ff;
-  box-shadow: 0 0 8px rgba(0, 240, 255, 0.3);
 }
 
-/* Barra de experiencia */
-.perfil-exp {
+/* Botón de logout */
+.btn-logout {
   margin-top: 1rem;
+  background-color: transparent;
+  border: 2px solid #00f0ff;
+  color: #00f0ff;
+  padding: 0.6rem 1.2rem;
+  font-weight: bold;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-logout:hover {
+  background-color: #00f0ff;
+  color: #121212;
+}
+
+/* Experiencia */
+.perfil-exp {
+  margin-top: 2.5rem;
 }
 
 .barra-exp {
@@ -122,22 +150,13 @@
 }
 
 /* Responsive */
-@media (max-width: 600px) {
-  .perfil-container {
-    padding: 1rem;
+@media (max-width: 700px) {
+  .perfil-header {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
-  .perfil-foto img {
-    width: 100px;
-    height: 100px;
-  }
-
-  .btn-subir-foto {
-    font-size: 0.85rem;
-    padding: 0.5rem 1rem;
-  }
-
-  .progreso {
-    font-size: 0.8rem;
+  .perfil-datos h2 {
+    font-size: 1.4rem;
   }
 }
