@@ -16,11 +16,7 @@
     <section class="perfil-header">
       <!-- Foto de perfil -->
       <div class="perfil-foto">
-        <img
-  src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><circle cx='60' cy='60' r='60' fill='%231a1a1a'/><path d='M60 65c9.4 0 17-7.6 17-17s-7.6-17-17-17-17 7.6-17 17 7.6 17 17 17zm0 5c-11.6 0-35 5.8-35 17.5V100h70v-12.5C95 75.8 71.6 70 60 70z' fill='%23ffffff'/></svg>"
-  alt=""
-  id="fotoPerfil"
-/>
+        <img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'><circle cx='60' cy='60' r='60' fill='%231a1a1a'/><path d='M60 65c9.4 0 17-7.6 17-17s-7.6-17-17-17-17 7.6-17 17 7.6 17 17 17zm0 5c-11.6 0-35 5.8-35 17.5V100h70v-12.5C95 75.8 71.6 70 60 70z' fill='%23ffffff'/></svg>" alt="" id="fotoPerfil" />
         <label for="subirFoto" class="btn-subir-foto">Cambiar foto</label>
         <input type="file" id="subirFoto" accept="image/*" hidden />
       </div>
@@ -29,14 +25,16 @@
       <div class="perfil-datos">
         <h2 id="nombreUsuario">Nombre del usuario</h2>
 
+        <button id="btnEditar" class="btn-editar">Editar</button>
+
         <div class="campo">
           <label for="apodo">Apodo (opcional):</label>
-          <input type="text" id="apodo" placeholder="Tu apodo cool" maxlength="25" />
+          <input type="text" id="apodo" placeholder="Tu apodo cool" maxlength="25" disabled />
         </div>
 
         <div class="campo">
           <label for="biografia">Biografía:</label>
-          <textarea id="biografia" maxlength="200" placeholder="Contanos un poco sobre vos... (máx 200 caracteres)"></textarea>
+          <textarea id="biografia" maxlength="200" placeholder="Contanos un poco sobre vos... (máx 200 caracteres)" disabled></textarea>
         </div>
 
         <!-- Botón de cerrar sesión -->
