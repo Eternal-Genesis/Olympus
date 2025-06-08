@@ -1,5 +1,12 @@
 // perfil.js
 import { auth, onAuthStateChanged, signOut } from "./firebase.js";
+import { db } from "./firebase.js";
+import {
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const subirFoto = document.getElementById("subirFoto");
@@ -22,7 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const largo = bioTextarea.value.length;
     contador.textContent = `${largo} / 200`;
     contador.style.color = largo >= 200 ? "#ff6060" : "#888";
-    guardar("bio", bioTextarea.value);
+    guardarEnFirestore("biografia", bioTextarea.value);
   });
 
   subirFoto.addEventListener("change", (e) => {
@@ -31,13 +38,13 @@ document.addEventListener("DOMContentLoaded", () => {
       const lector = new FileReader();
       lector.onload = () => {
         fotoPerfil.src = lector.result;
-        guardar("foto", lector.result);
+        guardarEnFirestore("foto", lector.result);
       };
       lector.readAsDataURL(archivo);
     }
   });
 
-  apodoInput.addEventListener("input", () => guardar("apodo", apodoInput.value));
+  apodoInput.addEventListener("input", () => guardarEnFirestore("apodo", apodoInput.value));
 
   cerrarSesionBtn.addEventListener("click", () => {
     signOut(auth)
@@ -45,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .catch(err => console.error("Error al cerrar sesión:", err));
   });
 
-  onAuthStateChanged(auth, (user) => {
+  onAuthStateChanged(auth, async (user) => {
     if (!user) {
       alert("Debes iniciar sesión para acceder al perfil.");
       window.location.href = "auth.html";
@@ -55,32 +62,41 @@ document.addEventListener("DOMContentLoaded", () => {
     const uid = user.uid;
     const nombre = user.displayName || user.email.split("@")[0];
     nombreUsuario.textContent = nombre;
-    cargar(uid);
+
+    const ref = doc(db, "usuarios", uid);
+    const snap = await getDoc(ref);
+
+    if (!snap.exists()) {
+      await setDoc(ref, {
+        apodo: "",
+        biografia: "",
+        foto: "",
+        exp: 0
+      });
+    } else {
+      const datos = snap.data();
+      if (datos.apodo) apodoInput.value = datos.apodo;
+      if (datos.biografia) {
+        bioTextarea.value = datos.biografia;
+        contador.textContent = `${datos.biografia.length} / 200`;
+      }
+      if (datos.foto) fotoPerfil.src = datos.foto;
+      if (typeof datos.exp === "number") {
+        const porcentaje = Math.min(100, Math.max(0, datos.exp));
+        progresoExp.style.width = `${porcentaje}%`;
+        progresoExp.textContent = `${porcentaje} / 100`;
+      }
+    }
   });
 
-  function guardar(campo, valor) {
+  async function guardarEnFirestore(campo, valor) {
     const user = auth.currentUser;
     if (!user) return;
-    const uid = user.uid;
-    const datos = JSON.parse(localStorage.getItem(`perfil_${uid}`)) || {};
-    datos[campo] = valor;
-    localStorage.setItem(`perfil_${uid}`, JSON.stringify(datos));
-  }
-
-  function cargar(uid) {
-    const datos = JSON.parse(localStorage.getItem(`perfil_${uid}`));
-    if (!datos) return;
-
-    if (datos.apodo) apodoInput.value = datos.apodo;
-    if (datos.bio) {
-      bioTextarea.value = datos.bio;
-      contador.textContent = `${datos.bio.length} / 200`;
-    }
-    if (datos.foto) fotoPerfil.src = datos.foto;
-    if (datos.exp) {
-      const porcentaje = Math.min(100, Math.max(0, datos.exp));
-      progresoExp.style.width = `${porcentaje}%`;
-      progresoExp.textContent = `${porcentaje} / 100`;
+    const ref = doc(db, "usuarios", user.uid);
+    try {
+      await updateDoc(ref, { [campo]: valor });
+    } catch (e) {
+      console.error("Error al guardar en Firestore:", e);
     }
   }
 });
