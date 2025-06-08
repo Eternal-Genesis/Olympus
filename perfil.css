@@ -6,7 +6,6 @@ body {
   font-family: 'Inter', sans-serif;
 }
 
-/* Ahora centramos solo el contenido principal */
 main.perfil-container {
   padding: 4rem 2rem;
   display: flex;
@@ -91,4 +90,52 @@ main.perfil-container {
 
 .btn-logout:hover {
   background-color: #e63946;
+}
+
+/* ===== Tema claro (modo light) ===== */
+body.light-mode {
+  background-color: #f1f1f1;
+  color: #121212;
+}
+
+body.light-mode .perfil-card {
+  background-color: #ffffff;
+  color: #121212;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+body.light-mode .perfil-email {
+  color: #444;
+}
+
+body.light-mode .btn-tema {
+  background-color: #ddd;
+  color: #121212;
+}
+
+body.light-mode .btn-tema:hover {
+  background-color: #ccc;
+}
+
+body.light-mode .btn-premium {
+  background-color: #00cfe0;
+  color: #121212;
+}
+
+body.light-mode .btn-premium:hover {
+  background-color: #00bcd4;
+}
+
+body.light-mode .btn-logout {
+  background-color: #ff6b6b;
+  color: #fff;
+}
+
+body.light-mode .btn-logout:hover {
+  background-color: #e63946;
+}
+
+body.light-mode .badge-premium {
+  background-color: #ffce00;
+  color: #121212;
 }
