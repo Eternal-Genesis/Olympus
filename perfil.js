@@ -1,14 +1,16 @@
-import { auth, onAuthStateChanged } from "./firebase.js";
+// perfil.js
+import { auth, onAuthStateChanged, signOut } from "./firebase.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const subirFoto = document.getElementById("subirFoto");
   const fotoPerfil = document.getElementById("fotoPerfil");
-  const nombreInput = document.getElementById("nombre");
+  const nombreUsuario = document.getElementById("nombreUsuario");
   const apodoInput = document.getElementById("apodo");
   const bioTextarea = document.getElementById("biografia");
   const progresoExp = document.getElementById("progresoExp");
+  const cerrarSesionBtn = document.getElementById("cerrarSesion");
 
-  // Contador dinámico de biografía
+  // Contador de biografía
   const contador = document.createElement("div");
   contador.style.textAlign = "right";
   contador.style.fontSize = "0.8rem";
@@ -23,7 +25,6 @@ document.addEventListener("DOMContentLoaded", () => {
     guardar("bio", bioTextarea.value);
   });
 
-  // Cargar imagen localmente
   subirFoto.addEventListener("change", (e) => {
     const archivo = e.target.files[0];
     if (archivo) {
@@ -36,11 +37,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Guardar campos al escribir
-  nombreInput.addEventListener("input", () => guardar("nombre", nombreInput.value));
   apodoInput.addEventListener("input", () => guardar("apodo", apodoInput.value));
 
-  // Esperar autenticación con Firebase
+  cerrarSesionBtn.addEventListener("click", () => {
+    signOut(auth)
+      .then(() => window.location.href = "auth.html")
+      .catch(err => console.error("Error al cerrar sesión:", err));
+  });
+
   onAuthStateChanged(auth, (user) => {
     if (!user) {
       alert("Debes iniciar sesión para acceder al perfil.");
@@ -49,10 +53,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const uid = user.uid;
+    const nombre = user.displayName || user.email.split("@")[0];
+    nombreUsuario.textContent = nombre;
     cargar(uid);
   });
 
-  // Guardar datos por UID en localStorage
   function guardar(campo, valor) {
     const user = auth.currentUser;
     if (!user) return;
@@ -62,20 +67,16 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem(`perfil_${uid}`, JSON.stringify(datos));
   }
 
-  // Cargar datos por UID
   function cargar(uid) {
     const datos = JSON.parse(localStorage.getItem(`perfil_${uid}`));
     if (!datos) return;
 
-    if (datos.nombre) nombreInput.value = datos.nombre;
     if (datos.apodo) apodoInput.value = datos.apodo;
     if (datos.bio) {
       bioTextarea.value = datos.bio;
       contador.textContent = `${datos.bio.length} / 200`;
     }
     if (datos.foto) fotoPerfil.src = datos.foto;
-
-    // Simulación: cargar experiencia si existiera
     if (datos.exp) {
       const porcentaje = Math.min(100, Math.max(0, datos.exp));
       progresoExp.style.width = `${porcentaje}%`;
