@@ -215,10 +215,22 @@
 }
 
 .plan-card .precio {
-  font-size: 1.2rem;
-  font-weight: bold;
+  font-size: 1.1rem;
+  font-weight: 600;
   color: #00f0ff;
   margin-bottom: 1rem;
+}
+
+.precio .descuento {
+  font-size: 0.85rem;
+  color: #00ffa6;
+  margin-left: 0.5rem;
+}
+
+.precio .tachado {
+  text-decoration: line-through;
+  color: #999;
+  margin-right: 0.3rem;
 }
 
 .plan-card ul {
