@@ -1,89 +1,85 @@
-import { auth, db } from "./firebase.js";
-import {
-  onAuthStateChanged,
-  signOut
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import {
-  doc,
-  getDoc,
-  updateDoc
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { auth, onAuthStateChanged } from "./firebase.js";
 
-let userRef = null;
+document.addEventListener("DOMContentLoaded", () => {
+  const subirFoto = document.getElementById("subirFoto");
+  const fotoPerfil = document.getElementById("fotoPerfil");
+  const nombreInput = document.getElementById("nombre");
+  const apodoInput = document.getElementById("apodo");
+  const bioTextarea = document.getElementById("biografia");
+  const progresoExp = document.getElementById("progresoExp");
 
-// Verificar sesión y cargar datos
-onAuthStateChanged(auth, async (user) => {
-  if (!user) {
-    window.location.href = "bienvenida.html";
-    return;
-  }
+  // Contador dinámico de biografía
+  const contador = document.createElement("div");
+  contador.style.textAlign = "right";
+  contador.style.fontSize = "0.8rem";
+  contador.style.color = "#888";
+  contador.textContent = "0 / 200";
+  bioTextarea.parentNode.appendChild(contador);
 
-  document.getElementById("user-name").textContent =
-    user.displayName || "Sin nombre";
-  document.getElementById("user-email").textContent = user.email;
+  bioTextarea.addEventListener("input", () => {
+    const largo = bioTextarea.value.length;
+    contador.textContent = `${largo} / 200`;
+    contador.style.color = largo >= 200 ? "#ff6060" : "#888";
+    guardar("bio", bioTextarea.value);
+  });
 
-  try {
-    userRef = doc(db, "usuarios", user.uid);
-    const snap = await getDoc(userRef);
-
-    if (snap.exists()) {
-      const data = snap.data();
-      const tipo = data.membresia || "personal";
-
-      document.getElementById("tipo-membresia").textContent =
-        tipo.charAt(0).toUpperCase() + tipo.slice(1);
-
-      const badge = document.getElementById("premium-badge");
-      const btnPremium = document.getElementById("pagar-premium");
-
-      if (tipo !== "personal") {
-        badge.style.display = "inline-block";
-        badge.textContent = `Cuenta ${tipo.charAt(0).toUpperCase() + tipo.slice(1)}`;
-        btnPremium.style.display = "none";
-      } else {
-        badge.style.display = "none";
-        btnPremium.style.display = "inline-block";
-      }
-    }
-  } catch (err) {
-    console.error("Error al cargar membresía:", err);
-  }
-});
-
-// Mostrar selector de membresía
-document.getElementById("pagar-premium").addEventListener("click", () => {
-  document.getElementById("selector-membresia").style.display = "block";
-});
-
-// Cambiar membresía
-document.querySelectorAll(".opcion").forEach((btn) => {
-  btn.addEventListener("click", async () => {
-    const tipoNuevo = btn.dataset.tipo;
-
-    if (userRef) {
-      await updateDoc(userRef, { membresia: tipoNuevo });
-
-      // Recargar para reflejar cambio
-      window.location.reload();
+  // Cargar imagen localmente
+  subirFoto.addEventListener("change", (e) => {
+    const archivo = e.target.files[0];
+    if (archivo) {
+      const lector = new FileReader();
+      lector.onload = () => {
+        fotoPerfil.src = lector.result;
+        guardar("foto", lector.result);
+      };
+      lector.readAsDataURL(archivo);
     }
   });
-});
 
-// Cambiar tema
-document.getElementById("toggle-tema").addEventListener("click", () => {
-  document.body.classList.toggle("light-mode");
-  const modo = document.body.classList.contains("light-mode") ? "claro" : "oscuro";
-  localStorage.setItem("tema", modo);
-});
+  // Guardar campos al escribir
+  nombreInput.addEventListener("input", () => guardar("nombre", nombreInput.value));
+  apodoInput.addEventListener("input", () => guardar("apodo", apodoInput.value));
 
-// Restaurar tema al cargar
-if (localStorage.getItem("tema") === "claro") {
-  document.body.classList.add("light-mode");
-}
+  // Esperar autenticación con Firebase
+  onAuthStateChanged(auth, (user) => {
+    if (!user) {
+      alert("Debes iniciar sesión para acceder al perfil.");
+      window.location.href = "auth.html";
+      return;
+    }
 
-// Cerrar sesión
-document.getElementById("logout").addEventListener("click", () => {
-  signOut(auth)
-    .then(() => window.location.href = "bienvenida.html")
-    .catch((error) => console.error("Error al cerrar sesión:", error));
+    const uid = user.uid;
+    cargar(uid);
+  });
+
+  // Guardar datos por UID en localStorage
+  function guardar(campo, valor) {
+    const user = auth.currentUser;
+    if (!user) return;
+    const uid = user.uid;
+    const datos = JSON.parse(localStorage.getItem(`perfil_${uid}`)) || {};
+    datos[campo] = valor;
+    localStorage.setItem(`perfil_${uid}`, JSON.stringify(datos));
+  }
+
+  // Cargar datos por UID
+  function cargar(uid) {
+    const datos = JSON.parse(localStorage.getItem(`perfil_${uid}`));
+    if (!datos) return;
+
+    if (datos.nombre) nombreInput.value = datos.nombre;
+    if (datos.apodo) apodoInput.value = datos.apodo;
+    if (datos.bio) {
+      bioTextarea.value = datos.bio;
+      contador.textContent = `${datos.bio.length} / 200`;
+    }
+    if (datos.foto) fotoPerfil.src = datos.foto;
+
+    // Simulación: cargar experiencia si existiera
+    if (datos.exp) {
+      const porcentaje = Math.min(100, Math.max(0, datos.exp));
+      progresoExp.style.width = `${porcentaje}%`;
+      progresoExp.textContent = `${porcentaje} / 100`;
+    }
+  }
 });
