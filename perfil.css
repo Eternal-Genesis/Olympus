@@ -57,6 +57,7 @@
 /* Datos del usuario */
 .perfil-datos {
   flex: 1;
+  position: relative;
 }
 
 .perfil-datos h2 {
@@ -91,9 +92,35 @@
   box-shadow: inset 0 0 6px rgba(0, 240, 255, 0.15);
 }
 
+.campo input:disabled,
+.campo textarea:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .campo input:focus,
 .campo textarea:focus {
   outline: 2px solid #00f0ff;
+}
+
+/* Botón editar/guardar */
+.btn-editar {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: #ffffff;
+  color: #121212;
+  font-weight: bold;
+  padding: 0.4rem 0.9rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+.btn-editar:hover {
+  background-color: #e0e0e0;
 }
 
 /* Botón de logout */
