@@ -29,8 +29,8 @@
   height: 120px;
   object-fit: cover;
   border-radius: 50%;
-  border: 3px solid #00f0ff;
-  box-shadow: 0 0 10px rgba(0, 240, 255, 0.4);
+  border: 3px solid #ffffff;
+  box-shadow: none;
   transition: transform 0.3s ease;
 }
 
@@ -40,7 +40,7 @@
 
 .btn-subir-foto {
   margin-top: 0.5rem;
-  background-color: #00f0ff;
+  background-color: #ffffff;
   color: #121212;
   font-weight: bold;
   padding: 0.4rem 1rem;
@@ -51,7 +51,7 @@
 }
 
 .btn-subir-foto:hover {
-  background-color: #00d4e0;
+  background-color: #e0e0e0;
 }
 
 /* Datos del usuario */
@@ -100,8 +100,8 @@
 .btn-logout {
   margin-top: 1rem;
   background-color: transparent;
-  border: 2px solid #00f0ff;
-  color: #00f0ff;
+  border: 2px solid #ff4c4c;
+  color: #ff4c4c;
   padding: 0.6rem 1.2rem;
   font-weight: bold;
   border-radius: 6px;
@@ -111,7 +111,7 @@
 }
 
 .btn-logout:hover {
-  background-color: #00f0ff;
+  background-color: #ff4c4c;
   color: #121212;
 }
 
@@ -160,4 +160,3 @@
     font-size: 1.4rem;
   }
 }
-
