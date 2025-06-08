@@ -20,9 +20,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const botonesPlanes = document.querySelectorAll(".btn-plan");
   const inputCodigo = document.getElementById("codigoCreador");
   const precioPersonal = document.getElementById("precioPersonal");
+  const mensajeCodigo = document.getElementById("mensajeCodigo");
 
   let modoEdicion = false;
 
+  // Activar edición
   btnEditar.addEventListener("click", async () => {
     if (!modoEdicion) {
       apodoInput.disabled = false;
@@ -39,6 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
+  // Manejo de botones de planes
   botonesPlanes.forEach(boton => {
     boton.addEventListener("click", () => {
       const plan = boton.parentElement.querySelector("h4").textContent;
@@ -47,20 +50,24 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-if (inputCodigo && precioPersonal) {
-  inputCodigo.addEventListener("input", () => {
-    const codigo = inputCodigo.value.trim().toUpperCase();
+  // Código de creador (validación visual sin bloquear)
+  if (inputCodigo && precioPersonal && mensajeCodigo) {
+    inputCodigo.addEventListener("input", () => {
+      const codigo = inputCodigo.value.trim().toUpperCase();
 
-    if (codigo === "OLYMPUS50") {
-      precioPersonal.innerHTML = "$2 <span class='descuento'>(50% aplicado)</span>";
-      inputCodigo.classList.add("valid");
-    } else {
-      precioPersonal.innerHTML = "$4 <span class='descuento'>($2 con código de creador)</span>";
-      inputCodigo.classList.remove("valid");
-    }
-  });
-}
+      if (codigo === "OLYMPUS50") {
+        precioPersonal.innerHTML = "$2 <span class='descuento'>(50% aplicado)</span>";
+        inputCodigo.classList.add("valid");
+        mensajeCodigo.classList.remove("oculto");
+      } else {
+        precioPersonal.innerHTML = "$4 <span class='descuento'>($2 con código de creador)</span>";
+        inputCodigo.classList.remove("valid");
+        mensajeCodigo.classList.add("oculto");
+      }
+    });
+  }
 
+  // Contador de caracteres en la biografía
   const contador = document.createElement("div");
   contador.style.textAlign = "right";
   contador.style.fontSize = "0.8rem";
@@ -74,6 +81,7 @@ if (inputCodigo && precioPersonal) {
     contador.style.color = largo >= 200 ? "#ff6060" : "#888";
   });
 
+  // Foto de perfil
   subirFoto.addEventListener("change", (e) => {
     const archivo = e.target.files[0];
     if (archivo) {
@@ -86,12 +94,14 @@ if (inputCodigo && precioPersonal) {
     }
   });
 
+  // Cerrar sesión
   cerrarSesionBtn.addEventListener("click", () => {
     signOut(auth)
       .then(() => window.location.href = "index.html")
       .catch(err => console.error("Error al cerrar sesión:", err));
   });
 
+  // Obtener datos del usuario
   onAuthStateChanged(auth, async (user) => {
     if (!user) return;
 
@@ -126,6 +136,7 @@ if (inputCodigo && precioPersonal) {
     }
   });
 
+  // Guardar datos
   async function guardarEnFirestore(campo, valor) {
     const user = auth.currentUser;
     if (!user) return;
