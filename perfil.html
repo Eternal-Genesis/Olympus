@@ -10,13 +10,34 @@
 <body>
   <header id="navbar"></header>
 
-  <main class="perfil-container">
-    <div class="perfil-card">
-      <h1 class="perfil-nombre">
-        <span id="user-name">Usuario</span>
-        <span id="premium-badge" class="badge-premium" style="display: none;">Cuenta Premium</span>
-      </h1>
+<main class="perfil-container">
+  <div class="perfil-card">
+    <h1 class="perfil-nombre">
+      <span id="user-name">Usuario</span>
+      <span id="premium-badge" class="badge-premium" style="display: none;">Cuenta Premium</span>
+    </h1>
 
+    <p class="perfil-email" id="user-email">correo@example.com</p>
+    <p class="perfil-membresia">Membresía: <strong id="tipo-membresia">Cargando...</strong></p>
+
+    <div class="perfil-acciones">
+      <button id="toggle-tema" class="btn-tema">Cambiar Tema</button>
+      <button id="pagar-premium" class="btn-premium" style="display: none;">Mejorar Membresía</button>
+      <button id="logout" class="btn-logout">Cerrar Sesión</button>
+    </div>
+  </div>
+
+  <!-- Selector de membresía -->
+  <div id="selector-membresia" class="selector-membresia" style="display: none;">
+    <h2>Elegí tu membresía</h2>
+    <div class="opciones">
+      <button class="opcion" data-tipo="personal">Personal</button>
+      <button class="opcion" data-tipo="negocio">Negocio</button>
+      <button class="opcion" data-tipo="empresa">Empresa</button>
+    </div>
+  </div>
+</main>
+  
       <p class="perfil-email" id="user-email">correo@example.com</p>
       <p class="perfil-membresia">Membresía: <strong id="tipo-membresia">Cargando...</strong></p>
 
