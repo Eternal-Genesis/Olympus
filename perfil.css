@@ -62,8 +62,8 @@
 .perfil-datos h2 {
   margin: 0 0 1rem;
   font-size: 1.6rem;
-  color: #00f0ff;
-  text-shadow: 0 0 4px rgba(0, 240, 255, 0.5);
+  color: #ffffff;
+  text-shadow: none;
 }
 
 .campo {
@@ -74,7 +74,7 @@
   display: block;
   font-weight: 600;
   margin-bottom: 0.3rem;
-  color: #00f0ff;
+  color: #ffffff;
 }
 
 .campo input,
@@ -160,3 +160,4 @@
     font-size: 1.4rem;
   }
 }
+
