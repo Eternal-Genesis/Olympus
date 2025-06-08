@@ -47,17 +47,19 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  if (inputCodigo && precioPersonal) {
-    inputCodigo.addEventListener("input", () => {
-      const codigo = inputCodigo.value.trim().toUpperCase();
+if (inputCodigo && precioPersonal) {
+  inputCodigo.addEventListener("input", () => {
+    const codigo = inputCodigo.value.trim().toUpperCase();
 
-      if (codigo === "OLYMPUS50") {
-        precioPersonal.innerHTML = "$2 <span class='descuento'>(50% aplicado)</span>";
-      } else {
-        precioPersonal.innerHTML = "$4 <span class='descuento'>($2 con código de creador)</span>";
-      }
-    });
-  }
+    if (codigo === "OLYMPUS50") {
+      precioPersonal.innerHTML = "$2 <span class='descuento'>(50% aplicado)</span>";
+      inputCodigo.classList.add("valid");
+    } else {
+      precioPersonal.innerHTML = "$4 <span class='descuento'>($2 con código de creador)</span>";
+      inputCodigo.classList.remove("valid");
+    }
+  });
+}
 
   const contador = document.createElement("div");
   contador.style.textAlign = "right";
