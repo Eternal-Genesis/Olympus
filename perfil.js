@@ -61,12 +61,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Botones de planes
+  // Botones de planes (al hacer clic)
   botonesPlanes.forEach(boton => {
     boton.addEventListener("click", () => {
-      const plan = boton.closest(".plan-card")?.querySelector("h4")?.textContent;
-      if (plan === "Personal") return;
-      alert(`En el futuro podrás mejorar al plan: ${plan}`);
+      const plan = boton.dataset.plan;
+      alert(`En el futuro podrás adquirir o cambiar al plan: ${plan}`);
     });
   });
 
@@ -104,7 +103,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .catch(err => console.error("Error al cerrar sesión:", err));
   });
 
-  // Cargar datos del usuario
+  // Cargar datos del usuario y actualizar interfaz
   onAuthStateChanged(auth, async (user) => {
     if (!user) return;
 
@@ -114,6 +113,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const ref = doc(db, "usuarios", uid);
     const snap = await getDoc(ref);
+
+    let planActual = "Personal";
 
     if (!snap.exists()) {
       await setDoc(ref, {
@@ -136,9 +137,23 @@ document.addEventListener("DOMContentLoaded", () => {
         progresoExp.style.width = `${porcentaje}%`;
         progresoExp.textContent = `${porcentaje} / 100`;
       }
+      if (datos.plan) planActual = datos.plan;
     }
+
+    // Cambiar textos de botones según plan actual
+    botonesPlanes.forEach(boton => {
+      const plan = boton.dataset.plan;
+      if (plan === planActual) {
+        boton.textContent = "Usando";
+        boton.disabled = true;
+      } else {
+        boton.textContent = "Cambiar";
+        boton.disabled = false;
+      }
+    });
   });
 
+  // Guardar campo en Firestore
   async function guardarEnFirestore(campo, valor) {
     const user = auth.currentUser;
     if (!user) return;
