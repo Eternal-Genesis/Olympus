@@ -3,42 +3,57 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Perfil</title>
+  <title>Mi Perfil | Olympus</title>
   <link rel="stylesheet" href="navbar.css" />
   <link rel="stylesheet" href="perfil.css" />
 </head>
 <body>
-  <!-- Navbar se carga dinámicamente -->
+  <!-- 🔹 Navbar dinámico -->
   <div id="navbar"></div>
 
+  <!-- 🔹 Perfil -->
   <main class="perfil-container">
     <section class="perfil-card">
+      
+      <!-- 📷 Foto de perfil -->
       <div class="perfil-foto">
         <img src="default-profile.png" alt="Foto de perfil" id="fotoPerfil" />
-        <input type="file" id="subirFoto" accept="image/*" />
+        <label for="subirFoto" class="btn-subir-foto">Cambiar foto</label>
+        <input type="file" id="subirFoto" accept="image/*" hidden />
       </div>
 
+      <!-- 🧑 Datos personales -->
       <div class="perfil-info">
-        <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" placeholder="Tu nombre" maxlength="30"/>
+        <div class="campo">
+          <label for="nombre">Nombre:</label>
+          <input type="text" id="nombre" placeholder="Tu nombre" maxlength="40" autocomplete="name"/>
+        </div>
 
-        <label for="apodo">Apodo (opcional):</label>
-        <input type="text" id="apodo" placeholder="Tu apodo" maxlength="20"/>
+        <div class="campo">
+          <label for="apodo">Apodo (opcional):</label>
+          <input type="text" id="apodo" placeholder="Tu apodo cool" maxlength="25" />
+        </div>
 
-        <label for="biografia">Biografía:</label>
-        <textarea id="biografia" placeholder="Contanos quién sos (máx 200 caracteres)" maxlength="200"></textarea>
-      </div>
-
-      <div class="perfil-exp">
-        <label>Experiencia:</label>
-        <div class="barra-exp">
-          <div class="progreso" style="width: 45%;">45 / 100</div>
+        <div class="campo">
+          <label for="biografia">Biografía:</label>
+          <textarea id="biografia" maxlength="200" placeholder="Contanos un poco sobre vos... (máx 200 caracteres)"></textarea>
         </div>
       </div>
+
+      <!-- 🧪 Barra de experiencia -->
+      <div class="perfil-exp">
+        <label for="exp">Experiencia:</label>
+        <div class="barra-exp">
+          <div class="progreso" id="progresoExp">45 / 100</div>
+        </div>
+        <p class="rango-texto">Rango actual: <strong>Aprendiz</strong></p>
+      </div>
+      
     </section>
   </main>
 
+  <!-- 🔹 Scripts -->
   <script src="navbar.js"></script>
-  <script src="perfil.js"></script>
+  <script type="module" src="perfil.js"></script>
 </body>
 </html>
