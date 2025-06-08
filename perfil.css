@@ -176,6 +176,87 @@
   color: #888;
 }
 
+/* Planes de membresía */
+.planes-membresia {
+  margin-top: 3rem;
+  text-align: center;
+}
+
+.planes-membresia h3 {
+  font-size: 1.8rem;
+  margin-bottom: 2rem;
+  color: #ffffff;
+}
+
+.cards-membresia {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.plan-card {
+  background-color: #222;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.06);
+  border: 2px solid #333;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.plan-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 16px rgba(0, 240, 255, 0.15);
+}
+
+.plan-card h4 {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+  color: #ffffff;
+}
+
+.plan-card .precio {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #00f0ff;
+  margin-bottom: 1rem;
+}
+
+.plan-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0 1.5rem;
+  color: #ccc;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.plan-card li::before {
+  content: '✓';
+  margin-right: 0.5rem;
+  color: #00f0ff;
+}
+
+.btn-plan {
+  background-color: #00f0ff;
+  color: #121212;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  padding: 0.7rem 1.4rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.btn-plan:hover {
+  background-color: #00d4e0;
+}
+
+.plan-card.destacado {
+  border: 2px solid #00f0ff;
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.2);
+}
+
 /* Responsive */
 @media (max-width: 700px) {
   .perfil-header {
