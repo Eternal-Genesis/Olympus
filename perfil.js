@@ -18,14 +18,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const cerrarSesionBtn = document.getElementById("cerrarSesion");
   const btnEditar = document.getElementById("btnEditar");
   const botonesPlanes = document.querySelectorAll(".btn-plan");
+
   const inputCodigo = document.getElementById("codigoCreador");
   const precioPersonal = document.getElementById("precioPersonal");
   const mensajeCodigo = document.getElementById("mensajeCodigo");
 
   let modoEdicion = false;
 
-  // Activar edición
-  btnEditar.addEventListener("click", async () => {
+  // Edición del perfil
+  btnEditar?.addEventListener("click", async () => {
     if (!modoEdicion) {
       apodoInput.disabled = false;
       bioTextarea.disabled = false;
@@ -41,48 +42,50 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Manejo de botones de planes
+  // Código de creador visual (sin guardar)
+  if (inputCodigo && precioPersonal) {
+    inputCodigo.addEventListener("input", () => {
+      const codigo = inputCodigo.value.trim().toUpperCase();
+      const descuento = "$2 <span class='descuento'>(50% aplicado)</span>";
+      const normal = "$4 <span class='descuento'>($2 con código de creador)</span>";
+
+      if (codigo === "OLYMPUS50") {
+        precioPersonal.innerHTML = descuento;
+        inputCodigo.classList.add("valid");
+        mensajeCodigo?.classList.remove("oculto");
+      } else {
+        precioPersonal.innerHTML = normal;
+        inputCodigo.classList.remove("valid");
+        mensajeCodigo?.classList.add("oculto");
+      }
+    });
+  }
+
+  // Botones de planes
   botonesPlanes.forEach(boton => {
     boton.addEventListener("click", () => {
-      const plan = boton.parentElement.querySelector("h4").textContent;
+      const plan = boton.closest(".plan-card")?.querySelector("h4")?.textContent;
       if (plan === "Personal") return;
       alert(`En el futuro podrás mejorar al plan: ${plan}`);
     });
   });
 
-  // Código de creador (validación visual sin bloquear)
-  if (inputCodigo && precioPersonal && mensajeCodigo) {
-    inputCodigo.addEventListener("input", () => {
-      const codigo = inputCodigo.value.trim().toUpperCase();
-
-      if (codigo === "OLYMPUS50") {
-        precioPersonal.innerHTML = "$2 <span class='descuento'>(50% aplicado)</span>";
-        inputCodigo.classList.add("valid");
-        mensajeCodigo.classList.remove("oculto");
-      } else {
-        precioPersonal.innerHTML = "$4 <span class='descuento'>($2 con código de creador)</span>";
-        inputCodigo.classList.remove("valid");
-        mensajeCodigo.classList.add("oculto");
-      }
-    });
-  }
-
-  // Contador de caracteres en la biografía
+  // Contador biografía
   const contador = document.createElement("div");
   contador.style.textAlign = "right";
   contador.style.fontSize = "0.8rem";
   contador.style.color = "#888";
   contador.textContent = "0 / 200";
-  bioTextarea.parentNode.appendChild(contador);
+  bioTextarea?.parentNode?.appendChild(contador);
 
-  bioTextarea.addEventListener("input", () => {
+  bioTextarea?.addEventListener("input", () => {
     const largo = bioTextarea.value.length;
     contador.textContent = `${largo} / 200`;
     contador.style.color = largo >= 200 ? "#ff6060" : "#888";
   });
 
-  // Foto de perfil
-  subirFoto.addEventListener("change", (e) => {
+  // Cargar imagen de perfil
+  subirFoto?.addEventListener("change", (e) => {
     const archivo = e.target.files[0];
     if (archivo) {
       const lector = new FileReader();
@@ -95,13 +98,13 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Cerrar sesión
-  cerrarSesionBtn.addEventListener("click", () => {
+  cerrarSesionBtn?.addEventListener("click", () => {
     signOut(auth)
       .then(() => window.location.href = "index.html")
       .catch(err => console.error("Error al cerrar sesión:", err));
   });
 
-  // Obtener datos del usuario
+  // Cargar datos del usuario
   onAuthStateChanged(auth, async (user) => {
     if (!user) return;
 
@@ -136,7 +139,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Guardar datos
   async function guardarEnFirestore(campo, valor) {
     const user = auth.currentUser;
     if (!user) return;
