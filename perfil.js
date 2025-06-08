@@ -48,16 +48,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
   cerrarSesionBtn.addEventListener("click", () => {
     signOut(auth)
-      .then(() => window.location.href = "auth.html")
+      .then(() => window.location.href = "index.html")
       .catch(err => console.error("Error al cerrar sesión:", err));
   });
 
   onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      alert("Debes iniciar sesión para acceder al perfil.");
-      window.location.href = "auth.html";
-      return;
-    }
+    if (!user) return; // No mostrar alerta ni redirigir automáticamente
 
     const uid = user.uid;
     const nombre = user.displayName || user.email.split("@")[0];
