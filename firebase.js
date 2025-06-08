@@ -1,6 +1,6 @@
 // firebase.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 // Configuración de tu proyecto (copiada desde Firebase Console)
@@ -22,4 +22,4 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 // Exportar
-export { auth, db };
+export { auth, db, signOut, onAuthStateChanged };
