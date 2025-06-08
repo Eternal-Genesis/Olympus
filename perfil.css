@@ -1,144 +1,108 @@
-body {
-  margin: 0;
-  padding: 0;
-  background-color: #121212;
-  color: #f1f1f1;
-  font-family: 'Inter', sans-serif;
+/* Estilo del contenedor principal */
+.perfil-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: #1a1a1a;
+  border-radius: 16px;
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
 }
 
-main.perfil-container {
-  padding: 4rem 2rem;
-  display: flex;
-  justify-content: center;
-  width: 100%;
-}
-
+/* Tarjeta del perfil */
 .perfil-card {
-  background-color: #1e1e1e;
-  padding: 3rem;
-  border-radius: 12px;
-  box-shadow: 0 0 30px rgba(0, 240, 255, 0.08);
-  max-width: 480px;
-  width: 100%;
-  text-align: center;
-}
-
-.perfil-nombre {
-  font-size: 2rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  margin-bottom: 0.5rem;
-  position: relative;
-}
-
-.perfil-email,
-.perfil-membresia {
-  font-size: 1.1rem;
-  color: #ccc;
-  margin-bottom: 1rem;
-}
-
-.badge-premium {
-  display: inline-block;
-  margin-top: 0.5rem;
-  padding: 0.4rem 0.8rem;
-  background-color: #ffd700;
-  color: #121212;
-  font-weight: bold;
-  border-radius: 6px;
-  font-size: 0.9rem;
-  text-transform: uppercase;
-}
-
-.perfil-acciones {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  margin-top: 2rem;
+  gap: 2rem;
 }
 
-.perfil-acciones button {
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  font-weight: bold;
+/* Foto de perfil */
+.perfil-foto {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.perfil-foto img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #00f0ff;
+  box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+}
+
+.perfil-foto input[type="file"] {
+  font-size: 0.9rem;
+  color: #ccc;
+}
+
+/* Campos de texto */
+.perfil-info label {
+  display: block;
+  margin-top: 1rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #00f0ff;
+}
+
+.perfil-info input,
+.perfil-info textarea {
+  width: 100%;
+  margin-top: 0.3rem;
+  padding: 0.75rem 1rem;
   border: none;
   border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-.btn-tema {
   background-color: #2a2a2a;
   color: #f1f1f1;
+  font-size: 1rem;
+  font-family: 'Inter', sans-serif;
+  resize: none;
+  box-shadow: inset 0 0 5px rgba(0, 240, 255, 0.2);
 }
 
-.btn-tema:hover {
-  background-color: #3a3a3a;
+.perfil-info input:focus,
+.perfil-info textarea:focus {
+  outline: 2px solid #00f0ff;
 }
 
-.btn-premium {
-  background-color: #00f0ff;
-  color: #121212;
+/* Barra de experiencia */
+.perfil-exp label {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #00f0ff;
 }
 
-.btn-premium:hover {
-  background-color: #00cfe0;
+.barra-exp {
+  margin-top: 0.5rem;
+  background-color: #2a2a2a;
+  border-radius: 12px;
+  height: 26px;
+  overflow: hidden;
+  box-shadow: inset 0 0 8px rgba(0, 240, 255, 0.2);
 }
 
-.btn-logout {
-  background-color: #ff4d4d;
-  color: #fff;
+.progreso {
+  height: 100%;
+  background: linear-gradient(90deg, #00f0ff, #00d4ff);
+  color: #1a1a1a;
+  font-weight: 900;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  transition: width 0.4s ease;
 }
 
-.btn-logout:hover {
-  background-color: #e63946;
-}
+/* Responsivo */
+@media (max-width: 600px) {
+  .perfil-container {
+    padding: 1rem;
+  }
 
-/* ===== Tema claro ===== */
-body.light-mode {
-  background-color: #f1f1f1;
-  color: #121212;
-}
-
-body.light-mode .perfil-card {
-  background-color: #ffffff;
-  color: #121212;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-}
-
-body.light-mode .perfil-email,
-body.light-mode .perfil-membresia {
-  color: #444;
-}
-
-body.light-mode .btn-tema {
-  background-color: #ddd;
-  color: #121212;
-}
-
-body.light-mode .btn-tema:hover {
-  background-color: #ccc;
-}
-
-body.light-mode .btn-premium {
-  background-color: #00cfe0;
-  color: #121212;
-}
-
-body.light-mode .btn-premium:hover {
-  background-color: #00bcd4;
-}
-
-body.light-mode .btn-logout {
-  background-color: #ff6b6b;
-  color: #fff;
-}
-
-body.light-mode .btn-logout:hover {
-  background-color: #e63946;
-}
-
-body.light-mode .badge-premium {
-  background-color: #ffce00;
-  color: #121212;
+  .perfil-foto img {
+    width: 100px;
+    height: 100px;
+  }
 }
