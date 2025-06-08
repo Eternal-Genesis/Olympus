@@ -16,6 +16,27 @@ document.addEventListener("DOMContentLoaded", () => {
   const bioTextarea = document.getElementById("biografia");
   const progresoExp = document.getElementById("progresoExp");
   const cerrarSesionBtn = document.getElementById("cerrarSesion");
+  const btnEditar = document.getElementById("btnEditar");
+
+  let modoEdicion = false;
+
+  btnEditar.addEventListener("click", async () => {
+    if (!modoEdicion) {
+      // Entrar en modo edición
+      apodoInput.disabled = false;
+      bioTextarea.disabled = false;
+      btnEditar.textContent = "Guardar";
+      modoEdicion = true;
+    } else {
+      // Guardar y salir del modo edición
+      apodoInput.disabled = true;
+      bioTextarea.disabled = true;
+      btnEditar.textContent = "Editar";
+      modoEdicion = false;
+      await guardarEnFirestore("apodo", apodoInput.value);
+      await guardarEnFirestore("biografia", bioTextarea.value);
+    }
+  });
 
   // Contador de biografía
   const contador = document.createElement("div");
@@ -29,7 +50,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const largo = bioTextarea.value.length;
     contador.textContent = `${largo} / 200`;
     contador.style.color = largo >= 200 ? "#ff6060" : "#888";
-    guardarEnFirestore("biografia", bioTextarea.value);
   });
 
   subirFoto.addEventListener("change", (e) => {
@@ -44,8 +64,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  apodoInput.addEventListener("input", () => guardarEnFirestore("apodo", apodoInput.value));
-
   cerrarSesionBtn.addEventListener("click", () => {
     signOut(auth)
       .then(() => window.location.href = "index.html")
@@ -53,7 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   onAuthStateChanged(auth, async (user) => {
-    if (!user) return; // No mostrar alerta ni redirigir automáticamente
+    if (!user) return;
 
     const uid = user.uid;
     const nombre = user.displayName || user.email.split("@")[0];
