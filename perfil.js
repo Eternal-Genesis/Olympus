@@ -18,6 +18,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const cerrarSesionBtn = document.getElementById("cerrarSesion");
   const btnEditar = document.getElementById("btnEditar");
   const botonesPlanes = document.querySelectorAll(".btn-plan");
+  const inputCodigo = document.getElementById("codigoCreador");
+  const precioPersonal = document.getElementById("precioPersonal");
 
   let modoEdicion = false;
 
@@ -44,6 +46,18 @@ document.addEventListener("DOMContentLoaded", () => {
       alert(`En el futuro podrás mejorar al plan: ${plan}`);
     });
   });
+
+  if (inputCodigo && precioPersonal) {
+    inputCodigo.addEventListener("input", () => {
+      const codigo = inputCodigo.value.trim().toUpperCase();
+
+      if (codigo === "OLYMPUS50") {
+        precioPersonal.innerHTML = "$2 <span class='descuento'>(50% aplicado)</span>";
+      } else {
+        precioPersonal.innerHTML = "$4 <span class='descuento'>($2 con código de creador)</span>";
+      }
+    });
+  }
 
   const contador = document.createElement("div");
   contador.style.textAlign = "right";
