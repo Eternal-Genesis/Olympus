@@ -328,6 +328,16 @@
   display: none;
 }
 
+/* Botones de planes bloqueados (Próximamente) */
+.btn-plan-disabled {
+  background-color: #444;
+  color: #aaa;
+  cursor: not-allowed;
+  border: 1px solid #666;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
 /* Recuadro para ingresar código de creador */
 .codigo-recuadro {
   background-color: #1a1a1a;
