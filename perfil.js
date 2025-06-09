@@ -49,13 +49,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (codigo === "MARPE") {
         const precioFinal = (5 * 0.4).toFixed(2); // 60% de descuento
-        precioPersonal.innerHTML = `$${precioFinal} / mes`;
+        precioPersonal.innerHTML = `<span class="tachado">$5</span> $${precioFinal} / mes`;
         inputCodigo.classList.add("valid");
         mensajeCodigo?.classList.remove("oculto");
         descuentoCodigo = true;
       } else {
         const precioConDescuento = (5 * 0.8).toFixed(2); // 20% de descuento estándar
-        precioPersonal.innerHTML = `$${precioConDescuento} / mes`;
+        precioPersonal.innerHTML = `<span class="tachado">$5</span> $${precioConDescuento} / mes`;
         inputCodigo.classList.remove("valid");
         mensajeCodigo?.classList.add("oculto");
         descuentoCodigo = false;
@@ -64,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Mostrar precio con 20% de descuento al cargar la página
     const precioConDescuento = (5 * 0.8).toFixed(2);
-    precioPersonal.innerHTML = `$${precioConDescuento} / mes`;
+    precioPersonal.innerHTML = `<span class="tachado">$5</span> $${precioConDescuento} / mes`;
   }
 
   // Botones de planes
