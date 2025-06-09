@@ -1,12 +1,14 @@
 // perfil.js
-import { auth, onAuthStateChanged, signOut } from "./firebase.js";
-import { db } from "./firebase.js";
 import {
+  auth,
+  db,
+  signOut,
+  onAuthStateChanged,
   doc,
   getDoc,
   setDoc,
   updateDoc
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+} from "./firebase.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   const subirFoto = document.getElementById("subirFoto");
