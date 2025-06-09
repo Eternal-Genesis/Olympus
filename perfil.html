@@ -40,71 +40,67 @@
 
     <!-- Experiencia -->
     <section class="perfil-exp">
-      <label for="exp">Experiencia:</label>
+      <p id="nivelTexto" class="nivel-usuario">Nivel 0</p>
       <div class="barra-exp">
-       <div class="progreso" id="progresoExp">Cargando...</div>
+        <div class="progreso" id="progresoExp">0 / 100</div>
       </div>
-      <p class="rango-texto">Rango actual: <strong>Aprendiz</strong></p>
     </section>
 
-<!-- Membresías -->
-<section class="planes-membresia">
-  <h3>Planes de membresía</h3>
+    <!-- Membresías -->
+    <section class="planes-membresia">
+      <h3>Planes de membresía</h3>
+      <div class="codigo-contenedor">
+        <input type="text" id="codigoCreador" class="codigo-input" placeholder="Código de creador" maxlength="10" />
+        <div id="mensajeCodigo" class="mensaje-codigo oculto">✅ Código aplicado correctamente</div>
+      </div>
 
-  <!-- Recuadro de código de creador -->
-  <div class="codigo-recuadro">
-    <label for="codigoCreador">¿Tenés un código de creador?</label>
-    <input type="text" id="codigoCreador" maxlength="12" placeholder="Ingresá tu código aquí" />
-    <div id="mensajeCodigo" class="mensaje-codigo oculto">✅ Código válido aplicado: -60%</div>
-  </div>
+      <div class="cards-membresia">
+        <!-- PERSONAL -->
+        <div class="plan-card neon" id="planPersonal">
+          <h4>Personal</h4>
+          <p class="precio" id="precioPersonal">
+            <span class="tachado">$5</span> $4 <span class="descuento">($2 con código de creador)</span>
+          </p>
+          <ul>
+            <li>Avance, Cuerpo y Mente ilimitado</li>
+            <li>Gestión de finanzas personales</li>
+            <li>Panel privado de desarrollo personal</li>
+            <li>Acceso exclusivo a Club Olympus</li>
+          </ul>
+          <button class="btn-plan" data-plan="Personal">Adquirir</button>
+        </div>
 
-  <div class="cards-membresia">
+        <!-- NEGOCIO -->
+        <div class="plan-card destacado">
+          <h4>Negocio</h4>
+          <p class="precio">
+            <span class="tachado">$25</span> $20 / mes
+          </p>
+          <ul>
+            <li>Todo lo del plan Personal</li>
+            <li>Sección completa para gestión de negocios</li>
+            <li>Inventario, stock, ingresos y egresos</li>
+            <li>Planificación estratégica con reportes</li>
+          </ul>
+          <button class="btn-plan" data-plan="Negocio">Adquirir</button>
+        </div>
 
-    <!-- PERSONAL -->
-    <div class="plan-card neon" id="planPersonal">
-      <h4>Personal</h4>
-      <p class="precio" id="precioPersonal">$5 / mes</p>
-      <ul>
-        <li>Avance, Cuerpo y Mente ilimitado</li>
-        <li>Gestión de finanzas personales</li>
-        <li>Panel privado de desarrollo personal</li>
-        <li>Acceso exclusivo a Club Olympus</li>
-      </ul>
-      <button class="btn-plan" data-plan="Personal">Adquirir</button>
-    </div>
-
-    <!-- NEGOCIO -->
-    <div class="plan-card destacado" id="planNegocio">
-      <h4>Negocio</h4>
-      <p class="precio">
-        <span class="tachado">$25</span> $20 / mes
-      </p>
-      <ul>
-        <li>Todo lo del plan Personal</li>
-        <li>Sección completa para gestión de negocios</li>
-        <li>Inventario, stock, ingresos y egresos</li>
-        <li>Planificación estratégica con reportes</li>
-      </ul>
-      <button class="btn-plan disabled" disabled>Próximamente</button>
-    </div>
-
-    <!-- EMPRESA -->
-    <div class="plan-card neon" id="planEmpresa">
-      <h4>Empresa</h4>
-      <p class="precio">
-        <span class="tachado">$120</span> $80 / mes
-      </p>
-      <ul>
-        <li>Todo lo del plan Negocio</li>
-        <li>Gestión empresarial colaborativa</li>
-        <li>Usuarios con distintos rangos y permisos</li>
-        <li>Menú empresarial completo y exclusivo</li>
-      </ul>
-      <button class="btn-plan disabled" disabled>Próximamente</button>
-    </div>
-
-  </div>
-</section>
+        <!-- EMPRESA -->
+        <div class="plan-card">
+          <h4>Empresa</h4>
+          <p class="precio">
+            <span class="tachado">$120</span> $80 / mes
+          </p>
+          <ul>
+            <li>Todo lo del plan Negocio</li>
+            <li>Gestión empresarial colaborativa</li>
+            <li>Usuarios con distintos rangos y permisos</li>
+            <li>Menú empresarial completo y exclusivo</li>
+          </ul>
+          <button class="btn-plan" data-plan="Empresa">Adquirir</button>
+        </div>
+      </div>
+    </section>
   </main>
 
   <!-- Scripts -->
