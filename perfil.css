@@ -201,6 +201,12 @@
   box-shadow: 0 0 10px rgba(0, 240, 255, 0.06);
   border: 2px solid #333;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  /* 🔥 Nuevo: para alinear el botón al fondo */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 500px; /* Ajustalo según tu contenido */
 }
 
 .plan-card:hover {
