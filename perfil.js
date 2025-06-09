@@ -23,9 +23,19 @@ document.addEventListener("DOMContentLoaded", () => {
   const inputCodigo = document.getElementById("codigoCreador");
   const precioPersonal = document.getElementById("precioPersonal");
   const mensajeCodigo = document.getElementById("mensajeCodigo");
+  const rangoTexto = document.querySelector(".rango-texto strong");
 
   let modoEdicion = false;
   let descuentoCodigo = false;
+
+  // RANGOS por XP
+  function obtenerRango(exp) {
+    if (exp >= 1000) return "Maestro";
+    if (exp >= 500) return "Guerrero";
+    if (exp >= 250) return "Estratega";
+    if (exp >= 100) return "Explorador";
+    return "Aprendiz";
+  }
 
   // Edición del perfil
   btnEditar?.addEventListener("click", async () => {
@@ -44,19 +54,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Código de creador: aplicar descuento sobre plan Personal
+  // Código de creador
   if (inputCodigo && precioPersonal) {
     inputCodigo.addEventListener("input", () => {
       const codigo = inputCodigo.value.trim().toUpperCase();
 
       if (codigo === "MARPE") {
-        const precioFinal = (5 * 0.4).toFixed(2); // 60% de descuento
+        const precioFinal = (5 * 0.4).toFixed(2); // 60%
         precioPersonal.innerHTML = `<span class="tachado">$5</span> $${precioFinal} / mes`;
         inputCodigo.classList.add("valid");
         mensajeCodigo?.classList.remove("oculto");
         descuentoCodigo = true;
       } else {
-        const precioConDescuento = (5 * 0.8).toFixed(2); // 20% de descuento estándar
+        const precioConDescuento = (5 * 0.8).toFixed(2); // 20%
         precioPersonal.innerHTML = `<span class="tachado">$5</span> $${precioConDescuento} / mes`;
         inputCodigo.classList.remove("valid");
         mensajeCodigo?.classList.add("oculto");
@@ -64,7 +74,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
-    // Mostrar precio con 20% de descuento al cargar la página
     const precioConDescuento = (5 * 0.8).toFixed(2);
     precioPersonal.innerHTML = `<span class="tachado">$5</span> $${precioConDescuento} / mes`;
   }
@@ -74,20 +83,10 @@ document.addEventListener("DOMContentLoaded", () => {
     boton.addEventListener("click", async () => {
       const plan = boton.dataset.plan;
       let precio = 0;
-
-      switch (plan) {
-        case "Personal":
-          precio = descuentoCodigo ? (5 * 0.4) : (5 * 0.8);
-          break;
-        case "Negocio":
-          precio = 20.00;
-          break;
-        case "Empresa":
-          precio = 80.00;
-          break;
-        default:
-          return;
-      }
+      if (plan === "Personal") precio = descuentoCodigo ? (5 * 0.4) : (5 * 0.8);
+      else if (plan === "Negocio") precio = 20.00;
+      else if (plan === "Empresa") precio = 80.00;
+      else return;
 
       const user = auth.currentUser;
       if (!user) return;
@@ -95,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       try {
         await updateDoc(ref, {
-          plan: plan,
+          plan,
           codigoCreador: descuentoCodigo ? "MARPE" : "",
           precioPagado: precio
         });
@@ -107,7 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Contador de biografía
+  // Biografía contador
   const contador = document.createElement("div");
   contador.style.textAlign = "right";
   contador.style.fontSize = "0.8rem";
@@ -121,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
     contador.style.color = largo >= 200 ? "#ff6060" : "#888";
   });
 
-  // Cargar imagen de perfil
+  // Subir imagen
   subirFoto?.addEventListener("change", (e) => {
     const archivo = e.target.files[0];
     if (archivo) {
@@ -141,29 +140,28 @@ document.addEventListener("DOMContentLoaded", () => {
       .catch(err => console.error("Error al cerrar sesión:", err));
   });
 
-  // Cargar datos del usuario
+  // Cargar datos + XP diaria + rango
   onAuthStateChanged(auth, async (user) => {
     if (!user) return;
-
     const uid = user.uid;
-    const nombre = user.displayName || user.email.split("@")[0];
-    nombreUsuario.textContent = nombre;
-
     const ref = doc(db, "usuarios", uid);
     const snap = await getDoc(ref);
 
-    let planActual = "";
+    const hoy = new Date().toISOString().split("T")[0];
+    let nuevaExp = 0;
 
     if (!snap.exists()) {
       await setDoc(ref, {
         apodo: "",
         biografia: "",
         foto: "",
-        exp: 0,
+        exp: 5,
+        ultimaVisita: hoy,
         plan: "",
         codigoCreador: "",
         precioPagado: 0
       });
+      nuevaExp = 5;
     } else {
       const datos = snap.data();
       if (datos.apodo) apodoInput.value = datos.apodo;
@@ -172,15 +170,29 @@ document.addEventListener("DOMContentLoaded", () => {
         contador.textContent = `${datos.biografia.length} / 200`;
       }
       if (datos.foto) fotoPerfil.src = datos.foto;
-      if (typeof datos.exp === "number") {
-        const porcentaje = Math.min(100, Math.max(0, datos.exp));
-        progresoExp.style.width = `${porcentaje}%`;
-        progresoExp.textContent = `${porcentaje} / 100`;
+
+      let expActual = datos.exp || 0;
+      const ultimaVisita = datos.ultimaVisita || "";
+
+      if (ultimaVisita !== hoy) {
+        nuevaExp = expActual + 5;
+        await updateDoc(ref, {
+          exp: nuevaExp,
+          ultimaVisita: hoy
+        });
+      } else {
+        nuevaExp = expActual;
       }
-      if (datos.plan) planActual = datos.plan;
     }
 
-    // Botones según plan actual
+    const porcentaje = Math.min(100, Math.max(0, nuevaExp));
+    progresoExp.style.width = `${porcentaje}%`;
+    progresoExp.textContent = `${porcentaje} / 100`;
+    rangoTexto.textContent = obtenerRango(nuevaExp);
+
+    // Plan actual
+    const datos = (await getDoc(ref)).data();
+    const planActual = datos?.plan || "";
     botonesPlanes.forEach(boton => {
       const plan = boton.dataset.plan;
       if (plan === planActual) {
@@ -193,7 +205,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Guardar campo en Firestore
+  // Guardar campo común
   async function guardarEnFirestore(campo, valor) {
     const user = auth.currentUser;
     if (!user) return;
