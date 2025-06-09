@@ -54,12 +54,17 @@ document.addEventListener("DOMContentLoaded", () => {
         mensajeCodigo?.classList.remove("oculto");
         descuentoCodigo = true;
       } else {
-        precioPersonal.innerHTML = "$5 / mes";
+        const precioConDescuento = (5 * 0.8).toFixed(2); // 20% de descuento estándar
+        precioPersonal.innerHTML = `$${precioConDescuento} / mes`;
         inputCodigo.classList.remove("valid");
         mensajeCodigo?.classList.add("oculto");
         descuentoCodigo = false;
       }
     });
+
+    // Mostrar precio con 20% de descuento al cargar la página
+    const precioConDescuento = (5 * 0.8).toFixed(2);
+    precioPersonal.innerHTML = `$${precioConDescuento} / mes`;
   }
 
   // Botones de planes
@@ -70,7 +75,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       switch (plan) {
         case "Personal":
-          precio = descuentoCodigo ? 2.00 : 5.00;
+          precio = descuentoCodigo ? (5 * 0.4) : (5 * 0.8);
           break;
         case "Negocio":
           precio = 20.00;
