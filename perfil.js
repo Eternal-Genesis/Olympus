@@ -23,21 +23,27 @@ document.addEventListener("DOMContentLoaded", () => {
   const inputCodigo = document.getElementById("codigoCreador");
   const precioPersonal = document.getElementById("precioPersonal");
   const mensajeCodigo = document.getElementById("mensajeCodigo");
-  const rangoTexto = document.querySelector(".rango-texto strong");
+  const nivelTexto = document.getElementById("nivelTexto");
 
   let modoEdicion = false;
   let descuentoCodigo = false;
 
-  // RANGOS por XP
-  function obtenerRango(exp) {
-    if (exp >= 1000) return "Maestro";
-    if (exp >= 500) return "Guerrero";
-    if (exp >= 250) return "Estratega";
-    if (exp >= 100) return "Explorador";
-    return "Aprendiz";
+  // FUNCIÓN DE NIVEL
+  function getNivelData(xp) {
+    const nivel = Math.floor(Math.sqrt(xp / 10));
+    const xpMin = nivel ** 2 * 10;
+    const xpMax = (nivel + 1) ** 2 * 10;
+    const progreso = (xp - xpMin) / (xpMax - xpMin);
+    return {
+      nivel,
+      xpMin,
+      xpMax,
+      progreso,
+      texto: `Nivel ${nivel}`
+    };
   }
 
-  // Edición del perfil
+  // Edición de perfil
   btnEditar?.addEventListener("click", async () => {
     if (!modoEdicion) {
       apodoInput.disabled = false;
@@ -140,7 +146,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .catch(err => console.error("Error al cerrar sesión:", err));
   });
 
-  // Cargar datos + XP diaria + rango
+  // Cargar datos + XP diaria
   onAuthStateChanged(auth, async (user) => {
     if (!user) return;
     const uid = user.uid;
@@ -185,14 +191,18 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    const porcentaje = Math.min(100, Math.max(0, nuevaExp));
-    progresoExp.style.width = `${porcentaje}%`;
-    progresoExp.textContent = `${porcentaje} / 100`;
-    rangoTexto.textContent = obtenerRango(nuevaExp);
+    const { nivel, xpMin, xpMax, progreso, texto } = getNivelData(nuevaExp);
+
+    // actualizar barra de experiencia
+    progresoExp.style.width = `${(progreso * 100).toFixed(1)}%`;
+    progresoExp.textContent = `${nuevaExp - xpMin} / ${xpMax - xpMin}`;
+
+    // actualizar nivel
+    if (nivelTexto) nivelTexto.textContent = texto;
 
     // Plan actual
-    const datos = (await getDoc(ref)).data();
-    const planActual = datos?.plan || "";
+    const datosActualizados = (await getDoc(ref)).data();
+    const planActual = datosActualizados?.plan || "";
     botonesPlanes.forEach(boton => {
       const plan = boton.dataset.plan;
       if (plan === planActual) {
@@ -205,7 +215,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Guardar campo común
+  // Guardar en firestore
   async function guardarEnFirestore(campo, valor) {
     const user = auth.currentUser;
     if (!user) return;
