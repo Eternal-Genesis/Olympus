@@ -18,12 +18,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const cerrarSesionBtn = document.getElementById("cerrarSesion");
   const btnEditar = document.getElementById("btnEditar");
   const botonesPlanes = document.querySelectorAll(".btn-plan");
-
   const inputCodigo = document.getElementById("codigoCreador");
   const precioPersonal = document.getElementById("precioPersonal");
   const mensajeCodigo = document.getElementById("mensajeCodigo");
 
   let modoEdicion = false;
+  let descuentoCodigo = false;
 
   // Edición del perfil
   btnEditar?.addEventListener("click", async () => {
@@ -42,34 +42,65 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Código de creador visual (sin guardar)
+  // Código de creador: aplicar descuento sobre plan Personal
   if (inputCodigo && precioPersonal) {
     inputCodigo.addEventListener("input", () => {
       const codigo = inputCodigo.value.trim().toUpperCase();
-      const descuento = "$2 <span class='descuento'>(50% aplicado)</span>";
-      const normal = "$4 <span class='descuento'>($2 con código de creador)</span>";
 
-      if (codigo === "OLYMPUS50") {
-        precioPersonal.innerHTML = descuento;
+      if (codigo === "MARPE") {
+        const precioFinal = (5 * 0.4).toFixed(2); // 60% de descuento
+        precioPersonal.innerHTML = `$${precioFinal} / mes`;
         inputCodigo.classList.add("valid");
         mensajeCodigo?.classList.remove("oculto");
+        descuentoCodigo = true;
       } else {
-        precioPersonal.innerHTML = normal;
+        precioPersonal.innerHTML = "$5 / mes";
         inputCodigo.classList.remove("valid");
         mensajeCodigo?.classList.add("oculto");
+        descuentoCodigo = false;
       }
     });
   }
 
-  // Botones de planes (al hacer clic)
+  // Botones de planes
   botonesPlanes.forEach(boton => {
-    boton.addEventListener("click", () => {
+    boton.addEventListener("click", async () => {
       const plan = boton.dataset.plan;
-      alert(`En el futuro podrás adquirir o cambiar al plan: ${plan}`);
+      let precio = 0;
+
+      switch (plan) {
+        case "Personal":
+          precio = descuentoCodigo ? 2.00 : 5.00;
+          break;
+        case "Negocio":
+          precio = 20.00;
+          break;
+        case "Empresa":
+          precio = 80.00;
+          break;
+        default:
+          return;
+      }
+
+      const user = auth.currentUser;
+      if (!user) return;
+      const ref = doc(db, "usuarios", user.uid);
+
+      try {
+        await updateDoc(ref, {
+          plan: plan,
+          codigoCreador: descuentoCodigo ? "MARPE" : "",
+          precioPagado: precio
+        });
+        alert(`Has adquirido el plan ${plan} por $${precio.toFixed(2)}/mes.`);
+        window.location.reload();
+      } catch (e) {
+        console.error("Error al guardar el plan:", e);
+      }
     });
   });
 
-  // Contador biografía
+  // Contador de biografía
   const contador = document.createElement("div");
   contador.style.textAlign = "right";
   contador.style.fontSize = "0.8rem";
@@ -103,7 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
       .catch(err => console.error("Error al cerrar sesión:", err));
   });
 
-  // Cargar datos del usuario y actualizar interfaz
+  // Cargar datos del usuario
   onAuthStateChanged(auth, async (user) => {
     if (!user) return;
 
@@ -114,7 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const ref = doc(db, "usuarios", uid);
     const snap = await getDoc(ref);
 
-    let planActual = "Personal";
+    let planActual = "";
 
     if (!snap.exists()) {
       await setDoc(ref, {
@@ -122,7 +153,9 @@ document.addEventListener("DOMContentLoaded", () => {
         biografia: "",
         foto: "",
         exp: 0,
-        plan: "Personal"
+        plan: "",
+        codigoCreador: "",
+        precioPagado: 0
       });
     } else {
       const datos = snap.data();
@@ -140,7 +173,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (datos.plan) planActual = datos.plan;
     }
 
-    // Cambiar textos de botones según plan actual
+    // Botones según plan actual
     botonesPlanes.forEach(boton => {
       const plan = boton.dataset.plan;
       if (plan === planActual) {
