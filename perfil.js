@@ -112,6 +112,25 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  botonesPlanes.forEach(boton => {
+  const plan = boton.dataset.plan;
+
+  if (plan === "Personal") {
+    if (plan === planActual) {
+      boton.textContent = "Usando";
+      boton.disabled = true;
+    } else {
+      boton.textContent = "Adquirir";
+      boton.disabled = false;
+    }
+  } else {
+    // Planes Negocio y Empresa aún no disponibles
+    boton.textContent = "Próximamente";
+    boton.disabled = true;
+    boton.classList.add("btn-plan-disabled");
+  }
+});
+
   // Biografía contador
   const contador = document.createElement("div");
   contador.style.textAlign = "right";
