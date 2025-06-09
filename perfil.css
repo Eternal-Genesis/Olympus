@@ -178,12 +178,13 @@
 
 /* Planes de membresía */
 .planes-membresia {
-  margin-top: 2rem;
+  margin-top: 3rem;
   text-align: center;
 }
 
 .planes-membresia h3 {
   font-size: 1.8rem;
+  margin-top: 3rem;       /* 🔥 esto baja el título */
   margin-bottom: 2rem;
   color: #ffffff;
 }
