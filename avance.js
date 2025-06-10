@@ -17,21 +17,31 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Renderiza todos los hábitos
   function renderHabitos() {
-    contenedorHabitos.innerHTML = "";
-    habitos.forEach(h => {
-      const div = document.createElement("div");
-      div.className = "habito-item" + (h.completado ? " completado" : "");
-      div.innerHTML = `
-        <span>${h.nombre}</span>
-        <div>
-          <button data-accion="completar" data-id="${h.id}">${h.completado ? "✓" : "Marcar"}</button>
-          <button data-accion="editar" data-id="${h.id}">✏️</button>
-          <button data-accion="eliminar" data-id="${h.id}">🗑️</button>
+  contenedorHabitos.innerHTML = "";
+
+  habitos.forEach(h => {
+    const div = document.createElement("div");
+    div.className = "habito-item" + (h.completado ? " completado" : "");
+
+    div.innerHTML = `
+      <span>${h.nombre}</span>
+      <div class="acciones-habito">
+        <button data-accion="completar" data-id="${h.id}">
+          ${h.completado ? "✓" : "Marcar"}
+        </button>
+        <div class="menu-container">
+          <button class="btn-menu" data-id="${h.id}">⋯</button>
+          <ul class="menu-opciones oculto" data-id="${h.id}">
+            <li data-accion="editar">Editar</li>
+            <li data-accion="eliminar">Eliminar</li>
+          </ul>
         </div>
-      `;
-      contenedorHabitos.appendChild(div);
-    });
-  }
+      </div>
+    `;
+
+    contenedorHabitos.appendChild(div);
+  });
+}
 
   // Muestra el modal para crear o editar
   function abrirModal(habito = null) {
