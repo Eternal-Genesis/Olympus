@@ -5,7 +5,6 @@ document.addEventListener("DOMContentLoaded", () => {
     { id: 3, nombre: "Beber 2L de agua", completado: true },
   ];
 
-  // DOM elementos
   const contenedorHabitos = document.querySelector(".habitos-hoy");
   const modal = document.getElementById("modal-habito");
   const form = document.getElementById("form-habito");
@@ -14,7 +13,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnCancelar = document.getElementById("btn-cancelar");
   const btnNuevo = document.getElementById("btn-crear-habito");
 
-  // Mostrar hábitos
   function renderHabitos() {
     contenedorHabitos.innerHTML = "";
     habitos.forEach(h => {
@@ -32,7 +30,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Abrir modal (crear o editar)
   function abrirModal(habito = null) {
     modal.classList.add("activo");
     if (habito) {
@@ -46,14 +43,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Cerrar modal
   function cerrarModal() {
     modal.classList.remove("activo");
     form.reset();
     inputId.value = "";
   }
 
-  // Guardar hábito (nuevo o editado)
   form.addEventListener("submit", e => {
     e.preventDefault();
     const nombre = inputNombre.value.trim();
@@ -62,16 +57,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!nombre) return;
 
     if (id) {
-      // Editar
       const index = habitos.findIndex(h => h.id === parseInt(id));
       if (index !== -1) habitos[index].nombre = nombre;
     } else {
-      // Crear nuevo
-      const nuevo = {
-        id: Date.now(),
-        nombre,
-        completado: false
-      };
+      const nuevo = { id: Date.now(), nombre, completado: false };
       habitos.push(nuevo);
     }
 
@@ -79,13 +68,9 @@ document.addEventListener("DOMContentLoaded", () => {
     renderHabitos();
   });
 
-  // Botón cancelar
   btnCancelar.addEventListener("click", cerrarModal);
-
-  // Botón nuevo hábito
   btnNuevo.addEventListener("click", () => abrirModal());
 
-  // Delegación de eventos: completar, editar, eliminar
   contenedorHabitos.addEventListener("click", e => {
     const btn = e.target.closest("button");
     if (!btn) return;
@@ -106,6 +91,6 @@ document.addEventListener("DOMContentLoaded", () => {
     renderHabitos();
   });
 
-  // Inicializar
   renderHabitos();
 });
+
