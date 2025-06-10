@@ -4,10 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gestión de Hábitos – Olympus</title>
+  <link rel="stylesheet" href="navbar.css" />
   <link rel="stylesheet" href="avance.css" />
 </head>
 <body>
-  <!-- Menú superior -->
+  <!-- Menú superior cargado dinámicamente -->
   <header id="navbar"></header>
 
   <!-- Contenido principal -->
@@ -16,9 +17,7 @@
     <!-- Sección de hábitos del día -->
     <section class="hoy">
       <h2>Resumen de Hoy</h2>
-      <div class="habitos-hoy">
-        <!-- Hábitos dinámicos -->
-      </div>
+      <div class="habitos-hoy"></div>
     </section>
 
     <!-- Sección de acciones rápidas -->
@@ -28,7 +27,7 @@
       </div>
     </section>
 
-    <!-- Modal para crear o editar hábitos -->
+    <!-- Modal para crear/editar hábitos -->
     <div class="modal" id="modal-habito">
       <div class="modal-contenido">
         <h3 id="modal-titulo">Nuevo Hábito</h3>
