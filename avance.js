@@ -1,12 +1,11 @@
-document.addEventListener("DOMContentLoaded", () => {
-  // Lista de hábitos (puede reemplazarse por localStorage o backend)
-  let habitos = [
-    { id: 1, nombre: "Meditar 10 min", completado: false },
-    { id: 2, nombre: "Leer 5 páginas", completado: false },
-    { id: 3, nombre: "Beber 2L de agua", completado: true },
-  ];
+// avance.js con integración Firebase Firestore estructurada por fecha
 
-  // Elementos del DOM
+import { auth, db, onAuthStateChanged, doc, getDoc, setDoc, updateDoc } from "./firebase.js";
+
+document.addEventListener("DOMContentLoaded", () => {
+  let habitos = [];
+  let uid = null;
+
   const contenedorHabitos = document.querySelector(".habitos-hoy");
   const modal = document.getElementById("modal-habito");
   const form = document.getElementById("form-habito");
@@ -15,10 +14,29 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnCancelar = document.getElementById("btn-cancelar");
   const btnNuevo = document.getElementById("btn-crear-habito");
 
-  // Renderiza todos los hábitos
+  const hoy = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) return;
+    uid = user.uid;
+    await cargarHabitos(uid);
+    renderHabitos();
+  });
+
+  async function cargarHabitos(uid) {
+    const ref = doc(db, "usuarios", uid, "historialHabitos", hoy);
+    const snap = await getDoc(ref);
+    habitos = snap.exists() ? snap.data().items : [];
+  }
+
+  async function guardarHabitos() {
+    if (!uid) return;
+    const ref = doc(db, "usuarios", uid, "historialHabitos", hoy);
+    await setDoc(ref, { items: habitos }, { merge: true });
+  }
+
   function renderHabitos() {
     contenedorHabitos.innerHTML = "";
-
     habitos.forEach(h => {
       const div = document.createElement("div");
       div.className = "habito-item" + (h.completado ? " completado" : "");
@@ -43,7 +61,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Cerrar cualquier menú contextual si se hace clic fuera
   document.addEventListener("click", (e) => {
     document.querySelectorAll(".menu-opciones").forEach(menu => {
       if (!menu.contains(e.target) && !menu.previousElementSibling.contains(e.target)) {
@@ -52,8 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Acciones del botón ⋯, completar, editar, eliminar
-  contenedorHabitos.addEventListener("click", e => {
+  contenedorHabitos.addEventListener("click", async e => {
     const btnMenu = e.target.closest(".btn-menu");
     if (btnMenu) {
       const menu = btnMenu.nextElementSibling;
@@ -73,6 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
       } else if (accion === "eliminar") {
         if (confirm("¿Eliminar este hábito?")) {
           habitos.splice(index, 1);
+          await guardarHabitos();
         }
       }
 
@@ -80,19 +97,18 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // Acción: completar hábito
     const completar = e.target.closest("button[data-accion='completar']");
     if (completar) {
       const id = parseInt(completar.dataset.id);
       const index = habitos.findIndex(h => h.id === id);
       if (index !== -1) {
         habitos[index].completado = !habitos[index].completado;
+        await guardarHabitos();
         renderHabitos();
       }
     }
   });
 
-  // Mostrar modal (crear o editar)
   function abrirModal(habito = null) {
     modal.classList.add("activo");
     if (habito) {
@@ -106,15 +122,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Cerrar modal
   function cerrarModal() {
     modal.classList.remove("activo");
     form.reset();
     inputId.value = "";
   }
 
-  // Guardar hábito (nuevo o editado)
-  form.addEventListener("submit", e => {
+  form.addEventListener("submit", async e => {
     e.preventDefault();
     const nombre = inputNombre.value.trim();
     const id = inputId.value;
@@ -129,13 +143,11 @@ document.addEventListener("DOMContentLoaded", () => {
       habitos.push(nuevo);
     }
 
+    await guardarHabitos();
     cerrarModal();
     renderHabitos();
   });
 
   btnCancelar.addEventListener("click", cerrarModal);
   btnNuevo.addEventListener("click", () => abrirModal());
-
-  // Inicializar
-  renderHabitos();
 });
