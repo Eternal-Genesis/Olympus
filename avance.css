@@ -43,7 +43,12 @@ h2 {
   text-decoration: line-through;
 }
 
-/* --- NUEVO: MENÚ CONTEXTUAL --- */
+.habito-item.completado::before {
+  content: "✔ ";
+  color: #00ff88;
+}
+
+/* --- MENÚ CONTEXTUAL --- */
 .acciones-habito {
   display: flex;
   align-items: center;
@@ -167,4 +172,15 @@ button:hover {
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
+}
+
+.modal-contenido button {
+  min-width: 80px;
+}
+
+/* === SEPARADOR DE DÍAS (futuro historial) === */
+.habito-dia {
+  margin-top: 2rem;
+  border-top: 1px solid #333;
+  padding-top: 1rem;
 }
