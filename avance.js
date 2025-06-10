@@ -43,6 +43,44 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 }
 
+// Cerrar cualquier menú contextual si se hace clic fuera
+document.addEventListener("click", (e) => {
+  document.querySelectorAll(".menu-opciones").forEach(menu => {
+    if (!menu.contains(e.target) && !menu.previousElementSibling.contains(e.target)) {
+      menu.classList.add("oculto");
+    }
+  });
+});
+
+// Acciones del botón ⋯ y opciones del menú
+contenedorHabitos.addEventListener("click", e => {
+  const btnMenu = e.target.closest(".btn-menu");
+  if (btnMenu) {
+    const menu = btnMenu.nextElementSibling;
+    menu.classList.toggle("oculto");
+    return;
+  }
+
+  const opcion = e.target.closest(".menu-opciones li");
+  if (opcion) {
+    const accion = opcion.dataset.accion;
+    const id = parseInt(opcion.parentElement.dataset.id);
+    const index = habitos.findIndex(h => h.id === id);
+    if (index === -1) return;
+
+    if (accion === "editar") {
+      abrirModal(habitos[index]);
+    } else if (accion === "eliminar") {
+      if (confirm("¿Eliminar este hábito?")) {
+        habitos.splice(index, 1);
+      }
+    }
+
+    renderHabitos();
+    return;
+  }
+});
+  
   // Muestra el modal para crear o editar
   function abrirModal(habito = null) {
     modal.classList.add("activo");
