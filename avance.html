@@ -3,14 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Avance – Olympus</title>
-  <link rel="stylesheet" href="navbar.css" />
+  <title>Gestión de Hábitos – Olympus</title>
   <link rel="stylesheet" href="avance.css" />
 </head>
 <body>
-  <header id="navbar"></header>
-
   <main class="avance-container">
+    
+    <!-- Sección de hábitos de hoy -->
     <section class="hoy">
       <h2>Resumen de Hoy</h2>
       <div class="habitos-hoy">
@@ -18,23 +17,31 @@
       </div>
     </section>
 
-    <section class="objetivos">
-      <div class="objetivos-header">
-        <h2>Tus Objetivos</h2>
-        <button class="btn-nuevo-objetivo">+ Nuevo Objetivo</button>
-      </div>
-      <div class="lista-objetivos">
-        <!-- Objetivos renderizados desde JS -->
+    <!-- Sección de gestión de hábitos -->
+    <section class="gestion-habitos">
+      <div class="acciones-rapidas">
+        <button id="btn-crear-habito">+ Nuevo Hábito</button>
       </div>
     </section>
 
-    <section class="acciones-rapidas">
-      <button class="btn-crear-habito">+ Nuevo Hábito</button>
-      <button class="btn-asignar-habito">Asignar Hábito a Objetivo</button>
-    </section>
+    <!-- Modal para crear/editar hábito -->
+    <div class="modal" id="modal-habito">
+      <div class="modal-contenido">
+        <h3 id="modal-titulo">Nuevo Hábito</h3>
+        <form id="form-habito">
+          <input type="hidden" id="habito-id" />
+          <label for="habito-nombre">Nombre del hábito:</label>
+          <input type="text" id="habito-nombre" required />
+          <div class="modal-acciones">
+            <button type="submit">Guardar</button>
+            <button type="button" id="btn-cancelar">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+    
   </main>
 
-  <script src="navbar.js"></script>
   <script src="avance.js"></script>
 </body>
 </html>
