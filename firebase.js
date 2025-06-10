@@ -6,10 +6,11 @@ import {
   doc,
   getDoc,
   setDoc,
-  updateDoc
+  updateDoc,
+  collection
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// Configuración de tu proyecto (copiada desde Firebase Console)
+// Configuración de Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyA4B_l9nV0ZdgPNQDBl7zl4cZL-5ADdDj0",
   authDomain: "olympussystem.firebaseapp.com",
@@ -27,7 +28,7 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Exportar todo lo necesario para otros scripts
+// Exportaciones para usar en otros archivos
 export {
   auth,
   db,
@@ -36,5 +37,7 @@ export {
   doc,
   getDoc,
   setDoc,
-  updateDoc
+  updateDoc,
+  collection
 };
+
