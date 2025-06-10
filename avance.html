@@ -13,7 +13,6 @@
 
   <!-- Contenido principal -->
   <main class="avance-container">
-    
     <!-- Sección de hábitos del día -->
     <section class="hoy">
       <h2>Resumen de Hoy</h2>
@@ -29,24 +28,23 @@
 
     <!-- Modal para crear/editar hábitos -->
     <div class="modal" id="modal-habito">
-    <div class="modal-contenido">
-      <h3 id="modal-titulo">Nuevo Hábito</h3>
-      <form id="form-habito">
-        <input type="hidden" id="habito-id" />
-        <label for="habito-nombre">Nombre del hábito:</label>
-        <input type="text" id="habito-nombre" required />
-        <div class="modal-acciones">
-          <button type="submit">Guardar</button>
-          <button type="button" id="btn-cancelar">Cancelar</button>
-        </div>
-      </form>
+      <div class="modal-contenido">
+        <h3 id="modal-titulo">Nuevo Hábito</h3>
+        <form id="form-habito">
+          <input type="hidden" id="habito-id" />
+          <label for="habito-nombre">Nombre del hábito:</label>
+          <input type="text" id="habito-nombre" required />
+          <div class="modal-acciones">
+            <button type="submit">Guardar</button>
+            <button type="button" id="btn-cancelar">Cancelar</button>
+          </div>
+        </form>
+      </div>
     </div>
-  </div>
-
-</main>
+  </main>
 
   <!-- Scripts -->
-  <script src="navbar.js"></script>
-  <script src="avance.js"></script>
+  <script type="module" src="firebase.js"></script>
+  <script type="module" src="avance.js"></script>
 </body>
 </html>
