@@ -80,7 +80,18 @@ contenedorHabitos.addEventListener("click", e => {
     return;
   }
 });
-  
+
+    // Acción: completar hábito
+  const completar = e.target.closest("button[data-accion='completar']");
+  if (completar) {
+    const id = parseInt(completar.dataset.id);
+    const index = habitos.findIndex(h => h.id === id);
+    if (index !== -1) {
+      habitos[index].completado = !habitos[index].completado;
+      renderHabitos();
+    }
+  }
+
   // Muestra el modal para crear o editar
   function abrirModal(habito = null) {
     modal.classList.add("activo");
