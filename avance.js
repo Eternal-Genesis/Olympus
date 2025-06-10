@@ -43,15 +43,6 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 }
 
-// Cerrar cualquier menú contextual si se hace clic fuera
-document.addEventListener("click", (e) => {
-  document.querySelectorAll(".menu-opciones").forEach(menu => {
-    if (!menu.contains(e.target) && !menu.previousElementSibling.contains(e.target)) {
-      menu.classList.add("oculto");
-    }
-  });
-});
-
 // Acciones del botón ⋯ y opciones del menú
 contenedorHabitos.addEventListener("click", e => {
   const btnMenu = e.target.closest(".btn-menu");
@@ -80,6 +71,17 @@ contenedorHabitos.addEventListener("click", e => {
     return;
   }
 });
+
+    // Acción: completar hábito
+  const completar = e.target.closest("button[data-accion='completar']");
+  if (completar) {
+    const id = parseInt(completar.dataset.id);
+    const index = habitos.findIndex(h => h.id === id);
+    if (index !== -1) {
+      habitos[index].completado = !habitos[index].completado;
+      renderHabitos();
+    }
+  }
 
     // Acción: completar hábito
   const completar = e.target.closest("button[data-accion='completar']");
