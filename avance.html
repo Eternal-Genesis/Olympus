@@ -7,25 +7,28 @@
   <link rel="stylesheet" href="avance.css" />
 </head>
 <body>
+  <!-- Menú superior -->
   <header id="navbar"></header>
 
+  <!-- Contenido principal -->
   <main class="avance-container">
-    <!-- Sección de hábitos de hoy -->
+    
+    <!-- Sección de hábitos del día -->
     <section class="hoy">
       <h2>Resumen de Hoy</h2>
       <div class="habitos-hoy">
-        <!-- Aquí se insertarán hábitos del día dinámicamente -->
+        <!-- Hábitos dinámicos -->
       </div>
     </section>
 
-    <!-- Sección de gestión de hábitos -->
+    <!-- Sección de acciones rápidas -->
     <section class="gestion-habitos">
       <div class="acciones-rapidas">
         <button id="btn-crear-habito">+ Nuevo Hábito</button>
       </div>
     </section>
 
-    <!-- Modal para crear/editar hábito -->
+    <!-- Modal para crear o editar hábitos -->
     <div class="modal" id="modal-habito">
       <div class="modal-contenido">
         <h3 id="modal-titulo">Nuevo Hábito</h3>
@@ -40,8 +43,10 @@
         </form>
       </div>
     </div>
+
   </main>
 
+  <!-- Scripts -->
   <script src="navbar.js"></script>
   <script src="avance.js"></script>
 </body>
