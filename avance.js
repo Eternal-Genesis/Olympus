@@ -17,84 +17,82 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Renderiza todos los hábitos
   function renderHabitos() {
-  contenedorHabitos.innerHTML = "";
+    contenedorHabitos.innerHTML = "";
 
-  habitos.forEach(h => {
-    const div = document.createElement("div");
-    div.className = "habito-item" + (h.completado ? " completado" : "");
+    habitos.forEach(h => {
+      const div = document.createElement("div");
+      div.className = "habito-item" + (h.completado ? " completado" : "");
 
-    div.innerHTML = `
-      <span>${h.nombre}</span>
-      <div class="acciones-habito">
-        <button data-accion="completar" data-id="${h.id}">
-          ${h.completado ? "✓" : "Marcar"}
-        </button>
-        <div class="menu-container">
-          <button class="btn-menu" data-id="${h.id}">⋯</button>
-          <ul class="menu-opciones oculto" data-id="${h.id}">
-            <li data-accion="editar">Editar</li>
-            <li data-accion="eliminar">Eliminar</li>
-          </ul>
+      div.innerHTML = `
+        <span>${h.nombre}</span>
+        <div class="acciones-habito">
+          <button data-accion="completar" data-id="${h.id}">
+            ${h.completado ? "✓" : "Marcar"}
+          </button>
+          <div class="menu-container">
+            <button class="btn-menu" data-id="${h.id}">⋯</button>
+            <ul class="menu-opciones oculto" data-id="${h.id}">
+              <li data-accion="editar">Editar</li>
+              <li data-accion="eliminar">Eliminar</li>
+            </ul>
+          </div>
         </div>
-      </div>
-    `;
+      `;
 
-    contenedorHabitos.appendChild(div);
-  });
-}
-
-// Acciones del botón ⋯ y opciones del menú
-contenedorHabitos.addEventListener("click", e => {
-  const btnMenu = e.target.closest(".btn-menu");
-  if (btnMenu) {
-    const menu = btnMenu.nextElementSibling;
-    menu.classList.toggle("oculto");
-    return;
+      contenedorHabitos.appendChild(div);
+    });
   }
 
-  const opcion = e.target.closest(".menu-opciones li");
-  if (opcion) {
-    const accion = opcion.dataset.accion;
-    const id = parseInt(opcion.parentElement.dataset.id);
-    const index = habitos.findIndex(h => h.id === id);
-    if (index === -1) return;
+  // Cerrar cualquier menú contextual si se hace clic fuera
+  document.addEventListener("click", (e) => {
+    document.querySelectorAll(".menu-opciones").forEach(menu => {
+      if (!menu.contains(e.target) && !menu.previousElementSibling.contains(e.target)) {
+        menu.classList.add("oculto");
+      }
+    });
+  });
 
-    if (accion === "editar") {
-      abrirModal(habitos[index]);
-    } else if (accion === "eliminar") {
-      if (confirm("¿Eliminar este hábito?")) {
-        habitos.splice(index, 1);
+  // Acciones del botón ⋯, completar, editar, eliminar
+  contenedorHabitos.addEventListener("click", e => {
+    const btnMenu = e.target.closest(".btn-menu");
+    if (btnMenu) {
+      const menu = btnMenu.nextElementSibling;
+      menu.classList.toggle("oculto");
+      return;
+    }
+
+    const opcion = e.target.closest(".menu-opciones li");
+    if (opcion) {
+      const accion = opcion.dataset.accion;
+      const id = parseInt(opcion.parentElement.dataset.id);
+      const index = habitos.findIndex(h => h.id === id);
+      if (index === -1) return;
+
+      if (accion === "editar") {
+        abrirModal(habitos[index]);
+      } else if (accion === "eliminar") {
+        if (confirm("¿Eliminar este hábito?")) {
+          habitos.splice(index, 1);
+        }
+      }
+
+      renderHabitos();
+      return;
+    }
+
+    // Acción: completar hábito
+    const completar = e.target.closest("button[data-accion='completar']");
+    if (completar) {
+      const id = parseInt(completar.dataset.id);
+      const index = habitos.findIndex(h => h.id === id);
+      if (index !== -1) {
+        habitos[index].completado = !habitos[index].completado;
+        renderHabitos();
       }
     }
+  });
 
-    renderHabitos();
-    return;
-  }
-});
-
-    // Acción: completar hábito
-  const completar = e.target.closest("button[data-accion='completar']");
-  if (completar) {
-    const id = parseInt(completar.dataset.id);
-    const index = habitos.findIndex(h => h.id === id);
-    if (index !== -1) {
-      habitos[index].completado = !habitos[index].completado;
-      renderHabitos();
-    }
-  }
-
-    // Acción: completar hábito
-  const completar = e.target.closest("button[data-accion='completar']");
-  if (completar) {
-    const id = parseInt(completar.dataset.id);
-    const index = habitos.findIndex(h => h.id === id);
-    if (index !== -1) {
-      habitos[index].completado = !habitos[index].completado;
-      renderHabitos();
-    }
-  }
-
-  // Muestra el modal para crear o editar
+  // Mostrar modal (crear o editar)
   function abrirModal(habito = null) {
     modal.classList.add("activo");
     if (habito) {
@@ -108,14 +106,14 @@ contenedorHabitos.addEventListener("click", e => {
     }
   }
 
-  // Cierra y limpia el modal
+  // Cerrar modal
   function cerrarModal() {
     modal.classList.remove("activo");
     form.reset();
     inputId.value = "";
   }
 
-  // Guardar hábito desde el formulario
+  // Guardar hábito (nuevo o editado)
   form.addEventListener("submit", e => {
     e.preventDefault();
     const nombre = inputNombre.value.trim();
@@ -135,12 +133,9 @@ contenedorHabitos.addEventListener("click", e => {
     renderHabitos();
   });
 
-  // Botón de cancelar en modal
   btnCancelar.addEventListener("click", cerrarModal);
-
-  // Botón de nuevo hábito
   btnNuevo.addEventListener("click", () => abrirModal());
 
-  // Inicializa la vista
+  // Inicializar
   renderHabitos();
 });
