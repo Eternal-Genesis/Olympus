@@ -128,27 +128,6 @@ contenedorHabitos.addEventListener("click", e => {
   // Botón de nuevo hábito
   btnNuevo.addEventListener("click", () => abrirModal());
 
-  // Delegación de eventos de acciones
-  contenedorHabitos.addEventListener("click", e => {
-    const btn = e.target.closest("button");
-    if (!btn) return;
-
-    const accion = btn.dataset.accion;
-    const id = parseInt(btn.dataset.id);
-    const index = habitos.findIndex(h => h.id === id);
-    if (index === -1) return;
-
-    if (accion === "completar") {
-      habitos[index].completado = !habitos[index].completado;
-    } else if (accion === "editar") {
-      abrirModal(habitos[index]);
-    } else if (accion === "eliminar") {
-      if (confirm("¿Eliminar este hábito?")) habitos.splice(index, 1);
-    }
-
-    renderHabitos();
-  });
-
   // Inicializa la vista
   renderHabitos();
 });
