@@ -1,3 +1,20 @@
+/* Estilos base */
+body {
+  background-color: #121212;
+  color: #f1f1f1;
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+.avance-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
 /* MODAL */
 .modal {
   position: fixed;
