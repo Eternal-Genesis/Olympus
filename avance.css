@@ -1,4 +1,4 @@
-/* Estilos base */
+/* === BASE === */
 body {
   background-color: #121212;
   color: #f1f1f1;
@@ -6,6 +6,13 @@ body {
   font-family: 'Inter', sans-serif;
 }
 
+h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+/* === CONTENEDOR GENERAL === */
 .avance-container {
   max-width: 800px;
   margin: 0 auto;
@@ -15,7 +22,50 @@ body {
   gap: 2rem;
 }
 
-/* MODAL */
+/* === SECCIÓN DE HÁBITOS === */
+.habitos-hoy {
+  display: grid;
+  gap: 1rem;
+}
+
+.habito-item {
+  background-color: #1e1e1e;
+  padding: 1rem;
+  border-left: 4px solid #00f0ff;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.habito-item.completado {
+  opacity: 0.6;
+  text-decoration: line-through;
+}
+
+/* === BOTONES === */
+button {
+  background-color: #00f0ff;
+  color: #121212;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #00c3d6;
+}
+
+/* === ACCIONES RÁPIDAS === */
+.acciones-rapidas {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* === MODAL === */
 .modal {
   position: fixed;
   top: 0; left: 0;
@@ -35,9 +85,10 @@ body {
   background-color: #1e1e1e;
   padding: 2rem;
   border-radius: 12px;
-  max-width: 400px;
   width: 100%;
-  color: white;
+  max-width: 400px;
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
 }
 
 .modal-contenido h3 {
