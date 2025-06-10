@@ -1,10 +1,12 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // Lista de hábitos (puede reemplazarse por localStorage o backend)
   let habitos = [
     { id: 1, nombre: "Meditar 10 min", completado: false },
     { id: 2, nombre: "Leer 5 páginas", completado: false },
     { id: 3, nombre: "Beber 2L de agua", completado: true },
   ];
 
+  // Elementos del DOM
   const contenedorHabitos = document.querySelector(".habitos-hoy");
   const modal = document.getElementById("modal-habito");
   const form = document.getElementById("form-habito");
@@ -13,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnCancelar = document.getElementById("btn-cancelar");
   const btnNuevo = document.getElementById("btn-crear-habito");
 
+  // Renderiza todos los hábitos
   function renderHabitos() {
     contenedorHabitos.innerHTML = "";
     habitos.forEach(h => {
@@ -30,6 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Muestra el modal para crear o editar
   function abrirModal(habito = null) {
     modal.classList.add("activo");
     if (habito) {
@@ -43,12 +47,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Cierra y limpia el modal
   function cerrarModal() {
     modal.classList.remove("activo");
     form.reset();
     inputId.value = "";
   }
 
+  // Guardar hábito desde el formulario
   form.addEventListener("submit", e => {
     e.preventDefault();
     const nombre = inputNombre.value.trim();
@@ -68,9 +74,13 @@ document.addEventListener("DOMContentLoaded", () => {
     renderHabitos();
   });
 
+  // Botón de cancelar en modal
   btnCancelar.addEventListener("click", cerrarModal);
+
+  // Botón de nuevo hábito
   btnNuevo.addEventListener("click", () => abrirModal());
 
+  // Delegación de eventos de acciones
   contenedorHabitos.addEventListener("click", e => {
     const btn = e.target.closest("button");
     if (!btn) return;
@@ -91,6 +101,6 @@ document.addEventListener("DOMContentLoaded", () => {
     renderHabitos();
   });
 
+  // Inicializa la vista
   renderHabitos();
 });
-
