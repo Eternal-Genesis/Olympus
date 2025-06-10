@@ -165,7 +165,22 @@ document.addEventListener("DOMContentLoaded", () => {
       .catch(err => console.error("Error al cerrar sesión:", err));
   });
 
-  // Cargar datos + XP diaria
+    // Plan actual
+    const datosActualizados = (await getDoc(ref)).data();
+    const planActual = datosActualizados?.plan || "";
+    botonesPlanes.forEach(boton => {
+      const plan = boton.dataset.plan;
+      if (plan === planActual) {
+        boton.textContent = "Usando";
+        boton.disabled = true;
+      } else {
+        boton.textContent = "Cambiar";
+        boton.disabled = false;
+      }
+    });
+  });
+
+ // Cargar datos + XP diaria
   onAuthStateChanged(auth, async (user) => {
     if (!user) return;
     const uid = user.uid;
@@ -218,22 +233,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // actualizar nivel
     if (nivelTexto) nivelTexto.textContent = texto;
-
-    // Plan actual
-    const datosActualizados = (await getDoc(ref)).data();
-    const planActual = datosActualizados?.plan || "";
-    botonesPlanes.forEach(boton => {
-      const plan = boton.dataset.plan;
-      if (plan === planActual) {
-        boton.textContent = "Usando";
-        boton.disabled = true;
-      } else {
-        boton.textContent = "Cambiar";
-        boton.disabled = false;
-      }
-    });
-  });
-
+  
   // Guardar en firestore
   async function guardarEnFirestore(campo, valor) {
     const user = auth.currentUser;
