@@ -29,9 +29,10 @@
   height: 120px;
   object-fit: cover;
   border-radius: 50%;
-  border: 3px solid #ffffff;
-  box-shadow: none;
-  transition: transform 0.3s ease;
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.2); /* Suavizado */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  image-rendering: auto; /* 🔧 asegura suavizado en navegadores */
 }
 
 .perfil-foto img:hover {
