@@ -1,17 +1,9 @@
-/* NUEVA SECCIÓN: GESTIÓN DE HÁBITOS */
-.gestion-habitos .acciones-rapidas {
-  margin-top: 1rem;
-  justify-content: flex-end;
-}
-
-/* MODAL GENERAL */
+/* MODAL */
 .modal {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: none; /* Oculto por defecto */
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  display: none;
   align-items: center;
   justify-content: center;
   background-color: rgba(0, 0, 0, 0.6);
@@ -22,22 +14,18 @@
   display: flex;
 }
 
-/* CONTENIDO DEL MODAL */
 .modal-contenido {
   background-color: #1e1e1e;
   padding: 2rem;
   border-radius: 12px;
-  width: 100%;
   max-width: 400px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+  width: 100%;
   color: white;
 }
 
 .modal-contenido h3 {
   margin-top: 0;
-  margin-bottom: 1rem;
   font-size: 1.4rem;
-  font-weight: bold;
 }
 
 .modal-contenido label {
@@ -56,27 +44,8 @@
   color: #f0f0f0;
 }
 
-.modal-contenido input[type="text"]::placeholder {
-  color: #888;
-}
-
 .modal-acciones {
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
-}
-
-.modal-acciones button {
-  padding: 0.5rem 1rem;
-}
-
-/* MODO CLARO PARA MODAL */
-body.light-mode .modal-contenido {
-  background-color: #fff;
-  color: #111;
-}
-
-body.light-mode .modal-contenido input[type="text"] {
-  background-color: #f0f0f0;
-  color: #111;
 }
