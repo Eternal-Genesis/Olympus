@@ -1,4 +1,4 @@
-// avance.js con integración Firebase Firestore estructurada por fecha
+// avance.js con integración Firebase Firestore estructurada por fecha y validaciones robustas
 
 import { auth, db, onAuthStateChanged, doc, getDoc, setDoc, updateDoc } from "./firebase.js";
 
@@ -17,22 +17,35 @@ document.addEventListener("DOMContentLoaded", () => {
   const hoy = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
 
   onAuthStateChanged(auth, async (user) => {
-    if (!user) return;
+    if (!user) return console.warn("Usuario no autenticado");
     uid = user.uid;
     await cargarHabitos(uid);
     renderHabitos();
   });
 
   async function cargarHabitos(uid) {
-    const ref = doc(db, "usuarios", uid, "historialHabitos", hoy);
-    const snap = await getDoc(ref);
-    habitos = snap.exists() ? snap.data().items : [];
+    try {
+      const ref = doc(db, "usuarios", uid, "historialHabitos", hoy);
+      const snap = await getDoc(ref);
+      habitos = snap.exists() ? snap.data().items : [];
+      console.log("Hábitos cargados:", habitos);
+    } catch (err) {
+      console.error("Error al cargar hábitos:", err);
+    }
   }
 
   async function guardarHabitos() {
-    if (!uid) return;
-    const ref = doc(db, "usuarios", uid, "historialHabitos", hoy);
-    await setDoc(ref, { items: habitos }, { merge: true });
+    if (!uid) {
+      console.warn("UID no definido. No se puede guardar.");
+      return;
+    }
+    try {
+      const ref = doc(db, "usuarios", uid, "historialHabitos", hoy);
+      await setDoc(ref, { items: habitos }, { merge: true });
+      console.log("Hábitos guardados correctamente.");
+    } catch (err) {
+      console.error("Error al guardar hábitos:", err);
+    }
   }
 
   function renderHabitos() {
@@ -133,7 +146,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const nombre = inputNombre.value.trim();
     const id = inputId.value;
 
-    if (!nombre) return;
+    if (!nombre) {
+      console.warn("Nombre vacío, hábito no creado.");
+      return;
+    }
+
+    if (!uid) {
+      console.warn("UID no disponible, abortando creación.");
+      return;
+    }
 
     if (id) {
       const index = habitos.findIndex(h => h.id === parseInt(id));
