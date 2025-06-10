@@ -165,21 +165,6 @@ document.addEventListener("DOMContentLoaded", () => {
       .catch(err => console.error("Error al cerrar sesión:", err));
   });
 
-    // Plan actual
-    const datosActualizados = (await getDoc(ref)).data();
-    const planActual = datosActualizados?.plan || "";
-    botonesPlanes.forEach(boton => {
-      const plan = boton.dataset.plan;
-      if (plan === planActual) {
-        boton.textContent = "Usando";
-        boton.disabled = true;
-      } else {
-        boton.textContent = "Cambiar";
-        boton.disabled = false;
-      }
-    });
-  });
-
  // Cargar datos + XP diaria
   onAuthStateChanged(auth, async (user) => {
     if (!user) return;
