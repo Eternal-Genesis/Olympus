@@ -1,4 +1,4 @@
-// avance.js con historial de hábitos de los últimos 7 días y datos de prueba
+// avance.js con historial visual y ejemplo de ayer
 
 import { auth, db, onAuthStateChanged, doc, getDoc, setDoc } from "./firebase.js";
 
@@ -19,10 +19,10 @@ document.addEventListener("DOMContentLoaded", () => {
   onAuthStateChanged(auth, async (user) => {
     if (!user) return;
     uid = user.uid;
+    await insertarHabitoEjemploAyer(uid); // Solo para demo visual
     await cargarHabitos(uid);
     renderHabitos();
     await cargarHistorial(uid);
-    await insertarHistorialPrueba(uid); // ⚠️ Solo para pruebas, eliminar luego
   });
 
   async function cargarHabitos(uid) {
@@ -64,54 +64,58 @@ document.addEventListener("DOMContentLoaded", () => {
   async function cargarHistorial(uid) {
     const dias = 7;
     contenedorHistorial.innerHTML = "";
+
     for (let i = 1; i <= dias; i++) {
       const fecha = new Date();
       fecha.setDate(fecha.getDate() - i);
       const diaStr = fecha.toISOString().split("T")[0];
+
       const ref = doc(db, "usuarios", uid, "historialHabitos", diaStr);
       const snap = await getDoc(ref);
 
       if (snap.exists()) {
         const data = snap.data();
-        const seccion = document.createElement("div");
-        seccion.className = "habito-dia";
-        seccion.innerHTML = `<h4>${diaStr}</h4>`;
+        const fechaTexto = obtenerDiaSemana(fecha) + " " + fecha.getDate().toString().padStart(2, '0') + " " + obtenerMes(fecha);
+
+        const card = document.createElement("div");
+        card.className = "habito-dia";
+        card.innerHTML = `<h4>${fechaTexto}</h4>`;
 
         data.items.forEach(h => {
-          const item = document.createElement("div");
-          item.textContent = `- ${h.nombre} ${h.completado ? "[✓]" : "[✗]"}`;
-          seccion.appendChild(item);
+          const div = document.createElement("div");
+          div.className = `habito ${h.completado ? '' : 'incompleto'}`;
+          div.innerHTML = `<span class="estado">${h.completado ? '✓' : '✗'}</span>${h.nombre}`;
+          card.appendChild(div);
         });
 
-        contenedorHistorial.appendChild(seccion);
+        contenedorHistorial.appendChild(card);
       }
     }
   }
 
-  async function insertarHistorialPrueba(uid) {
-    const diasPrueba = [
-      { fecha: -1, items: [
-        { id: 1, nombre: "Leer 10 páginas", completado: true },
-        { id: 2, nombre: "Beber agua", completado: false },
-      ]},
-      { fecha: -2, items: [
-        { id: 3, nombre: "Ejercicio 30 min", completado: true },
-        { id: 4, nombre: "Meditar", completado: true },
-      ]},
-      { fecha: -3, items: [
-        { id: 5, nombre: "Dormir 8h", completado: false },
-        { id: 6, nombre: "No azúcar", completado: true },
-      ]}
-    ];
+  function obtenerDiaSemana(fecha) {
+    return ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"][fecha.getDay()];
+  }
 
-    for (let dia of diasPrueba) {
-      const fecha = new Date();
-      fecha.setDate(fecha.getDate() + dia.fecha);
-      const str = fecha.toISOString().split("T")[0];
-      const ref = doc(db, "usuarios", uid, "historialHabitos", str);
-      await setDoc(ref, { items: dia.items }, { merge: true });
-      console.log("Insertado:", str);
-    }
+  function obtenerMes(fecha) {
+    return ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"][fecha.getMonth()];
+  }
+
+  async function insertarHabitoEjemploAyer(uid) {
+    const ayer = new Date();
+    ayer.setDate(ayer.getDate() - 1);
+    const fechaStr = ayer.toISOString().split("T")[0];
+
+    const ref = doc(db, "usuarios", uid, "historialHabitos", fechaStr);
+    const ejemplo = {
+      items: [
+        { id: 101, nombre: "Leer 10 páginas", completado: true },
+        { id: 102, nombre: "Beber agua", completado: false },
+        { id: 103, nombre: "Ejercicio", completado: true }
+      ]
+    };
+    await setDoc(ref, ejemplo, { merge: true });
+    console.log("Ejemplo de hábitos insertado para:", fechaStr);
   }
 
   document.addEventListener("click", (e) => {
@@ -203,4 +207,3 @@ document.addEventListener("DOMContentLoaded", () => {
   btnCancelar.addEventListener("click", cerrarModal);
   btnNuevo.addEventListener("click", () => abrirModal());
 });
-
