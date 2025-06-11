@@ -1,4 +1,4 @@
-// avance.js con historial visual y ejemplo de ayer
+// avance.js con historial visual de los últimos 5 días y 6 días de ejemplo
 
 import { auth, db, onAuthStateChanged, doc, getDoc, setDoc } from "./firebase.js";
 
@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
   onAuthStateChanged(auth, async (user) => {
     if (!user) return;
     uid = user.uid;
-    await insertarHabitoEjemploAyer(uid); // Solo para demo visual
+    await insertarHabitosEjemplo(uid); // Solo para demo visual
     await cargarHabitos(uid);
     renderHabitos();
     await cargarHistorial(uid);
@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function cargarHistorial(uid) {
-    const dias = 7;
+    const dias = 5;
     contenedorHistorial.innerHTML = "";
 
     for (let i = 1; i <= dias; i++) {
@@ -101,21 +101,30 @@ document.addEventListener("DOMContentLoaded", () => {
     return ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"][fecha.getMonth()];
   }
 
-  async function insertarHabitoEjemploAyer(uid) {
-    const ayer = new Date();
-    ayer.setDate(ayer.getDate() - 1);
-    const fechaStr = ayer.toISOString().split("T")[0];
+  async function insertarHabitosEjemplo(uid) {
+    const ejemplos = [
+      { nombre: "Leer 10 páginas", completado: true },
+      { nombre: "Beber agua", completado: false },
+      { nombre: "Ejercicio", completado: true },
+      { nombre: "Meditar", completado: false },
+      { nombre: "Escribir diario", completado: true }
+    ];
 
-    const ref = doc(db, "usuarios", uid, "historialHabitos", fechaStr);
-    const ejemplo = {
-      items: [
-        { id: 101, nombre: "Leer 10 páginas", completado: true },
-        { id: 102, nombre: "Beber agua", completado: false },
-        { id: 103, nombre: "Ejercicio", completado: true }
-      ]
-    };
-    await setDoc(ref, ejemplo, { merge: true });
-    console.log("Ejemplo de hábitos insertado para:", fechaStr);
+    for (let i = 1; i <= 6; i++) {
+      const fecha = new Date();
+      fecha.setDate(fecha.getDate() - i);
+      const fechaStr = fecha.toISOString().split("T")[0];
+
+      const ref = doc(db, "usuarios", uid, "historialHabitos", fechaStr);
+      const items = ejemplos.map((e, index) => ({
+        id: i * 100 + index,
+        nombre: e.nombre,
+        completado: Math.random() > 0.5
+      }));
+
+      await setDoc(ref, { items }, { merge: true });
+      console.log("Ejemplo insertado para:", fechaStr);
+    }
   }
 
   document.addEventListener("click", (e) => {
@@ -207,3 +216,4 @@ document.addEventListener("DOMContentLoaded", () => {
   btnCancelar.addEventListener("click", cerrarModal);
   btnNuevo.addEventListener("click", () => abrirModal());
 });
+
