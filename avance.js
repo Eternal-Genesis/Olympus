@@ -1,4 +1,4 @@
-// avance.js con historial visual de los últimos 5 días y 6 días de ejemplo
+// avance.js con historial visual de los últimos 4 días y 6 días de ejemplo
 
 import { auth, db, onAuthStateChanged, doc, getDoc, setDoc } from "./firebase.js";
 
@@ -62,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function cargarHistorial(uid) {
-    const dias = 5;
+    const dias = 4;
     contenedorHistorial.innerHTML = "";
 
     for (let i = 1; i <= dias; i++) {
@@ -216,4 +216,3 @@ document.addEventListener("DOMContentLoaded", () => {
   btnCancelar.addEventListener("click", cerrarModal);
   btnNuevo.addEventListener("click", () => abrirModal());
 });
-
