@@ -1,12 +1,14 @@
-// avance.js con integración Firebase Firestore estructurada por fecha y validaciones robustas
+// avance.js con historial de hábitos de los últimos 7 días
 
-import { auth, db, onAuthStateChanged, doc, getDoc, setDoc, updateDoc } from "./firebase.js";
+import { auth, db, onAuthStateChanged, doc, getDoc, setDoc } from "./firebase.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   let habitos = [];
   let uid = null;
+  const hoy = new Date().toISOString().split("T")[0];
 
   const contenedorHabitos = document.querySelector(".habitos-hoy");
+  const contenedorHistorial = document.querySelector(".lista-historial");
   const modal = document.getElementById("modal-habito");
   const form = document.getElementById("form-habito");
   const inputNombre = document.getElementById("habito-nombre");
@@ -14,38 +16,24 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnCancelar = document.getElementById("btn-cancelar");
   const btnNuevo = document.getElementById("btn-crear-habito");
 
-  const hoy = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
-
   onAuthStateChanged(auth, async (user) => {
-    if (!user) return console.warn("Usuario no autenticado");
+    if (!user) return;
     uid = user.uid;
     await cargarHabitos(uid);
     renderHabitos();
+    await cargarHistorial(uid);
   });
 
   async function cargarHabitos(uid) {
-    try {
-      const ref = doc(db, "usuarios", uid, "historialHabitos", hoy);
-      const snap = await getDoc(ref);
-      habitos = snap.exists() ? snap.data().items : [];
-      console.log("Hábitos cargados:", habitos);
-    } catch (err) {
-      console.error("Error al cargar hábitos:", err);
-    }
+    const ref = doc(db, "usuarios", uid, "historialHabitos", hoy);
+    const snap = await getDoc(ref);
+    habitos = snap.exists() ? snap.data().items : [];
   }
 
   async function guardarHabitos() {
-    if (!uid) {
-      console.warn("UID no definido. No se puede guardar.");
-      return;
-    }
-    try {
-      const ref = doc(db, "usuarios", uid, "historialHabitos", hoy);
-      await setDoc(ref, { items: habitos }, { merge: true });
-      console.log("Hábitos guardados correctamente.");
-    } catch (err) {
-      console.error("Error al guardar hábitos:", err);
-    }
+    if (!uid) return;
+    const ref = doc(db, "usuarios", uid, "historialHabitos", hoy);
+    await setDoc(ref, { items: habitos }, { merge: true });
   }
 
   function renderHabitos() {
@@ -53,7 +41,6 @@ document.addEventListener("DOMContentLoaded", () => {
     habitos.forEach(h => {
       const div = document.createElement("div");
       div.className = "habito-item" + (h.completado ? " completado" : "");
-
       div.innerHTML = `
         <span>${h.nombre}</span>
         <div class="acciones-habito">
@@ -69,9 +56,35 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
         </div>
       `;
-
       contenedorHabitos.appendChild(div);
     });
+  }
+
+  async function cargarHistorial(uid) {
+    const dias = 7;
+    contenedorHistorial.innerHTML = "";
+    for (let i = 1; i <= dias; i++) {
+      const fecha = new Date();
+      fecha.setDate(fecha.getDate() - i);
+      const diaStr = fecha.toISOString().split("T")[0];
+      const ref = doc(db, "usuarios", uid, "historialHabitos", diaStr);
+      const snap = await getDoc(ref);
+
+      if (snap.exists()) {
+        const data = snap.data();
+        const seccion = document.createElement("div");
+        seccion.className = "habito-dia";
+        seccion.innerHTML = `<h4>${diaStr}</h4>`;
+
+        data.items.forEach(h => {
+          const item = document.createElement("div");
+          item.textContent = `- ${h.nombre} ${h.completado ? "[✓]" : "[✗]"}`;
+          seccion.appendChild(item);
+        });
+
+        contenedorHistorial.appendChild(seccion);
+      }
+    }
   }
 
   document.addEventListener("click", (e) => {
@@ -145,16 +158,7 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
     const nombre = inputNombre.value.trim();
     const id = inputId.value;
-
-    if (!nombre) {
-      console.warn("Nombre vacío, hábito no creado.");
-      return;
-    }
-
-    if (!uid) {
-      console.warn("UID no disponible, abortando creación.");
-      return;
-    }
+    if (!nombre || !uid) return;
 
     if (id) {
       const index = habitos.findIndex(h => h.id === parseInt(id));
