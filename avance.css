@@ -13,9 +13,9 @@ h2 {
 }
 
 h4 {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin: 1.5rem 0 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  margin: 0;
 }
 
 /* === CONTENEDOR GENERAL === */
@@ -184,25 +184,50 @@ button:hover {
   min-width: 80px;
 }
 
-/* === HISTORIAL DE HÁBITOS === */
+/* === HISTORIAL COMPACTO === */
 .historial {
-  border-top: 1px solid #333;
   padding-top: 1rem;
 }
 
 .lista-historial {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: 1rem;
 }
 
 .habito-dia {
   background-color: #1a1a1a;
+  border: 1px solid #2a2a2a;
+  border-radius: 12px;
   padding: 1rem;
-  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
 
-.habito-dia div {
-  padding-left: 1rem;
-  line-height: 1.6;
+.habito-dia .habito {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #ccc;
+}
+
+.habito-dia .habito .estado {
+  font-size: 1rem;
+  color: #00ff88;
+}
+
+.habito-dia .habito.incompleto .estado {
+  color: #ff5e5e;
+}
+
+.habito-dia h4 {
+  color: #999;
+  text-align: center;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+  text-transform: uppercase;
 }
