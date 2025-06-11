@@ -1,4 +1,4 @@
-// avance.js con historial de hábitos de los últimos 7 días
+// avance.js con historial de hábitos de los últimos 7 días y datos de prueba
 
 import { auth, db, onAuthStateChanged, doc, getDoc, setDoc } from "./firebase.js";
 
@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
     await cargarHabitos(uid);
     renderHabitos();
     await cargarHistorial(uid);
+    await insertarHistorialPrueba(uid); // ⚠️ Solo para pruebas, eliminar luego
   });
 
   async function cargarHabitos(uid) {
@@ -84,6 +85,32 @@ document.addEventListener("DOMContentLoaded", () => {
 
         contenedorHistorial.appendChild(seccion);
       }
+    }
+  }
+
+  async function insertarHistorialPrueba(uid) {
+    const diasPrueba = [
+      { fecha: -1, items: [
+        { id: 1, nombre: "Leer 10 páginas", completado: true },
+        { id: 2, nombre: "Beber agua", completado: false },
+      ]},
+      { fecha: -2, items: [
+        { id: 3, nombre: "Ejercicio 30 min", completado: true },
+        { id: 4, nombre: "Meditar", completado: true },
+      ]},
+      { fecha: -3, items: [
+        { id: 5, nombre: "Dormir 8h", completado: false },
+        { id: 6, nombre: "No azúcar", completado: true },
+      ]}
+    ];
+
+    for (let dia of diasPrueba) {
+      const fecha = new Date();
+      fecha.setDate(fecha.getDate() + dia.fecha);
+      const str = fecha.toISOString().split("T")[0];
+      const ref = doc(db, "usuarios", uid, "historialHabitos", str);
+      await setDoc(ref, { items: dia.items }, { merge: true });
+      console.log("Insertado:", str);
     }
   }
 
@@ -176,3 +203,4 @@ document.addEventListener("DOMContentLoaded", () => {
   btnCancelar.addEventListener("click", cerrarModal);
   btnNuevo.addEventListener("click", () => abrirModal());
 });
+
