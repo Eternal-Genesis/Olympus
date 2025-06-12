@@ -1,10 +1,11 @@
+// avance.js con sistema de caché inteligente como perfil.js
 import {
   auth,
   db,
   onAuthStateChanged,
   doc,
   getDoc,
-  setDoc,
+  setDoc
 } from "./firebase.js";
 
 const hoy = new Date().toISOString().split("T")[0];
@@ -28,38 +29,42 @@ const btnNuevo = document.getElementById("btn-crear-habito");
 
 onAuthStateChanged(auth, async (user) => {
   console.log("¿Usuario activo?", user);
-  if (!user) {
-    console.warn("⚠️ Usuario no logueado.");
-    return;
-  }
-
+  if (!user) return;
   try {
     uid = user.uid;
-    document.getElementById("loading").textContent = "Cargando datos...";
 
-    const cacheLocal = localStorage.getItem(habitosHoyKey(uid));
-    console.log("Cache local de hábitos:", cacheLocal);
-
-    if (cacheLocal) {
-      habitos = JSON.parse(cacheLocal);
+    const cacheHabitos = localStorage.getItem(habitosHoyKey(uid));
+    if (cacheHabitos) {
+      habitos = JSON.parse(cacheHabitos);
       renderHabitos();
       document.querySelector(".seccion-hoy")?.classList.remove("oculto");
     }
 
-    await cargarHabitos(uid);
+    const cacheHistorial = localStorage.getItem(historialKey(uid));
+    if (cacheHistorial) {
+      renderHistorial(JSON.parse(cacheHistorial));
+      document.querySelector(".seccion-historial")?.classList.remove("oculto");
+    }
+
+    const cacheStats = localStorage.getItem(estadisticasKey(uid));
+    if (cacheStats) {
+      renderGrafico(JSON.parse(cacheStats));
+      contenedorEstadisticas?.classList.remove("oculto");
+    }
+
+    await Promise.all([
+      cargarHabitos(uid),
+      cargarHistorial(uid),
+      cargarEstadisticas(uid)
+    ]);
+
     renderHabitos();
     document.querySelector(".seccion-hoy")?.classList.remove("oculto");
-
-    await cargarHistorial(uid);
     document.querySelector(".seccion-historial")?.classList.remove("oculto");
-
-    await cargarEstadisticas(uid);
-    document.querySelector(".estadisticas")?.classList.remove("oculto");
-
+    contenedorEstadisticas?.classList.remove("oculto");
     document.getElementById("loading")?.classList.add("oculto");
-    console.log("✅ Todo cargado");
-  } catch (error) {
-    console.error("❌ Error durante la carga:", error);
+  } catch (err) {
+    console.error("Error al cargar avance:", err);
     document.getElementById("loading").textContent = "Error al cargar los datos.";
   }
 });
