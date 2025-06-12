@@ -1,4 +1,4 @@
-// avance.js corregido: guarda correctamente hábitos y asegura que el gráfico se renderice
+// avance.js actualizado y funcional completo
 import {
   auth,
   db,
@@ -32,6 +32,9 @@ onAuthStateChanged(auth, async (user) => {
 
   document.getElementById("loading")?.classList.remove("oculto");
 
+  // ⚠️ Solo para pruebas. Eliminar luego.
+  await insertarDatosEjemplo(uid);
+
   const cacheStats = localStorage.getItem(estadisticasKey(uid));
   if (cacheStats) renderGrafico(JSON.parse(cacheStats));
 
@@ -55,32 +58,32 @@ async function cargarHabitos(uid) {
 async function guardarHabitos() {
   if (!uid) return;
   const ref = doc(db, "usuarios", uid, "historialHabitos", hoy);
-  await setDoc(ref, { items: habitos }); // sin merge para asegurar reemplazo total
+  await setDoc(ref, { items: habitos });
   localStorage.setItem(habitosHoyKey(uid), JSON.stringify(habitos));
 }
 
-function renderHabitos() {
-  contenedorHabitos.innerHTML = "";
-  habitos.forEach(h => {
-    const div = document.createElement("div");
-    div.className = "habito-item" + (h.completado ? " completado" : "");
-    div.innerHTML = `
-      <span>${h.nombre}</span>
-      <div class="acciones-habito">
-        <button data-accion="completar" data-id="${h.id}">
-          ${h.completado ? "✓" : "Marcar"}
-        </button>
-        <div class="menu-container">
-          <button class="btn-menu" data-id="${h.id}">⋯</button>
-          <ul class="menu-opciones oculto" data-id="${h.id}">
-            <li data-accion="editar">Editar</li>
-            <li data-accion="eliminar">Eliminar</li>
-          </ul>
-        </div>
-      </div>
-    `;
-    contenedorHabitos.appendChild(div);
-  });
+async function insertarDatosEjemplo(uid) {
+  const dias = 5;
+  const ejemplo = [
+    { nombre: "Leer 10 páginas", completado: true },
+    { nombre: "Ejercicio", completado: false },
+    { nombre: "Beber agua", completado: true }
+  ];
+
+  for (let i = 1; i <= dias; i++) {
+    const fecha = new Date();
+    fecha.setDate(fecha.getDate() - i);
+    const fechaStr = fecha.toISOString().split("T")[0];
+    const ref = doc(db, "usuarios", uid, "historialHabitos", fechaStr);
+
+    const items = ejemplo.map((h, idx) => ({
+      id: i * 100 + idx,
+      nombre: h.nombre,
+      completado: Math.random() > 0.5
+    }));
+
+    await setDoc(ref, { items });
+  }
 }
 
 async function cargarHistorial(uid) {
@@ -158,7 +161,7 @@ async function cargarEstadisticas(uid) {
 function renderGrafico({ labels, porcentajes, detalles }) {
   const canvas = document.getElementById("grafico-habitos");
   if (!canvas) return;
-  canvas.style.display = "block"; // asegurar visibilidad
+  canvas.style.display = "block";
   const ctx = canvas.getContext("2d");
   new Chart(ctx, {
     type: "line",
