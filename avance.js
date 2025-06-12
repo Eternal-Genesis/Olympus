@@ -1,4 +1,3 @@
-// avance.js actualizado y funcional completo
 import {
   auth,
   db,
@@ -32,8 +31,11 @@ onAuthStateChanged(auth, async (user) => {
 
   document.getElementById("loading")?.classList.remove("oculto");
 
-  // ⚠️ Solo para pruebas. Eliminar luego.
-  await insertarDatosEjemplo(uid);
+  const cacheLocal = localStorage.getItem(habitosHoyKey(uid));
+  if (cacheLocal) {
+    habitos = JSON.parse(cacheLocal);
+    renderHabitos();
+  }
 
   const cacheStats = localStorage.getItem(estadisticasKey(uid));
   if (cacheStats) renderGrafico(JSON.parse(cacheStats));
@@ -62,28 +64,68 @@ async function guardarHabitos() {
   localStorage.setItem(habitosHoyKey(uid), JSON.stringify(habitos));
 }
 
-async function insertarDatosEjemplo(uid) {
-  const dias = 5;
-  const ejemplo = [
-    { nombre: "Leer 10 páginas", completado: true },
-    { nombre: "Ejercicio", completado: false },
-    { nombre: "Beber agua", completado: true }
-  ];
+function renderHabitos() {
+  contenedorHabitos.innerHTML = "";
+  habitos.forEach(h => {
+    const div = document.createElement("div");
+    div.className = "habito-item" + (h.completado ? " completado" : "");
+    div.innerHTML = `
+      <span>${h.nombre}</span>
+      <div class="acciones-habito">
+        <button data-accion="completar" data-id="${h.id}">
+          ${h.completado ? "✓" : "Marcar"}
+        </button>
+        <div class="menu-container">
+          <button class="btn-menu" data-id="${h.id}">⋯</button>
+          <ul class="menu-opciones oculto" data-id="${h.id}">
+            <li data-accion="editar">Editar</li>
+            <li data-accion="eliminar">Eliminar</li>
+          </ul>
+        </div>
+      </div>
+    `;
+    contenedorHabitos.appendChild(div);
+  });
+}
 
-  for (let i = 1; i <= dias; i++) {
-    const fecha = new Date();
-    fecha.setDate(fecha.getDate() - i);
-    const fechaStr = fecha.toISOString().split("T")[0];
-    const ref = doc(db, "usuarios", uid, "historialHabitos", fechaStr);
+form.addEventListener("submit", async e => {
+  e.preventDefault();
+  const nombre = inputNombre.value.trim();
+  const id = inputId.value;
+  if (!nombre || !uid) return;
 
-    const items = ejemplo.map((h, idx) => ({
-      id: i * 100 + idx,
-      nombre: h.nombre,
-      completado: Math.random() > 0.5
-    }));
-
-    await setDoc(ref, { items });
+  if (id) {
+    const index = habitos.findIndex(h => h.id === parseInt(id));
+    if (index !== -1) habitos[index].nombre = nombre;
+  } else {
+    habitos.push({ id: Date.now(), nombre, completado: false });
   }
+
+  await guardarHabitos();
+  cerrarModal();
+  renderHabitos();
+});
+
+btnCancelar.addEventListener("click", cerrarModal);
+btnNuevo.addEventListener("click", () => abrirModal());
+
+function abrirModal(habito = null) {
+  modal.classList.add("activo");
+  if (habito) {
+    document.getElementById("modal-titulo").textContent = "Editar Hábito";
+    inputNombre.value = habito.nombre;
+    inputId.value = habito.id;
+  } else {
+    document.getElementById("modal-titulo").textContent = "Nuevo Hábito";
+    form.reset();
+    inputId.value = "";
+  }
+}
+
+function cerrarModal() {
+  modal.classList.remove("activo");
+  form.reset();
+  inputId.value = "";
 }
 
 async function cargarHistorial(uid) {
@@ -216,6 +258,14 @@ function obtenerMes(f) {
   return ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"][f.getMonth()];
 }
 
+document.addEventListener("click", (e) => {
+  document.querySelectorAll(".menu-opciones").forEach(menu => {
+    if (!menu.contains(e.target) && !menu.previousElementSibling.contains(e.target)) {
+      menu.classList.add("oculto");
+    }
+  });
+});
+
 contenedorHabitos.addEventListener("click", async e => {
   const btnMenu = e.target.closest(".btn-menu");
   if (btnMenu) {
@@ -252,52 +302,3 @@ contenedorHabitos.addEventListener("click", async e => {
     }
   }
 });
-
-document.addEventListener("click", (e) => {
-  document.querySelectorAll(".menu-opciones").forEach(menu => {
-    if (!menu.contains(e.target) && !menu.previousElementSibling.contains(e.target)) {
-      menu.classList.add("oculto");
-    }
-  });
-});
-
-function abrirModal(habito = null) {
-  modal.classList.add("activo");
-  if (habito) {
-    document.getElementById("modal-titulo").textContent = "Editar Hábito";
-    inputNombre.value = habito.nombre;
-    inputId.value = habito.id;
-  } else {
-    document.getElementById("modal-titulo").textContent = "Nuevo Hábito";
-    form.reset();
-    inputId.value = "";
-  }
-}
-
-function cerrarModal() {
-  modal.classList.remove("activo");
-  form.reset();
-  inputId.value = "";
-}
-
-form.addEventListener("submit", async e => {
-  e.preventDefault();
-  const nombre = inputNombre.value.trim();
-  const id = inputId.value;
-  if (!nombre || !uid) return;
-
-  if (id) {
-    const index = habitos.findIndex(h => h.id === parseInt(id));
-    if (index !== -1) habitos[index].nombre = nombre;
-  } else {
-    habitos.push({ id: Date.now(), nombre, completado: false });
-  }
-
-  await guardarHabitos();
-  cerrarModal();
-  renderHabitos();
-});
-
-btnCancelar.addEventListener("click", cerrarModal);
-btnNuevo.addEventListener("click", () => abrirModal());
-
