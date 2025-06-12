@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestión Corporal – Olympus</title>
+  <link rel="stylesheet" href="navbar.css" />
+  <link rel="stylesheet" href="cuerpo.css" />
+</head>
+<body>
+  <header id="navbar"></header>
+
+  <main class="cuerpo-container">
+    <h1>Gestión Corporal</h1>
+
+    <!-- Datos del usuario -->
+    <section class="datos-personales">
+      <h2>Datos Personales</h2>
+      <form id="form-datos">
+        <label>Edad <input type="number" id="edad" required /></label>
+        <label>Altura (cm) <input type="number" id="altura" required /></label>
+        <label>Peso (kg) <input type="number" id="peso" required /></label>
+        <label>Sexo
+          <select id="sexo" required>
+            <option value="">Seleccionar</option>
+            <option value="masculino">Masculino</option>
+            <option value="femenino">Femenino</option>
+          </select>
+        </label>
+        <label>Actividad física
+          <select id="actividad" required>
+            <option value="1.2">Sedentario</option>
+            <option value="1.375">Ligero</option>
+            <option value="1.55">Moderado</option>
+            <option value="1.725">Activo</option>
+            <option value="1.9">Muy activo</option>
+          </select>
+        </label>
+        <label>Objetivo
+          <select id="objetivo" required>
+            <option value="mantener">Mantener peso</option>
+            <option value="bajar">Perder grasa</option>
+            <option value="subir">Ganar músculo</option>
+          </select>
+        </label>
+        <button type="submit">Calcular Plan</button>
+      </form>
+    </section>
+
+    <!-- Resultado -->
+    <section class="resultado-plan oculto" id="seccion-resultado">
+      <h2>Plan Nutricional Diario</h2>
+      <p><strong>Calorías recomendadas:</strong> <span id="calorias"></span> kcal</p>
+      <p><strong>Proteínas:</strong> <span id="proteinas"></span> g</p>
+      <p><strong>Carbohidratos:</strong> <span id="carbohidratos"></span> g</p>
+      <p><strong>Grasas:</strong> <span id="grasas"></span> g</p>
+    </section>
+  </main>
+
+  <script src="navbar.js"></script>
+  <script type="module" src="firebase.js"></script>
+  <script type="module" src="cuerpo.js"></script>
+</body>
+</html>
