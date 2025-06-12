@@ -1,4 +1,4 @@
-// avance.js con hábitos base configurables por días de la semana
+// avance.js con hábitos base configurables por días de la semana y días visibles
 import {
   auth,
   db,
@@ -134,11 +134,16 @@ function renderEstadisticas() {
 
 function renderHabitos() {
   contenedorHabitos.innerHTML = "";
+  const diasTexto = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
   habitos.forEach(h => {
+    const dias = h.dias?.map(d => diasTexto[d]).join(" - ") || "";
     const div = document.createElement("div");
     div.className = "habito-item" + (h.completado ? " completado" : "");
     div.innerHTML = `
-      <span>${h.nombre}</span>
+      <div>
+        <strong>${h.nombre}</strong>
+        <div class="dias-programados">${dias}</div>
+      </div>
       <div class="acciones-habito">
         <button data-accion="completar" data-id="${h.id}">
           ${h.completado ? "✓" : "Marcar"}
@@ -245,4 +250,3 @@ contenedorHabitos.addEventListener("click", async e => {
     }
   }
 });
-
