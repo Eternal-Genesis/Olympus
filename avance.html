@@ -38,18 +38,19 @@
         <h3 id="modal-titulo">Nuevo Hábito</h3>
         <form id="form-habito">
           <input type="hidden" id="habito-id" />
+
           <label for="habito-nombre">Nombre del hábito:</label>
           <input type="text" id="habito-nombre" required />
 
           <label>Días activos:</label>
           <div class="dias-semana">
-            <label><input type="checkbox" name="dias" value="0"> Lun</label>
-            <label><input type="checkbox" name="dias" value="1"> Mar</label>
-            <label><input type="checkbox" name="dias" value="2"> Mié</label>
-            <label><input type="checkbox" name="dias" value="3"> Jue</label>
-            <label><input type="checkbox" name="dias" value="4"> Vie</label>
-            <label><input type="checkbox" name="dias" value="5"> Sáb</label>
-            <label><input type="checkbox" name="dias" value="6"> Dom</label>
+            <input type="checkbox" id="dia-1" name="dias" value="1"><label for="dia-1">Lun</label>
+            <input type="checkbox" id="dia-2" name="dias" value="2"><label for="dia-2">Mar</label>
+            <input type="checkbox" id="dia-3" name="dias" value="3"><label for="dia-3">Mié</label>
+            <input type="checkbox" id="dia-4" name="dias" value="4"><label for="dia-4">Jue</label>
+            <input type="checkbox" id="dia-5" name="dias" value="5"><label for="dia-5">Vie</label>
+            <input type="checkbox" id="dia-6" name="dias" value="6"><label for="dia-6">Sáb</label>
+            <input type="checkbox" id="dia-0" name="dias" value="0"><label for="dia-0">Dom</label>
           </div>
 
           <div class="modal-acciones">
