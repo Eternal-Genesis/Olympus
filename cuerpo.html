@@ -74,6 +74,20 @@
         <button id="reiniciar-plan" class="btn-secundario">Reiniciar plan</button>
       </div>
     </section>
+
+    <!-- FASE 3: Revisión mensual -->
+    <section class="revision-section oculto" id="revision-section">
+      <h2>Revisión mensual</h2>
+      <div id="estado-revision"></div>
+
+      <form id="revision-form" class="oculto">
+        <div class="input-group">
+          <label for="peso-actual">¿Cuál es tu peso actual?</label>
+          <input type="number" id="peso-actual" step="0.1" required />
+        </div>
+        <button type="submit" class="btn-principal">Guardar y ajustar plan</button>
+      </form>
+    </section>
   </main>
 
   <!-- Scripts -->
