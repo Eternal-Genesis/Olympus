@@ -4,11 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Nutrición – Olympus</title>
+  <link rel="stylesheet" href="navbar.css" />
   <link rel="stylesheet" href="cuerpo.css" />
 </head>
 <body>
-  <main class="cuerpo-wrapper">
+  <!-- Navbar dinámico -->
+  <header id="navbar"></header>
 
+  <main class="cuerpo-wrapper">
     <!-- FASE 1: Evaluación -->
     <section class="evaluacion-section" id="evaluacion-section">
       <h2>Calculá tu plan nutricional personalizado</h2>
@@ -71,9 +74,10 @@
         <button id="reiniciar-plan" class="btn-secundario">Reiniciar plan</button>
       </div>
     </section>
-
   </main>
 
+  <!-- Scripts -->
+  <script src="navbar.js"></script>
   <script type="module" src="cuerpo.js"></script>
 </body>
 </html>
