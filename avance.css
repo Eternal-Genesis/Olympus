@@ -57,6 +57,18 @@ h2 {
   color: #00ff88;
 }
 
+.habito-item strong {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.dias-programados {
+  font-size: 0.8rem;
+  color: #aaa;
+  margin-top: 0.25rem;
+}
+
 /* === MENÚ CONTEXTUAL === */
 .acciones-habito {
   display: flex;
