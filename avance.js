@@ -1,4 +1,4 @@
-// avance.js optimizado con localStorage para carga rápida de hábitos, historial y estadísticas
+// avance.js optimizado para localStorage completo incluyendo estadísticas
 import {
   auth,
   db,
@@ -32,21 +32,8 @@ onAuthStateChanged(auth, async (user) => {
 
   document.getElementById("loading")?.classList.remove("oculto");
 
-  const ref = doc(db, "usuarios", uid, "historialHabitos", hoy);
-  const snap = await getDoc(ref);
-  if (!snap.exists()) await insertarHabitosEjemplo(uid);
-
-  const cache = localStorage.getItem(habitosHoyKey(uid));
-  if (cache) {
-    habitos = JSON.parse(cache);
-    renderHabitos();
-  }
-
-  const historialCache = localStorage.getItem(historialKey(uid));
-  if (historialCache) renderHistorial(JSON.parse(historialCache));
-
-  const estadisticasCache = localStorage.getItem(estadisticasKey(uid));
-  if (estadisticasCache) renderGrafico(JSON.parse(estadisticasCache));
+  const cacheStats = localStorage.getItem(estadisticasKey(uid));
+  if (cacheStats) renderGrafico(JSON.parse(cacheStats));
 
   await Promise.all([
     cargarHabitos(uid),
@@ -169,7 +156,9 @@ async function cargarEstadisticas(uid) {
 }
 
 function renderGrafico({ labels, porcentajes, detalles }) {
-  const ctx = document.getElementById("grafico-habitos").getContext("2d");
+  const canvas = document.getElementById("grafico-habitos");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
   new Chart(ctx, {
     type: "line",
     data: {
@@ -223,30 +212,6 @@ function obtenerMes(f) {
   return ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"][f.getMonth()];
 }
 
-async function insertarHabitosEjemplo(uid) {
-  const ejemplos = [
-    { nombre: "Leer 10 páginas", completado: true },
-    { nombre: "Beber agua", completado: false },
-    { nombre: "Ejercicio", completado: true },
-    { nombre: "Meditar", completado: false },
-    { nombre: "Escribir diario", completado: true }
-  ];
-
-  for (let i = 1; i <= 6; i++) {
-    const fecha = new Date();
-    fecha.setDate(fecha.getDate() - i);
-    const fechaStr = fecha.toISOString().split("T")[0];
-    const ref = doc(db, "usuarios", uid, "historialHabitos", fechaStr);
-    const items = ejemplos.map((e, index) => ({
-      id: i * 100 + index,
-      nombre: e.nombre,
-      completado: Math.random() > 0.5
-    }));
-    await setDoc(ref, { items }, { merge: true });
-  }
-}
-
-// Eventos de interacción
 contenedorHabitos.addEventListener("click", async e => {
   const btnMenu = e.target.closest(".btn-menu");
   if (btnMenu) {
