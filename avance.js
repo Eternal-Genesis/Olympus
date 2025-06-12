@@ -1,4 +1,4 @@
-// avance.js optimizado con localStorage para carga rápida
+// avance.js optimizado con localStorage para carga rápida de hábitos, historial y estadísticas
 import {
   auth,
   db,
@@ -11,6 +11,7 @@ import {
 const hoy = new Date().toISOString().split("T")[0];
 
 const habitosHoyKey = (uid) => `habitos-hoy-${uid}`;
+const historialKey = (uid) => `historial-${uid}`;
 const estadisticasKey = (uid) => `estadisticas-${uid}`;
 
 let uid = null;
@@ -40,6 +41,12 @@ onAuthStateChanged(auth, async (user) => {
     habitos = JSON.parse(cache);
     renderHabitos();
   }
+
+  const historialCache = localStorage.getItem(historialKey(uid));
+  if (historialCache) renderHistorial(JSON.parse(historialCache));
+
+  const estadisticasCache = localStorage.getItem(estadisticasKey(uid));
+  if (estadisticasCache) renderGrafico(JSON.parse(estadisticasCache));
 
   await Promise.all([
     cargarHabitos(uid),
@@ -91,7 +98,9 @@ function renderHabitos() {
 
 async function cargarHistorial(uid) {
   const dias = 4;
+  const historial = [];
   contenedorHistorial.innerHTML = "";
+
   for (let i = 1; i <= dias; i++) {
     const fecha = new Date();
     fecha.setDate(fecha.getDate() - i);
@@ -101,22 +110,30 @@ async function cargarHistorial(uid) {
 
     if (snap.exists()) {
       const data = snap.data();
-      const fechaTexto = `${obtenerDiaSemana(fecha)} ${fecha.getDate().toString().padStart(2, '0')} ${obtenerMes(fecha)}`;
-
-      const card = document.createElement("div");
-      card.className = "habito-dia";
-      card.innerHTML = `<h4>${fechaTexto}</h4>`;
-
-      data.items.forEach(h => {
-        const div = document.createElement("div");
-        div.className = `habito ${h.completado ? '' : 'incompleto'}`;
-        div.innerHTML = `<span class="estado">${h.completado ? '✓' : '✗'}</span>${h.nombre}`;
-        card.appendChild(div);
-      });
-
-      contenedorHistorial.appendChild(card);
+      historial.push({ fecha: diaStr, items: data.items });
     }
   }
+
+  localStorage.setItem(historialKey(uid), JSON.stringify(historial));
+  renderHistorial(historial);
+}
+
+function renderHistorial(historial) {
+  contenedorHistorial.innerHTML = "";
+  historial.forEach(({ fecha, items }) => {
+    const fechaObj = new Date(fecha);
+    const fechaTexto = `${obtenerDiaSemana(fechaObj)} ${fechaObj.getDate().toString().padStart(2, '0')} ${obtenerMes(fechaObj)}`;
+    const card = document.createElement("div");
+    card.className = "habito-dia";
+    card.innerHTML = `<h4>${fechaTexto}</h4>`;
+    items.forEach(h => {
+      const div = document.createElement("div");
+      div.className = `habito ${h.completado ? '' : 'incompleto'}`;
+      div.innerHTML = `<span class="estado">${h.completado ? '✓' : '✗'}</span>${h.nombre}`;
+      card.appendChild(div);
+    });
+    contenedorHistorial.appendChild(card);
+  });
 }
 
 async function cargarEstadisticas(uid) {
@@ -146,6 +163,12 @@ async function cargarEstadisticas(uid) {
     }
   }
 
+  const datos = { labels, porcentajes, detalles };
+  localStorage.setItem(estadisticasKey(uid), JSON.stringify(datos));
+  renderGrafico(datos);
+}
+
+function renderGrafico({ labels, porcentajes, detalles }) {
   const ctx = document.getElementById("grafico-habitos").getContext("2d");
   new Chart(ctx, {
     type: "line",
