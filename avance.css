@@ -185,24 +185,28 @@ button:hover {
   font-size: 0.9rem;
 }
 
-.dias-semana label {
-  background-color: #2a2a2a;
-  padding: 0.4rem 0.6rem;
-  border-radius: 6px;
-  cursor: pointer;
-  text-align: center;
-  user-select: none;
-  transition: background-color 0.3s ease;
-}
-
 .dias-semana input[type="checkbox"] {
   display: none;
+}
+
+.dias-semana label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #2a2a2a;
+  border-radius: 6px;
+  padding: 0.4rem;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.3s ease;
+  border: 1px solid #444;
 }
 
 .dias-semana input[type="checkbox"]:checked + label {
   background-color: #00f0ff;
   color: #121212;
   font-weight: bold;
+  border-color: #00c3d6;
 }
 
 .modal-acciones {
@@ -267,4 +271,3 @@ button:hover {
     grid-template-columns: repeat(3, 1fr);
   }
 }
-
