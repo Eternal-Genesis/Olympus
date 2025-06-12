@@ -1,4 +1,3 @@
-// avance.js definitivo optimizado con historial paralelo y cache local completo
 import {
   auth,
   db,
@@ -19,6 +18,7 @@ let habitos = [];
 
 const contenedorHabitos = document.querySelector(".habitos-hoy");
 const contenedorHistorial = document.querySelector(".lista-historial");
+const contenedorEstadisticas = document.querySelector(".estadisticas");
 const modal = document.getElementById("modal-habito");
 const form = document.getElementById("form-habito");
 const inputNombre = document.getElementById("habito-nombre");
@@ -36,23 +36,31 @@ onAuthStateChanged(auth, async (user) => {
   if (cacheLocal) {
     habitos = JSON.parse(cacheLocal);
     renderHabitos();
+    document.querySelector(".seccion-hoy").classList.remove("oculto");
   }
 
   const cacheHistorial = localStorage.getItem(historialKey(uid));
   if (cacheHistorial) {
     renderHistorial(JSON.parse(cacheHistorial));
+    document.querySelector(".seccion-historial").classList.remove("oculto");
   }
 
   const cacheStats = localStorage.getItem(estadisticasKey(uid));
-  if (cacheStats) renderGrafico(JSON.parse(cacheStats));
+  if (cacheStats) {
+    renderGrafico(JSON.parse(cacheStats));
+    contenedorEstadisticas.classList.remove("oculto");
+  }
 
-  await Promise.all([
-    cargarHabitos(uid),
-    cargarHistorial(uid),
-    cargarEstadisticas(uid)
-  ]);
-
+  await cargarHabitos(uid);
   renderHabitos();
+  document.querySelector(".seccion-hoy").classList.remove("oculto");
+
+  await cargarHistorial(uid);
+  document.querySelector(".seccion-historial").classList.remove("oculto");
+
+  await cargarEstadisticas(uid);
+  contenedorEstadisticas.classList.remove("oculto");
+
   document.getElementById("loading")?.classList.add("oculto");
 });
 
@@ -92,6 +100,46 @@ function renderHabitos() {
     `;
     contenedorHabitos.appendChild(div);
   });
+}
+
+form.addEventListener("submit", async e => {
+  e.preventDefault();
+  const nombre = inputNombre.value.trim();
+  const id = inputId.value;
+  if (!nombre || !uid) return;
+
+  if (id) {
+    const index = habitos.findIndex(h => h.id === parseInt(id));
+    if (index !== -1) habitos[index].nombre = nombre;
+  } else {
+    habitos.push({ id: Date.now(), nombre, completado: false });
+  }
+
+  await guardarHabitos();
+  cerrarModal();
+  renderHabitos();
+});
+
+btnCancelar.addEventListener("click", cerrarModal);
+btnNuevo.addEventListener("click", () => abrirModal());
+
+function abrirModal(habito = null) {
+  modal.classList.add("activo");
+  if (habito) {
+    document.getElementById("modal-titulo").textContent = "Editar Hábito";
+    inputNombre.value = habito.nombre;
+    inputId.value = habito.id;
+  } else {
+    document.getElementById("modal-titulo").textContent = "Nuevo Hábito";
+    form.reset();
+    inputId.value = "";
+  }
+}
+
+function cerrarModal() {
+  modal.classList.remove("activo");
+  form.reset();
+  inputId.value = "";
 }
 
 async function cargarHistorial(uid) {
@@ -226,6 +274,14 @@ function obtenerMes(f) {
   return ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"][f.getMonth()];
 }
 
+document.addEventListener("click", (e) => {
+  document.querySelectorAll(".menu-opciones").forEach(menu => {
+    if (!menu.contains(e.target) && !menu.previousElementSibling.contains(e.target)) {
+      menu.classList.add("oculto");
+    }
+  });
+});
+
 contenedorHabitos.addEventListener("click", async e => {
   const btnMenu = e.target.closest(".btn-menu");
   if (btnMenu) {
@@ -262,48 +318,3 @@ contenedorHabitos.addEventListener("click", async e => {
     }
   }
 });
-
-document.addEventListener("click", (e) => {
-  document.querySelectorAll(".menu-opciones").forEach(menu => {
-    if (!menu.contains(e.target) && !menu.previousElementSibling.contains(e.target)) {
-      menu.classList.add("oculto");
-    }
-  });
-});
-
-form.addEventListener("submit", async e => {
-  e.preventDefault();
-  const nombre = inputNombre.value.trim();
-  const id = inputId.value;
-  if (!nombre || !uid) return;
-
-  if (id) {
-    const index = habitos.findIndex(h => h.id === parseInt(id));
-    if (index !== -1) habitos[index].nombre = nombre;
-  } else {
-    habitos.push({ id: Date.now(), nombre, completado: false });
-  }
-
-  await guardarHabitos();
-  cerrarModal();
-  renderHabitos();
-});
-
-function abrirModal(habito = null) {
-  modal.classList.add("activo");
-  if (habito) {
-    document.getElementById("modal-titulo").textContent = "Editar Hábito";
-    inputNombre.value = habito.nombre;
-    inputId.value = habito.id;
-  } else {
-    document.getElementById("modal-titulo").textContent = "Nuevo Hábito";
-    form.reset();
-    inputId.value = "";
-  }
-}
-
-function cerrarModal() {
-  modal.classList.remove("activo");
-  form.reset();
-  inputId.value = "";
-}
