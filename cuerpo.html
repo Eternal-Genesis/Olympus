@@ -11,57 +11,86 @@
   <!-- Navbar global -->
   <header id="navbar"></header>
 
-  <!-- Navegación interna -->
-  <nav class="subnav">
-    <button class="tab-btn active" data-tab="resumen">🏠 Resumen</button>
-    <button class="tab-btn" data-tab="nutricion">🥗 Nutrición</button>
-    <button class="tab-btn" data-tab="entrenamiento">💪 Entrenamiento</button>
-    <button class="tab-btn" data-tab="seguimiento">📈 Seguimiento</button>
-    <button class="tab-btn" data-tab="revision">🔁 Revisión</button>
-  </nav>
-
-  <main class="cuerpo-app">
-
-    <!-- RESUMEN GENERAL -->
-    <section id="tab-resumen" class="tab-content active">
-      <h2>Resumen general</h2>
-      <div class="resumen-grid">
-        <div class="resumen-box"><h3>Peso actual</h3><p id="peso-actual">– kg</p></div>
-        <div class="resumen-box"><h3>Calorías/día</h3><p id="calorias-dia">– kcal</p></div>
-        <div class="resumen-box"><h3>Objetivo</h3><p id="objetivo-general">–</p></div>
-        <div class="resumen-box"><h3>Última revisión</h3><p id="ultima-revision">–</p></div>
-      </div>
-    </section>
-
-    <!-- PLAN DE NUTRICIÓN -->
-    <section id="tab-nutricion" class="tab-content oculto">
+  <main class="cuerpo-wrapper">
+    
+    <!-- FASE 1: Alimentación -->
+    <section class="alimentacion-section" id="alimentacion-section">
       <h2>Plan Nutricional</h2>
-      <div id="contenedor-nutricion">
-        <!-- Aquí se carga o genera el plan con JS -->
+      
+      <div class="alimentacion-info">
+        <h3>Objetivo Calórico Diario</h3>
+        <p><strong>Calorías objetivo:</strong> <span id="plan-calorias">– kcal</span></p>
+        <p><strong>Proteínas:</strong> <span id="plan-proteinas">– g</span></p>
+        <p><strong>Carbohidratos:</strong> <span id="plan-carbohidratos">– g</span></p>
+        <p><strong>Grasas:</strong> <span id="plan-grasas">– g</span></p>
       </div>
+
+      <!-- Botón para reajustar el plan -->
+      <div class="acciones-plan">
+        <button id="editar-plan" class="btn-secundario">Reajustar Plan</button>
+      </div>
+
+      <!-- Registro de comidas -->
+      <section id="registro-comidas">
+        <h3>Registrar Comidas</h3>
+        <form id="form-comida">
+          <div class="input-group">
+            <label for="nombre-comida">Comida</label>
+            <input type="text" id="nombre-comida" placeholder="Nombre de la comida" required />
+          </div>
+          <div class="input-group">
+            <label for="calorias-comida">Calorías</label>
+            <input type="number" id="calorias-comida" placeholder="Calorías consumidas" required />
+          </div>
+          <button type="submit" class="btn-secundario">Registrar Comida</button>
+        </form>
+        <div id="lista-comidas">
+          <!-- Aquí se mostrarán las comidas registradas -->
+        </div>
+      </section>
     </section>
 
-    <!-- PLAN DE ENTRENAMIENTO -->
-    <section id="tab-entrenamiento" class="tab-content oculto">
+    <!-- FASE 2: Entrenamiento -->
+    <section class="entrenamiento-section" id="entrenamiento-section">
       <h2>Plan de Entrenamiento</h2>
-      <div id="contenedor-entrenamiento">
-        <!-- Aquí se genera el entrenamiento personalizado -->
+      
+      <div class="entrenamiento-info">
+        <h3>Rutina de hoy</h3>
+        <p><strong>Ejercicio:</strong> Sentadillas</p>
+        <p><strong>Repeticiones:</strong> 3 x 15</p>
+        <p><strong>Series:</strong> 4</p>
       </div>
+
+      <!-- Ver más ejercicios -->
+      <button id="ver-entrenamiento" class="btn-secundario">Ver más ejercicios</button>
+
+      <!-- Registro de entrenamientos -->
+      <section id="registro-entrenamiento">
+        <h3>Registrar Entrenamiento</h3>
+        <form id="form-entrenamiento">
+          <div class="input-group">
+            <label for="ejercicio">Ejercicio</label>
+            <input type="text" id="ejercicio" placeholder="Nombre del ejercicio" required />
+          </div>
+          <div class="input-group">
+            <label for="series">Series</label>
+            <input type="number" id="series" placeholder="Número de series" required />
+          </div>
+          <div class="input-group">
+            <label for="repeticiones">Repeticiones</label>
+            <input type="number" id="repeticiones" placeholder="Número de repeticiones" required />
+          </div>
+          <button type="submit" class="btn-secundario">Registrar Ejercicio</button>
+        </form>
+      </section>
     </section>
 
-    <!-- SEGUIMIENTO -->
-    <section id="tab-seguimiento" class="tab-content oculto">
-      <h2>Seguimiento Diario</h2>
-      <div id="seguimiento-dia">
-        <!-- Registro de comidas, peso, entrenamientos -->
-      </div>
-    </section>
-
-    <!-- REVISIÓN MENSUAL -->
-    <section id="tab-revision" class="tab-content oculto">
-      <h2>Revisión Mensual</h2>
-      <div id="revision-mensual">
-        <!-- Evaluación del progreso -->
+    <!-- FASE 3: Resumen y Progreso Diario -->
+    <section id="progreso-diario">
+      <h2>Progreso Diario</h2>
+      <div class="progreso-info">
+        <p><strong>Calorías consumidas hoy:</strong> <span id="calorias-consumidas">0</span> kcal</p>
+        <p><strong>Entrenamientos completados hoy:</strong> <span id="entrenamientos-completados">0</span></p>
       </div>
     </section>
 
