@@ -1,0 +1,80 @@
+/* cuerpo.css – Estilos base para la vista de nutrición */
+body {
+  background-color: #121212;
+  color: #f1f1f1;
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.cuerpo-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+h1, h2 {
+  text-align: center;
+  color: #00f0ff;
+  margin-bottom: 1rem;
+}
+
+form {
+  display: grid;
+  gap: 1rem;
+  background-color: #1e1e1e;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.4);
+}
+
+form label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+form input,
+form select {
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: none;
+  background-color: #2a2a2a;
+  color: #f1f1f1;
+  margin-top: 0.25rem;
+}
+
+form button {
+  background-color: #00f0ff;
+  color: #121212;
+  padding: 0.7rem 1rem;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border: none;
+}
+
+form button:hover {
+  background-color: #00c3d6;
+}
+
+.resultado-plan {
+  background-color: #1e1e1e;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.4);
+}
+
+.resultado-plan p {
+  margin: 0.75rem 0;
+  font-size: 1.05rem;
+}
+
+.oculto {
+  display: none;
+}
