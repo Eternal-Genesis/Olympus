@@ -1,4 +1,4 @@
-// cuerpo.js – cálculo de plan nutricional personalizado
+// cuerpo.js – cálculo de plan nutricional personalizado con estado persistente
 import { auth, onAuthStateChanged } from "./firebase.js";
 
 const form = document.getElementById("form-datos");
@@ -20,6 +20,15 @@ let uid = null;
 onAuthStateChanged(auth, user => {
   if (!user) return;
   uid = user.uid;
+
+  // Intentar cargar el plan guardado
+  const cache = localStorage.getItem(`nutricion-${uid}`);
+  if (cache) {
+    const datos = JSON.parse(cache);
+    mostrarResultado(datos);
+    form.classList.add("oculto");
+    seccionResultado.classList.remove("oculto");
+  }
 });
 
 form.addEventListener("submit", (e) => {
@@ -54,17 +63,24 @@ form.addEventListener("submit", (e) => {
   const caloriasCarbs = calorias - (caloriasProteinas + caloriasGrasas);
   const carbohidratos = Math.round(caloriasCarbs / 4);
 
-  // Mostrar resultado
-  caloriasSpan.textContent = Math.round(calorias);
-  proteinasSpan.textContent = proteinas;
-  carbohidratosSpan.textContent = carbohidratos;
-  grasasSpan.textContent = grasas;
-  seccionResultado.classList.remove("oculto");
-
-  // Guardar en localStorage por hoy
-  const data = {
+  // Datos a guardar
+  const plan = {
     edad, altura, peso, sexo, actividad, objetivo,
     calorias: Math.round(calorias), proteinas, carbohidratos, grasas
   };
-  localStorage.setItem(`nutricion-${uid}`, JSON.stringify(data));
+
+  localStorage.setItem(`nutricion-${uid}`, JSON.stringify(plan));
+  mostrarResultado(plan);
+  form.classList.add("oculto");
+  seccionResultado.classList.remove("oculto");
 });
+
+function mostrarResultado({ calorias, proteinas, carbohidratos, grasas }) {
+  caloriasSpan.textContent = calorias;
+  proteinasSpan.textContent = proteinas;
+  carbohidratosSpan.textContent = carbohidratos;
+  grasasSpan.textContent = grasas;
+}
+
+// 🚧 En desarrollo: función para agregar "Recalcular plan" y seguimiento diario
+
