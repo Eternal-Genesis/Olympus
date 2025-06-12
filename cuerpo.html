@@ -2,63 +2,78 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gestión Corporal – Olympus</title>
-  <link rel="stylesheet" href="navbar.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Nutrición – Olympus</title>
   <link rel="stylesheet" href="cuerpo.css" />
 </head>
 <body>
-  <header id="navbar"></header>
+  <main class="cuerpo-wrapper">
 
-  <main class="cuerpo-container">
-    <h1>Gestión Corporal</h1>
-
-    <!-- Datos del usuario -->
-    <section class="datos-personales">
-      <h2>Datos Personales</h2>
-      <form id="form-datos">
-        <label>Edad <input type="number" id="edad" required /></label>
-        <label>Altura (cm) <input type="number" id="altura" required /></label>
-        <label>Peso (kg) <input type="number" id="peso" required /></label>
-        <label>Sexo
+    <!-- FASE 1: Evaluación -->
+    <section class="evaluacion-section" id="evaluacion-section">
+      <h2>Calculá tu plan nutricional personalizado</h2>
+      <form id="evaluacion-form">
+        <div class="input-group">
+          <label for="sexo">Sexo</label>
           <select id="sexo" required>
-            <option value="">Seleccionar</option>
-            <option value="masculino">Masculino</option>
-            <option value="femenino">Femenino</option>
+            <option value="hombre">Hombre</option>
+            <option value="mujer">Mujer</option>
           </select>
-        </label>
-        <label>Actividad física
+        </div>
+
+        <div class="input-group">
+          <label for="edad">Edad</label>
+          <input type="number" id="edad" required />
+        </div>
+
+        <div class="input-group">
+          <label for="peso">Peso (kg)</label>
+          <input type="number" id="peso" required />
+        </div>
+
+        <div class="input-group">
+          <label for="altura">Altura (cm)</label>
+          <input type="number" id="altura" required />
+        </div>
+
+        <div class="input-group">
+          <label for="actividad">Nivel de actividad</label>
           <select id="actividad" required>
             <option value="1.2">Sedentario</option>
-            <option value="1.375">Ligero</option>
-            <option value="1.55">Moderado</option>
-            <option value="1.725">Activo</option>
-            <option value="1.9">Muy activo</option>
+            <option value="1.375">Ligera</option>
+            <option value="1.55">Moderada</option>
+            <option value="1.725">Alta</option>
+            <option value="1.9">Muy alta</option>
           </select>
-        </label>
-        <label>Objetivo
+        </div>
+
+        <div class="input-group">
+          <label for="objetivo">Objetivo</label>
           <select id="objetivo" required>
+            <option value="bajar">Bajar grasa</option>
             <option value="mantener">Mantener peso</option>
-            <option value="bajar">Perder grasa</option>
-            <option value="subir">Ganar músculo</option>
+            <option value="subir">Subir masa</option>
           </select>
-        </label>
-        <button type="submit">Calcular Plan</button>
+        </div>
+
+        <button type="submit" class="btn-principal">Generar Plan</button>
       </form>
     </section>
 
-    <!-- Resultado -->
-    <section class="resultado-plan oculto" id="seccion-resultado">
-      <h2>Plan Nutricional Diario</h2>
-      <p><strong>Calorías recomendadas:</strong> <span id="calorias"></span> kcal</p>
-      <p><strong>Proteínas:</strong> <span id="proteinas"></span> g</p>
-      <p><strong>Carbohidratos:</strong> <span id="carbohidratos"></span> g</p>
-      <p><strong>Grasas:</strong> <span id="grasas"></span> g</p>
+    <!-- FASE 2: Visualización del plan -->
+    <section class="plan-section oculto" id="plan-section">
+      <h2>Tu Plan Nutricional Diario</h2>
+      <div class="plan-card">
+        <p><strong>Calorías objetivo:</strong> <span id="plan-calorias"></span></p>
+        <p><strong>Proteínas:</strong> <span id="plan-proteinas"></span></p>
+        <p><strong>Carbohidratos:</strong> <span id="plan-carbohidratos"></span></p>
+        <p><strong>Grasas:</strong> <span id="plan-grasas"></span></p>
+        <button id="reiniciar-plan" class="btn-secundario">Reiniciar plan</button>
+      </div>
     </section>
+
   </main>
 
-  <script src="navbar.js"></script>
-  <script type="module" src="firebase.js"></script>
   <script type="module" src="cuerpo.js"></script>
 </body>
 </html>
