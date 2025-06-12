@@ -13,7 +13,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const spanGrasas = document.getElementById("plan-grasas");
   const btnReiniciar = document.getElementById("reiniciar-plan");
 
+  const sectionRevision = document.getElementById("revision-section");
+  const revisionForm = document.getElementById("revision-form");
+  const estadoRevision = document.getElementById("estado-revision");
+
   const planKey = (uid) => `plan-nutricional-${uid}`;
+  const revisionKey = (uid) => `revision-${uid}`;
 
   onAuthStateChanged(auth, (user) => {
     if (!user) return;
@@ -21,9 +26,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const cache = localStorage.getItem(planKey(uid));
     if (cache) {
-      mostrarPlan(JSON.parse(cache));
+      const plan = JSON.parse(cache);
+      mostrarPlan(plan);
       sectionEvaluacion.classList.add("oculto");
       sectionPlan.classList.remove("oculto");
+      verificarRevision(plan);
     }
   });
 
@@ -37,17 +44,27 @@ document.addEventListener("DOMContentLoaded", () => {
     const objetivo = document.getElementById("objetivo").value;
 
     const plan = calcularPlanNutricional({ sexo, edad, peso, altura, actividad, objetivo });
+    plan.sexo = sexo;
+    plan.edad = edad;
+    plan.peso = peso;
+    plan.altura = altura;
+    plan.actividad = actividad;
+    plan.objetivo = objetivo;
+    plan.fechaUltimaRevision = new Date().toISOString().split("T")[0];
 
     localStorage.setItem(planKey(uid), JSON.stringify(plan));
     mostrarPlan(plan);
     sectionEvaluacion.classList.add("oculto");
     sectionPlan.classList.remove("oculto");
+    verificarRevision(plan);
   });
 
   btnReiniciar.addEventListener("click", () => {
     if (!uid) return;
     localStorage.removeItem(planKey(uid));
+    localStorage.removeItem(revisionKey(uid));
     sectionPlan.classList.add("oculto");
+    sectionRevision.classList.add("oculto");
     sectionEvaluacion.classList.remove("oculto");
     document.getElementById("evaluacion-form").reset();
   });
@@ -75,4 +92,50 @@ document.addEventListener("DOMContentLoaded", () => {
 
     return { calorias, proteinas, carbohidratos, grasas };
   }
+
+  function verificarRevision(plan) {
+    sectionRevision.classList.remove("oculto");
+
+    const ultimaFecha = plan.fechaUltimaRevision;
+    const hoy = new Date();
+    const fechaUltima = new Date(ultimaFecha);
+    const dias = Math.floor((hoy - fechaUltima) / (1000 * 60 * 60 * 24));
+
+    if (dias >= 30) {
+      estadoRevision.textContent = "Ya pasaron 30 días. Es hora de actualizar tu peso.";
+      revisionForm.classList.remove("oculto");
+    } else {
+      estadoRevision.textContent = `Próxima revisión disponible en ${30 - dias} días.`;
+      revisionForm.classList.add("oculto");
+    }
+  }
+
+  revisionForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const nuevoPeso = parseFloat(document.getElementById("peso-actual").value);
+    if (!uid || isNaN(nuevoPeso)) return;
+
+    const plan = JSON.parse(localStorage.getItem(planKey(uid)));
+    if (!plan) return;
+
+    plan.peso = nuevoPeso;
+    plan.fechaUltimaRevision = new Date().toISOString().split("T")[0];
+
+    const planActualizado = calcularPlanNutricional({
+      sexo: plan.sexo,
+      edad: plan.edad,
+      peso: nuevoPeso,
+      altura: plan.altura,
+      actividad: plan.actividad,
+      objetivo: plan.objetivo
+    });
+
+    Object.assign(plan, planActualizado);
+
+    localStorage.setItem(planKey(uid), JSON.stringify(plan));
+    mostrarPlan(plan);
+    verificarRevision(plan);
+
+    alert("Plan actualizado correctamente según tu nuevo peso.");
+  });
 });
