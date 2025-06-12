@@ -231,3 +231,12 @@ button:hover {
   font-size: 0.85rem;
   text-transform: uppercase;
 }
+
+/* === GRÁFICO DE ESTADÍSTICAS === */
+.estadisticas canvas {
+  background-color: transparent;
+  width: 100% !important;
+  height: 300px !important;
+  border-radius: 12px;
+  margin-top: 1rem;
+}
