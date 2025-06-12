@@ -1,4 +1,4 @@
-// avance.js con hábitos base diarios, gráfico funcional y sincronización eficiente
+// avance.js con hábitos base configurables por días de la semana
 import {
   auth,
   db,
@@ -9,6 +9,7 @@ import {
 } from "./firebase.js";
 
 const hoy = new Date().toISOString().split("T")[0];
+const diaSemana = new Date().getDay();
 const habitosHoyKey = (uid) => `habitos-hoy-${uid}`;
 const habitosBaseKey = (uid) => `habitos-base-${uid}`;
 const historialKey = (uid) => `historial-${uid}`;
@@ -36,7 +37,9 @@ onAuthStateChanged(auth, async (user) => {
     habitos = JSON.parse(cache);
   } else {
     const base = JSON.parse(localStorage.getItem(habitosBaseKey(uid))) || [];
-    habitos = base.map(h => ({ ...h, completado: false }));
+    habitos = base
+      .filter(h => h.dias?.includes(diaSemana))
+      .map(h => ({ ...h, completado: false }));
     localStorage.setItem(habitosHoyKey(uid), JSON.stringify(habitos));
   }
 
@@ -157,18 +160,23 @@ form.addEventListener("submit", async e => {
   e.preventDefault();
   const nombre = inputNombre.value.trim();
   const id = inputId.value;
-  if (!nombre || !uid) return;
+  const dias = Array.from(form.querySelectorAll("input[name='dias']:checked"))
+    .map(input => parseInt(input.value));
+
+  if (!nombre || !uid || dias.length === 0) return;
 
   if (id) {
     const index = habitos.findIndex(h => h.id === parseInt(id));
-    if (index !== -1) habitos[index].nombre = nombre;
+    if (index !== -1) {
+      habitos[index].nombre = nombre;
+      habitos[index].dias = dias;
+    }
   } else {
-    const nuevo = { id: Date.now(), nombre, completado: false };
+    const nuevo = { id: Date.now(), nombre, completado: false, dias };
     habitos.push(nuevo);
 
-    // Agregar a hábitos base también
     const base = JSON.parse(localStorage.getItem(habitosBaseKey(uid))) || [];
-    base.push({ id: nuevo.id, nombre: nuevo.nombre });
+    base.push({ id: nuevo.id, nombre: nuevo.nombre, dias });
     localStorage.setItem(habitosBaseKey(uid), JSON.stringify(base));
   }
 
@@ -186,6 +194,8 @@ function abrirModal(habito = null) {
     document.getElementById("modal-titulo").textContent = "Editar Hábito";
     inputNombre.value = habito.nombre;
     inputId.value = habito.id;
+    const checks = form.querySelectorAll("input[name='dias']");
+    checks.forEach(c => c.checked = habito.dias?.includes(parseInt(c.value)));
   } else {
     document.getElementById("modal-titulo").textContent = "Nuevo Hábito";
     form.reset();
@@ -235,3 +245,4 @@ contenedorHabitos.addEventListener("click", async e => {
     }
   }
 });
+
