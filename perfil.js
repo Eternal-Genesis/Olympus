@@ -25,42 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let modoEdicion = false;
   let descuentoCodigo = false;
 
-  // Editar apodo y biografía
-  btnEditar?.addEventListener("click", async () => {
-    if (!modoEdicion) {
-      apodoInput.disabled = false;
-      bioTextarea.disabled = false;
-      btnEditar.textContent = "Guardar";
-      modoEdicion = true;
-    } else {
-      apodoInput.disabled = true;
-      bioTextarea.disabled = true;
-      btnEditar.textContent = "Editar";
-      modoEdicion = false;
-      await guardarEnFirestore("apodo", apodoInput.value);
-      await guardarEnFirestore("biografia", bioTextarea.value);
-    }
-  });
-
-  // Código de creador visual
-  if (inputCodigo && precioPersonal) {
-    inputCodigo.addEventListener("input", () => {
-      const codigo = inputCodigo.value.trim().toUpperCase();
-      if (codigo === "MARPE") {
-        descuentoCodigo = true;
-        precioPersonal.innerHTML = `<span class="tachado">$5</span> $2 / mes`;
-        inputCodigo.classList.add("valid");
-        mensajeCodigo?.classList.remove("oculto");
-      } else {
-        descuentoCodigo = false;
-        precioPersonal.innerHTML = `<span class="tachado">$5</span> $4 / mes`;
-        inputCodigo.classList.remove("valid");
-        mensajeCodigo?.classList.add("oculto");
-      }
-    });
-  }
-
-  // Contador de caracteres en biografía
+  // Contador biografía
   const contador = document.createElement("div");
   contador.style.textAlign = "right";
   contador.style.fontSize = "0.8rem";
@@ -74,17 +39,51 @@ document.addEventListener("DOMContentLoaded", () => {
     contador.style.color = largo >= 200 ? "#ff6060" : "#888";
   });
 
-  // Cargar imagen
+  // Editar perfil
+  btnEditar?.addEventListener("click", async () => {
+    if (!modoEdicion) {
+      apodoInput.disabled = false;
+      bioTextarea.disabled = false;
+      btnEditar.textContent = "Guardar";
+      modoEdicion = true;
+    } else {
+      apodoInput.disabled = true;
+      bioTextarea.disabled = true;
+      btnEditar.textContent = "Editar";
+      modoEdicion = false;
+      actualizarUI("apodo", apodoInput.value);
+      actualizarUI("biografia", bioTextarea.value);
+    }
+  });
+
+  // Código de descuento
+  inputCodigo?.addEventListener("input", () => {
+    const codigo = inputCodigo.value.trim().toUpperCase();
+    if (codigo === "MARPE") {
+      descuentoCodigo = true;
+      precioPersonal.innerHTML = `<span class=\"tachado\">$5</span> $2 / mes`;
+      inputCodigo.classList.add("valid");
+      mensajeCodigo?.classList.remove("oculto");
+    } else {
+      descuentoCodigo = false;
+      precioPersonal.innerHTML = `<span class=\"tachado\">$5</span> $4 / mes`;
+      inputCodigo.classList.remove("valid");
+      mensajeCodigo?.classList.add("oculto");
+    }
+  });
+
+  // Subir imagen
   subirFoto?.addEventListener("change", (e) => {
     const archivo = e.target.files[0];
-    if (archivo) {
-      const lector = new FileReader();
-      lector.onload = () => {
-        fotoPerfil.src = lector.result;
-        guardarEnFirestore("foto", lector.result);
-      };
-      lector.readAsDataURL(archivo);
-    }
+    if (!archivo) return;
+
+    const lector = new FileReader();
+    lector.onload = () => {
+      const imagen = lector.result;
+      fotoPerfil.src = imagen;
+      actualizarUI("foto", imagen);
+    };
+    lector.readAsDataURL(archivo);
   });
 
   // Cerrar sesión
@@ -94,121 +93,120 @@ document.addEventListener("DOMContentLoaded", () => {
       .catch(err => console.error("Error al cerrar sesión:", err));
   });
 
-  // Adquirir planes
+  // Adquirir plan
   botonesPlanes.forEach(boton => {
     boton.addEventListener("click", async () => {
       const plan = boton.dataset.plan;
       let precio = 0;
-      if (plan === "Personal") precio = descuentoCodigo ? (5 * 0.4) : (5 * 0.8);
-      else if (plan === "Negocio") precio = 20.00;
-      else if (plan === "Empresa") precio = 80.00;
+      if (plan === "Personal") precio = descuentoCodigo ? 2 : 4;
       else return;
 
       const user = auth.currentUser;
       if (!user) return;
-      const ref = doc(db, "usuarios", user.uid);
 
       try {
-        await updateDoc(ref, {
+        await updateDoc(doc(db, "usuarios", user.uid), {
           plan,
           codigoCreador: descuentoCodigo ? "MARPE" : "",
           precioPagado: precio
         });
-        alert(`Has adquirido el plan ${plan} por $${precio.toFixed(2)}/mes.`);
-        window.location.reload();
+        alert(`Has adquirido el plan ${plan} por $${precio}/mes.`);
+        location.reload();
       } catch (e) {
         console.error("Error al guardar el plan:", e);
       }
     });
   });
 
-  // Detectar usuario y cargar datos
+  // Usuario actual y carga optimista
   onAuthStateChanged(auth, async (user) => {
     if (!user) return;
-
     const uid = user.uid;
-    const nombre = user.displayName || user.email.split("@")[0];
-    nombreUsuario.textContent = nombre;
+    nombreUsuario.textContent = user.displayName || user.email.split("@")[0];
 
     const ref = doc(db, "usuarios", uid);
-    const snap = await getDoc(ref);
+    const cacheKey = `perfil-${uid}`;
+    const cache = sessionStorage.getItem(cacheKey);
 
-    if (!snap.exists()) {
-      await setDoc(ref, {
-        apodo: "",
-        biografia: "",
-        foto: "",
-        exp: 0,
-        plan: "Personal"
-      });
+    if (cache) renderPerfil(JSON.parse(cache));
+
+    try {
+      let snap = await getDoc(ref);
+      if (!snap.exists()) {
+        await setDoc(ref, {
+          apodo: "",
+          biografia: "",
+          foto: "",
+          exp: 0,
+          plan: "Personal"
+        });
+        snap = await getDoc(ref);
+      }
+
+      const datos = snap.data();
+      sessionStorage.setItem(cacheKey, JSON.stringify(datos));
+      renderPerfil(datos);
+    } catch (e) {
+      console.error("Error al cargar datos:", e);
     }
+  });
 
-    const datos = (await getDoc(ref)).data();
-    if (!datos) return;
-
-    const nuevaExp = datos.exp || 0;
-
-    // Actualizar apodo, biografía, foto
-    if (datos.apodo) apodoInput.value = datos.apodo;
-    if (datos.biografia) {
-      bioTextarea.value = datos.biografia;
-      contador.textContent = `${datos.biografia.length} / 200`;
-    }
+  function renderPerfil(datos) {
+    apodoInput.value = datos.apodo || "";
+    bioTextarea.value = datos.biografia || "";
+    if (datos.biografia) contador.textContent = `${datos.biografia.length} / 200`;
     if (datos.foto) fotoPerfil.src = datos.foto;
 
-    // Mostrar experiencia y nivel
+    const nuevaExp = datos.exp || 0;
     const { nivel, xpMin, xpMax, progreso, texto } = getNivelData(nuevaExp);
     progresoExp.style.width = `${(progreso * 100).toFixed(1)}%`;
     progresoExp.textContent = `${nuevaExp - xpMin} / ${xpMax - xpMin}`;
-    if (nivelTexto) nivelTexto.textContent = texto;
+    nivelTexto.textContent = texto;
 
-    // Mostrar botones de planes correctamente
-    const planActual = datos.plan || "";
     botonesPlanes.forEach(boton => {
       const plan = boton.dataset.plan;
-
-      if (plan === "Personal") {
-        if (plan === planActual) {
-          boton.textContent = "Usando";
-          boton.disabled = true;
-        } else {
-          boton.textContent = "Adquirir";
-          boton.disabled = false;
-        }
+      if (plan === datos.plan) {
+        boton.textContent = "Usando";
+        boton.disabled = true;
       } else {
+        boton.textContent = "Adquirir";
+        boton.disabled = false;
+      }
+      if (plan !== "Personal") {
         boton.textContent = "Próximamente";
         boton.disabled = true;
         boton.classList.add("btn-plan-disabled");
       }
     });
-  });
+  }
 
-  async function guardarEnFirestore(campo, valor) {
+  async function actualizarUI(campo, valor) {
     const user = auth.currentUser;
     if (!user) return;
-    const ref = doc(db, "usuarios", user.uid);
     try {
-      await updateDoc(ref, { [campo]: valor });
+      await updateDoc(doc(db, "usuarios", user.uid), { [campo]: valor });
+      const cacheKey = `perfil-${user.uid}`;
+      const cache = JSON.parse(sessionStorage.getItem(cacheKey)) || {};
+      cache[campo] = valor;
+      sessionStorage.setItem(cacheKey, JSON.stringify(cache));
     } catch (e) {
-      console.error("Error al guardar en Firestore:", e);
+      console.error("Error al actualizar campo:", campo, e);
     }
   }
 
   function getNivelData(xp) {
-    let nivel = 0;
-    let xpTotal = 0;
-    let xpMin = 0;
-    let xpMax = 100;
-
+    let nivel = 0, xpMin = 0, xpMax = 100;
     while (xp >= xpMax) {
       nivel++;
       xpMin = xpMax;
       xpMax = Math.floor(xpMax * 1.2);
     }
-
-    const progreso = (xp - xpMin) / (xpMax - xpMin);
-    const texto = `Nivel ${nivel}`;
-    return { nivel, xpMin, xpMax, progreso, texto };
+    return {
+      nivel,
+      xpMin,
+      xpMax,
+      progreso: (xp - xpMin) / (xpMax - xpMin),
+      texto: `Nivel ${nivel}`
+    };
   }
 });
-
