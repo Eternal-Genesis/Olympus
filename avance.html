@@ -6,34 +6,28 @@
   <title>Gestión de Hábitos – Olympus</title>
   <link rel="stylesheet" href="navbar.css" />
   <link rel="stylesheet" href="avance.css" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <!-- Menú superior cargado dinámicamente -->
   <header id="navbar"></header>
 
-  <!-- Cargando -->
-  <div id="loading">Cargando...</div>
-
   <!-- Contenido principal -->
   <main class="avance-container">
     <!-- Sección de hábitos del día -->
-    <section class="seccion-hoy oculto">
+    <section class="seccion-hoy">
       <h2>Resumen de Hoy</h2>
       <div class="habitos-hoy"></div>
+    </section>
+
+    <!-- Sección de acciones rápidas -->
+    <section class="gestion-habitos">
       <div class="acciones-rapidas">
         <button id="btn-crear-habito">+ Nuevo Hábito</button>
       </div>
     </section>
 
-    <!-- Sección de historial de hábitos -->
-    <section class="seccion-historial oculto">
-      <h2>Historial Reciente</h2>
-      <div class="lista-historial"></div>
-    </section>
-
     <!-- Sección de estadísticas -->
-    <section class="estadisticas oculto">
+    <section class="estadisticas">
       <h2>Estadísticas de los Últimos 30 Días</h2>
       <canvas id="grafico-habitos" width="100%" height="300"></canvas>
     </section>
