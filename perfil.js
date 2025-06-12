@@ -39,7 +39,6 @@ document.addEventListener("DOMContentLoaded", () => {
     contador.style.color = largo >= 200 ? "#ff6060" : "#888";
   });
 
-  // Editar perfil
   btnEditar?.addEventListener("click", async () => {
     if (!modoEdicion) {
       apodoInput.disabled = false;
@@ -56,7 +55,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Código de descuento
   inputCodigo?.addEventListener("input", () => {
     const codigo = inputCodigo.value.trim().toUpperCase();
     if (codigo === "MARPE") {
@@ -72,7 +70,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Subir imagen
   subirFoto?.addEventListener("change", (e) => {
     const archivo = e.target.files[0];
     if (!archivo) return;
@@ -86,14 +83,12 @@ document.addEventListener("DOMContentLoaded", () => {
     lector.readAsDataURL(archivo);
   });
 
-  // Cerrar sesión
   cerrarSesionBtn?.addEventListener("click", () => {
     signOut(auth)
       .then(() => window.location.href = "index.html")
       .catch(err => console.error("Error al cerrar sesión:", err));
   });
 
-  // Adquirir plan
   botonesPlanes.forEach(boton => {
     boton.addEventListener("click", async () => {
       const plan = boton.dataset.plan;
@@ -118,7 +113,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // Usuario actual y carga optimista
   onAuthStateChanged(auth, async (user) => {
     if (!user) return;
     const uid = user.uid;
@@ -126,8 +120,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const ref = doc(db, "usuarios", uid);
     const cacheKey = `perfil-${uid}`;
-    const cache = sessionStorage.getItem(cacheKey);
 
+    const cache = localStorage.getItem(cacheKey);
     if (cache) renderPerfil(JSON.parse(cache));
 
     try {
@@ -144,7 +138,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       const datos = snap.data();
-      sessionStorage.setItem(cacheKey, JSON.stringify(datos));
+      localStorage.setItem(cacheKey, JSON.stringify(datos));
       renderPerfil(datos);
     } catch (e) {
       console.error("Error al cargar datos:", e);
@@ -186,9 +180,9 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       await updateDoc(doc(db, "usuarios", user.uid), { [campo]: valor });
       const cacheKey = `perfil-${user.uid}`;
-      const cache = JSON.parse(sessionStorage.getItem(cacheKey)) || {};
+      const cache = JSON.parse(localStorage.getItem(cacheKey)) || {};
       cache[campo] = valor;
-      sessionStorage.setItem(cacheKey, JSON.stringify(cache));
+      localStorage.setItem(cacheKey, JSON.stringify(cache));
     } catch (e) {
       console.error("Error al actualizar campo:", campo, e);
     }
