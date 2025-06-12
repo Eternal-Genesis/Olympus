@@ -1,4 +1,4 @@
-// avance.js sin historial visual, solo gráfico y hábitos diarios
+// avance.js con hábitos base diarios, gráfico funcional y sincronización eficiente
 import {
   auth,
   db,
@@ -10,6 +10,7 @@ import {
 
 const hoy = new Date().toISOString().split("T")[0];
 const habitosHoyKey = (uid) => `habitos-hoy-${uid}`;
+const habitosBaseKey = (uid) => `habitos-base-${uid}`;
 const historialKey = (uid) => `historial-${uid}`;
 const sincronizadoKey = (uid) => `ultima-sincronizacion-${uid}`;
 
@@ -33,9 +34,14 @@ onAuthStateChanged(auth, async (user) => {
   const cache = localStorage.getItem(habitosHoyKey(uid));
   if (cache) {
     habitos = JSON.parse(cache);
-    renderHabitos();
-    document.querySelector(".seccion-hoy")?.classList.remove("oculto");
+  } else {
+    const base = JSON.parse(localStorage.getItem(habitosBaseKey(uid))) || [];
+    habitos = base.map(h => ({ ...h, completado: false }));
+    localStorage.setItem(habitosHoyKey(uid), JSON.stringify(habitos));
   }
+
+  renderHabitos();
+  document.querySelector(".seccion-hoy")?.classList.remove("oculto");
 
   const ultimaSync = localStorage.getItem(sincronizadoKey(uid));
   if (ultimaSync !== hoy) {
@@ -45,7 +51,6 @@ onAuthStateChanged(auth, async (user) => {
   }
 
   renderEstadisticas();
-  document.querySelector(".seccion-hoy")?.classList.remove("oculto");
   contenedorEstadisticas?.classList.remove("oculto");
   document.getElementById("loading")?.classList.add("oculto");
 });
@@ -158,7 +163,13 @@ form.addEventListener("submit", async e => {
     const index = habitos.findIndex(h => h.id === parseInt(id));
     if (index !== -1) habitos[index].nombre = nombre;
   } else {
-    habitos.push({ id: Date.now(), nombre, completado: false });
+    const nuevo = { id: Date.now(), nombre, completado: false };
+    habitos.push(nuevo);
+
+    // Agregar a hábitos base también
+    const base = JSON.parse(localStorage.getItem(habitosBaseKey(uid))) || [];
+    base.push({ id: nuevo.id, nombre: nuevo.nombre });
+    localStorage.setItem(habitosBaseKey(uid), JSON.stringify(base));
   }
 
   localStorage.setItem(habitosHoyKey(uid), JSON.stringify(habitos));
@@ -224,4 +235,3 @@ contenedorHabitos.addEventListener("click", async e => {
     }
   }
 });
-
