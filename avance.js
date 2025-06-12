@@ -1,4 +1,4 @@
-// avance.js con sincronización diaria + historial local + gráfico
+// avance.js sin historial visual, solo gráfico y hábitos diarios
 import {
   auth,
   db,
@@ -18,7 +18,6 @@ let habitos = [];
 let graficoHabitos = null;
 
 const contenedorHabitos = document.querySelector(".habitos-hoy");
-const contenedorHistorial = document.querySelector(".lista-historial");
 const contenedorEstadisticas = document.querySelector(".estadisticas");
 const modal = document.getElementById("modal-habito");
 const form = document.getElementById("form-habito");
@@ -45,10 +44,8 @@ onAuthStateChanged(auth, async (user) => {
     localStorage.setItem(sincronizadoKey(uid), hoy);
   }
 
-  renderHistorial();
   renderEstadisticas();
   document.querySelector(".seccion-hoy")?.classList.remove("oculto");
-  document.querySelector(".seccion-historial")?.classList.remove("oculto");
   contenedorEstadisticas?.classList.remove("oculto");
   document.getElementById("loading")?.classList.add("oculto");
 });
@@ -60,24 +57,6 @@ function actualizarHistorialLocal() {
   const limpio = {};
   fechas.forEach(f => limpio[f] = historial[f]);
   localStorage.setItem(historialKey(uid), JSON.stringify(limpio));
-}
-
-function renderHistorial() {
-  contenedorHistorial.innerHTML = "";
-  const historial = JSON.parse(localStorage.getItem(historialKey(uid))) || {};
-  const fechas = Object.keys(historial).sort().slice(-4);
-  fechas.forEach(f => {
-    const cont = document.createElement("div");
-    cont.className = "habito-dia";
-    cont.innerHTML = `<h4>${f}</h4>`;
-    historial[f].forEach(h => {
-      const div = document.createElement("div");
-      div.className = `habito ${h.completado ? "completado" : "incompleto"}`;
-      div.innerHTML = `<span class="estado">${h.completado ? "✓" : "✗"}</span>${h.nombre}`;
-      cont.appendChild(div);
-    });
-    contenedorHistorial.appendChild(cont);
-  });
 }
 
 function renderEstadisticas() {
@@ -245,3 +224,4 @@ contenedorHabitos.addEventListener("click", async e => {
     }
   }
 });
+
