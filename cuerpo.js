@@ -28,6 +28,18 @@ onAuthStateChanged(auth, user => {
     mostrarResultado(datos);
     form.classList.add("oculto");
     seccionResultado.classList.remove("oculto");
+
+  // Mostrar botón de reinicio
+  const btnReiniciar = document.createElement("button");
+  btnReiniciar.textContent = "Reiniciar plan";
+  btnReiniciar.className = "btn-reiniciar";
+  btnReiniciar.addEventListener("click", () => {
+    localStorage.removeItem(`nutricion-${uid}`);
+    seccionResultado.classList.add("oculto");
+    form.classList.remove("oculto");
+    form.reset();
+  });
+  seccionResultado.appendChild(btnReiniciar);
   }
 });
 
@@ -83,4 +95,3 @@ function mostrarResultado({ calorias, proteinas, carbohidratos, grasas }) {
 }
 
 // 🚧 En desarrollo: función para agregar "Recalcular plan" y seguimiento diario
-
