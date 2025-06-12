@@ -1,13 +1,14 @@
-// avance.js - Gestión de hábitos con gráfico mejorado
+// avance.js - Gestión de hábitos con gráfico de porcentaje mejorado
 import {
   Chart,
-  BarController,
-  BarElement,
+  LineController,
+  LineElement,
+  PointElement,
   CategoryScale,
   LinearScale,
   Tooltip
 } from 'https://cdn.skypack.dev/chart.js';
-Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip);
+Chart.register(LineController, LineElement, PointElement, CategoryScale, LinearScale, Tooltip);
 
 import {
   auth,
@@ -110,7 +111,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   async function cargarEstadisticas(uid) {
     const labels = [];
-    const datos = [];
+    const porcentajes = [];
+    const detalles = [];
 
     for (let i = 30; i >= 1; i--) {
       const fecha = new Date();
@@ -120,48 +122,60 @@ document.addEventListener("DOMContentLoaded", () => {
       const snap = await getDoc(ref);
 
       labels.push(fecha.getDate().toString().padStart(2, "0"));
-      datos.push(snap.exists() ? snap.data().items.filter(h => h.completado).length : 0);
+
+      if (snap.exists()) {
+        const items = snap.data().items;
+        const total = items.length;
+        const completados = items.filter(h => h.completado).length;
+        const porcentaje = total > 0 ? Math.round((completados / total) * 100) : 0;
+        porcentajes.push(porcentaje);
+        detalles.push(`${porcentaje}% completado (${completados} de ${total})`);
+      } else {
+        porcentajes.push(0);
+        detalles.push("0% completado (0 de 0)");
+      }
     }
 
     const ctx = document.getElementById("grafico-habitos").getContext("2d");
     new Chart(ctx, {
-      type: "bar",
+      type: "line",
       data: {
         labels,
         datasets: [{
-          label: "Hábitos completados",
-          data: datos,
-          backgroundColor: "rgba(0, 240, 255, 0.6)",
-          borderRadius: 6,
-          barThickness: 16
+          label: "Porcentaje de cumplimiento diario",
+          data: porcentajes,
+          fill: true,
+          borderColor: "#00f0ff",
+          backgroundColor: "rgba(0, 240, 255, 0.1)",
+          tension: 0.4,
+          pointRadius: 3,
+          pointBackgroundColor: "#00f0ff"
         }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          legend: { display: false },
           tooltip: {
+            callbacks: {
+              label: (ctx) => detalles[ctx.dataIndex]
+            },
             backgroundColor: "#2a2a2a",
             titleColor: "#00f0ff",
-            bodyColor: "#fff",
-            callbacks: {
-              label: ctx => `${ctx.raw} completado${ctx.raw !== 1 ? 's' : ''}`
-            }
-          }
+            bodyColor: "#fff"
+          },
+          legend: { display: false }
         },
         scales: {
-          x: {
-            grid: { display: false },
-            ticks: { color: "#aaa" }
-          },
           y: {
             beginAtZero: true,
-            grid: {
-              color: "#333",
-              drawBorder: false
-            },
-            ticks: { color: "#aaa" }
+            max: 100,
+            ticks: { color: "#aaa", callback: val => val + "%" },
+            grid: { color: "#333", drawBorder: false }
+          },
+          x: {
+            ticks: { color: "#aaa" },
+            grid: { display: false }
           }
         }
       }
@@ -199,7 +213,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Eventos UI
   document.addEventListener("click", (e) => {
     document.querySelectorAll(".menu-opciones").forEach(menu => {
       if (!menu.contains(e.target) && !menu.previousElementSibling.contains(e.target)) {
