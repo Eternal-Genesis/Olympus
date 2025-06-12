@@ -240,3 +240,7 @@ button:hover {
   border-radius: 12px;
   margin-top: 1rem;
 }
+
+.estadisticas {
+  padding-bottom: 2rem;
+}
