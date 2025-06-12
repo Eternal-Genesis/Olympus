@@ -6,6 +6,10 @@ body {
   font-family: 'Inter', sans-serif;
 }
 
+h2, h3, label {
+  color: #f1f1f1;
+}
+
 h2 {
   font-size: 1.6rem;
   font-weight: 700;
@@ -19,7 +23,7 @@ h2 {
   padding: 2rem 1rem;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 2.5rem;
 }
 
 /* === SECCIÓN DE HÁBITOS DEL DÍA === */
@@ -30,13 +34,13 @@ h2 {
 
 .habito-item {
   background-color: #1e1e1e;
-  padding: 1rem;
+  padding: 1rem 1.2rem;
   border-left: 4px solid #00f0ff;
-  border-radius: 8px;
+  border-radius: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: all 0.2s ease-in-out;
+  transition: background-color 0.2s ease;
 }
 
 .habito-item:hover {
@@ -185,14 +189,14 @@ button:hover {
 
 /* === GRÁFICO DE ESTADÍSTICAS === */
 .estadisticas {
-  padding: 2rem 1rem 3rem;
+  padding: 2.5rem 1rem 3rem;
   background-color: #181818;
   border-radius: 12px;
   box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
 }
 
 .estadisticas h2 {
-  margin-bottom: 0;
+  margin-bottom: 0.5rem;
   text-align: center;
   font-size: 1.5rem;
   color: #00f0ff;
@@ -207,4 +211,27 @@ button:hover {
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
   border: 1px solid #2a2a2a;
+  transition: box-shadow 0.3s ease;
+}
+
+.estadisticas canvas:hover {
+  box-shadow: 0 0 0 2px #00f0ff;
+}
+
+@media (max-width: 600px) {
+  .avance-container {
+    padding: 1.5rem 1rem;
+  }
+
+  .modal-contenido {
+    padding: 1.5rem;
+  }
+
+  .estadisticas {
+    padding: 2rem 1rem;
+  }
+
+  .estadisticas h2 {
+    font-size: 1.3rem;
+  }
 }
