@@ -300,3 +300,4 @@ form.addEventListener("submit", async e => {
 
 btnCancelar.addEventListener("click", cerrarModal);
 btnNuevo.addEventListener("click", () => abrirModal());
+
