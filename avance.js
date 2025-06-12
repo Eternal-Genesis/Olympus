@@ -323,15 +323,3 @@ contenedorHabitos.addEventListener("click", async e => {
     }
   }
 });
-
-async function eliminarHistorialDePrueba(uid) {
-  const hoy = new Date();
-  for (let i = 1; i <= 5; i++) {
-    const fecha = new Date(hoy);
-    fecha.setDate(hoy.getDate() - i);
-    const fechaStr = fecha.toISOString().split("T")[0];
-    const ref = doc(db, "usuarios", uid, "historialHabitos", fechaStr);
-    await deleteDoc(ref);
-  }
-  console.log("Historial de prueba eliminado");
-}
