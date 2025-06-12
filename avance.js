@@ -16,6 +16,7 @@ const estadisticasKey = (uid) => `estadisticas-${uid}`;
 
 let uid = null;
 let habitos = [];
+let graficoHabitos = null;
 
 const contenedorHabitos = document.querySelector(".habitos-hoy");
 const contenedorHistorial = document.querySelector(".lista-historial");
@@ -224,9 +225,14 @@ async function cargarEstadisticas(uid) {
 function renderGrafico({ labels, porcentajes, detalles }) {
   const canvas = document.getElementById("grafico-habitos");
   if (!canvas) return;
-  canvas.style.display = "block";
   const ctx = canvas.getContext("2d");
-  new Chart(ctx, {
+
+  // Si ya existe un gráfico, lo destruimos para evitar errores
+  if (graficoHabitos) {
+    graficoHabitos.destroy();
+  }
+
+  graficoHabitos = new Chart(ctx, {
     type: "line",
     data: {
       labels,
