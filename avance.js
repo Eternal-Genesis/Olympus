@@ -1,4 +1,4 @@
-// avance.js con sistema de caché inteligente como perfil.js
+// avance.js con sincronización diaria + historial local + gráfico
 import {
   auth,
   db,
@@ -9,10 +9,9 @@ import {
 } from "./firebase.js";
 
 const hoy = new Date().toISOString().split("T")[0];
-
 const habitosHoyKey = (uid) => `habitos-hoy-${uid}`;
 const historialKey = (uid) => `historial-${uid}`;
-const estadisticasKey = (uid) => `estadisticas-${uid}`;
+const sincronizadoKey = (uid) => `ultima-sincronizacion-${uid}`;
 
 let uid = null;
 let habitos = [];
@@ -29,59 +28,121 @@ const btnCancelar = document.getElementById("btn-cancelar");
 const btnNuevo = document.getElementById("btn-crear-habito");
 
 onAuthStateChanged(auth, async (user) => {
-  console.log("¿Usuario activo?", user);
   if (!user) return;
-  try {
-    uid = user.uid;
+  uid = user.uid;
 
-    const cacheHabitos = localStorage.getItem(habitosHoyKey(uid));
-    if (cacheHabitos) {
-      habitos = JSON.parse(cacheHabitos);
-      renderHabitos();
-      document.querySelector(".seccion-hoy")?.classList.remove("oculto");
-    }
-
-    const cacheHistorial = localStorage.getItem(historialKey(uid));
-    if (cacheHistorial) {
-      renderHistorial(JSON.parse(cacheHistorial));
-      document.querySelector(".seccion-historial")?.classList.remove("oculto");
-    }
-
-    const cacheStats = localStorage.getItem(estadisticasKey(uid));
-    if (cacheStats) {
-      renderGrafico(JSON.parse(cacheStats));
-      contenedorEstadisticas?.classList.remove("oculto");
-    }
-
-    await Promise.all([
-      cargarHabitos(uid),
-      cargarHistorial(uid),
-      cargarEstadisticas(uid)
-    ]);
-
+  const cache = localStorage.getItem(habitosHoyKey(uid));
+  if (cache) {
+    habitos = JSON.parse(cache);
     renderHabitos();
     document.querySelector(".seccion-hoy")?.classList.remove("oculto");
-    document.querySelector(".seccion-historial")?.classList.remove("oculto");
-    contenedorEstadisticas?.classList.remove("oculto");
-    document.getElementById("loading")?.classList.add("oculto");
-  } catch (err) {
-    console.error("Error al cargar avance:", err);
-    document.getElementById("loading").textContent = "Error al cargar los datos.";
   }
+
+  const ultimaSync = localStorage.getItem(sincronizadoKey(uid));
+  if (ultimaSync !== hoy) {
+    await setDoc(doc(db, "usuarios", uid, "historialHabitos", hoy), { items: habitos });
+    actualizarHistorialLocal();
+    localStorage.setItem(sincronizadoKey(uid), hoy);
+  }
+
+  renderHistorial();
+  renderEstadisticas();
+  document.querySelector(".seccion-hoy")?.classList.remove("oculto");
+  document.querySelector(".seccion-historial")?.classList.remove("oculto");
+  contenedorEstadisticas?.classList.remove("oculto");
+  document.getElementById("loading")?.classList.add("oculto");
 });
 
-async function cargarHabitos(uid) {
-  const ref = doc(db, "usuarios", uid, "historialHabitos", hoy);
-  const snap = await getDoc(ref);
-  habitos = snap.exists() ? snap.data().items : [];
-  localStorage.setItem(habitosHoyKey(uid), JSON.stringify(habitos));
+function actualizarHistorialLocal() {
+  let historial = JSON.parse(localStorage.getItem(historialKey(uid))) || {};
+  historial[hoy] = habitos;
+  const fechas = Object.keys(historial).sort().slice(-30);
+  const limpio = {};
+  fechas.forEach(f => limpio[f] = historial[f]);
+  localStorage.setItem(historialKey(uid), JSON.stringify(limpio));
 }
 
-async function guardarHabitos() {
-  if (!uid) return;
-  const ref = doc(db, "usuarios", uid, "historialHabitos", hoy);
-  await setDoc(ref, { items: habitos });
-  localStorage.setItem(habitosHoyKey(uid), JSON.stringify(habitos));
+function renderHistorial() {
+  contenedorHistorial.innerHTML = "";
+  const historial = JSON.parse(localStorage.getItem(historialKey(uid))) || {};
+  const fechas = Object.keys(historial).sort().slice(-4);
+  fechas.forEach(f => {
+    const cont = document.createElement("div");
+    cont.className = "habito-dia";
+    cont.innerHTML = `<h4>${f}</h4>`;
+    historial[f].forEach(h => {
+      const div = document.createElement("div");
+      div.className = `habito ${h.completado ? "completado" : "incompleto"}`;
+      div.innerHTML = `<span class="estado">${h.completado ? "✓" : "✗"}</span>${h.nombre}`;
+      cont.appendChild(div);
+    });
+    contenedorHistorial.appendChild(cont);
+  });
+}
+
+function renderEstadisticas() {
+  const historial = JSON.parse(localStorage.getItem(historialKey(uid))) || {};
+  const fechas = Object.keys(historial).sort().slice(-30);
+  const labels = [], porcentajes = [], detalles = [];
+
+  fechas.forEach(fecha => {
+    const dia = historial[fecha];
+    const total = dia.length;
+    const completados = dia.filter(h => h.completado).length;
+    const porcentaje = total ? Math.round((completados / total) * 100) : 0;
+    labels.push(fecha);
+    porcentajes.push(porcentaje);
+    detalles.push(`${completados}/${total} hábitos completados`);
+  });
+
+  const canvas = document.getElementById("grafico-habitos");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+
+  if (graficoHabitos) graficoHabitos.destroy();
+  graficoHabitos = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels,
+      datasets: [{
+        label: "Porcentaje de cumplimiento diario",
+        data: porcentajes,
+        fill: true,
+        borderColor: "#00f0ff",
+        backgroundColor: "rgba(0, 240, 255, 0.1)",
+        tension: 0.4,
+        pointRadius: 3,
+        pointBackgroundColor: "#00f0ff"
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        tooltip: {
+          callbacks: {
+            label: ctx => detalles[ctx.dataIndex]
+          },
+          backgroundColor: "#2a2a2a",
+          titleColor: "#00f0ff",
+          bodyColor: "#fff"
+        },
+        legend: { display: false }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          max: 100,
+          ticks: { color: "#aaa", callback: val => val + "%" },
+          grid: { color: "#333", drawBorder: false }
+        },
+        x: {
+          ticks: { color: "#aaa" },
+          grid: { display: false }
+        }
+      }
+    }
+  });
 }
 
 function renderHabitos() {
@@ -121,7 +182,7 @@ form.addEventListener("submit", async e => {
     habitos.push({ id: Date.now(), nombre, completado: false });
   }
 
-  await guardarHabitos();
+  localStorage.setItem(habitosHoyKey(uid), JSON.stringify(habitos));
   cerrarModal();
   renderHabitos();
 });
@@ -148,151 +209,6 @@ function cerrarModal() {
   inputId.value = "";
 }
 
-async function cargarHistorial(uid) {
-  const dias = 4;
-  const hoy = new Date();
-  const fechas = [];
-
-  for (let i = 1; i <= dias; i++) {
-    const fecha = new Date(hoy);
-    fecha.setDate(hoy.getDate() - i);
-    const fechaStr = fecha.toISOString().split("T")[0];
-    fechas.push({ fecha: fechaStr, fechaObj: fecha });
-  }
-
-  const promesas = fechas.map(({ fecha }) =>
-    getDoc(doc(db, "usuarios", uid, "historialHabitos", fecha))
-      .then(snap => ({ fecha, data: snap.exists() ? snap.data().items : null }))
-  );
-
-  const resultados = await Promise.all(promesas);
-  const historial = resultados.filter(r => r.data).map(r => ({ fecha: r.fecha, items: r.data }));
-
-  localStorage.setItem(historialKey(uid), JSON.stringify(historial));
-  renderHistorial(historial);
-}
-
-function renderHistorial(historial) {
-  contenedorHistorial.innerHTML = "";
-  historial.forEach(({ fecha, items }) => {
-    const fechaObj = new Date(fecha);
-    const fechaTexto = `${obtenerDiaSemana(fechaObj)} ${fechaObj.getDate().toString().padStart(2, '0')} ${obtenerMes(fechaObj)}`;
-    const card = document.createElement("div");
-    card.className = "habito-dia";
-    card.innerHTML = `<h4>${fechaTexto}</h4>`;
-    items.forEach(h => {
-      const div = document.createElement("div");
-      div.className = `habito ${h.completado ? '' : 'incompleto'}`;
-      div.innerHTML = `<span class="estado">${h.completado ? '✓' : '✗'}</span>${h.nombre}`;
-      card.appendChild(div);
-    });
-    contenedorHistorial.appendChild(card);
-  });
-}
-
-async function cargarEstadisticas(uid) {
-  const labels = [];
-  const porcentajes = [];
-  const detalles = [];
-
-  for (let i = 30; i >= 1; i--) {
-    const fecha = new Date();
-    fecha.setDate(fecha.getDate() - i);
-    const fechaStr = fecha.toISOString().split("T")[0];
-    const ref = doc(db, "usuarios", uid, "historialHabitos", fechaStr);
-    const snap = await getDoc(ref);
-
-    labels.push(fecha.getDate().toString().padStart(2, "0"));
-
-    if (snap.exists()) {
-      const items = snap.data().items;
-      const total = items.length;
-      const completados = items.filter(h => h.completado).length;
-      const porcentaje = total > 0 ? Math.round((completados / total) * 100) : 0;
-      porcentajes.push(porcentaje);
-      detalles.push(`${porcentaje}% completado (${completados} de ${total})`);
-    } else {
-      porcentajes.push(0);
-      detalles.push("0% completado (0 de 0)");
-    }
-  }
-
-  const datos = { labels, porcentajes, detalles };
-  localStorage.setItem(estadisticasKey(uid), JSON.stringify(datos));
-  renderGrafico(datos);
-}
-
-function renderGrafico({ labels, porcentajes, detalles }) {
-  const canvas = document.getElementById("grafico-habitos");
-  if (!canvas) return;
-  const ctx = canvas.getContext("2d");
-
-  // Si ya existe un gráfico, lo destruimos para evitar errores
-  if (graficoHabitos) {
-    graficoHabitos.destroy();
-  }
-
-  graficoHabitos = new Chart(ctx, {
-    type: "line",
-    data: {
-      labels,
-      datasets: [{
-        label: "Porcentaje de cumplimiento diario",
-        data: porcentajes,
-        fill: true,
-        borderColor: "#00f0ff",
-        backgroundColor: "rgba(0, 240, 255, 0.1)",
-        tension: 0.4,
-        pointRadius: 3,
-        pointBackgroundColor: "#00f0ff"
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        tooltip: {
-          callbacks: {
-            label: (ctx) => detalles[ctx.dataIndex]
-          },
-          backgroundColor: "#2a2a2a",
-          titleColor: "#00f0ff",
-          bodyColor: "#fff"
-        },
-        legend: { display: false }
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-          max: 100,
-          ticks: { color: "#aaa", callback: val => val + "%" },
-          grid: { color: "#333", drawBorder: false }
-        },
-        x: {
-          ticks: { color: "#aaa" },
-          grid: { display: false }
-        }
-      }
-    }
-  });
-}
-
-function obtenerDiaSemana(f) {
-  return ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"][f.getDay()];
-}
-
-function obtenerMes(f) {
-  return ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"][f.getMonth()];
-}
-
-document.addEventListener("click", (e) => {
-  document.querySelectorAll(".menu-opciones").forEach(menu => {
-    if (!menu.contains(e.target) && !menu.previousElementSibling.contains(e.target)) {
-      menu.classList.add("oculto");
-    }
-  });
-});
-
 contenedorHabitos.addEventListener("click", async e => {
   const btnMenu = e.target.closest(".btn-menu");
   if (btnMenu) {
@@ -311,9 +227,9 @@ contenedorHabitos.addEventListener("click", async e => {
     if (accion === "editar") abrirModal(habitos[index]);
     if (accion === "eliminar" && confirm("¿Eliminar este hábito?")) {
       habitos.splice(index, 1);
-      await guardarHabitos();
     }
 
+    localStorage.setItem(habitosHoyKey(uid), JSON.stringify(habitos));
     renderHabitos();
     return;
   }
@@ -324,7 +240,7 @@ contenedorHabitos.addEventListener("click", async e => {
     const index = habitos.findIndex(h => h.id === id);
     if (index !== -1) {
       habitos[index].completado = !habitos[index].completado;
-      await guardarHabitos();
+      localStorage.setItem(habitosHoyKey(uid), JSON.stringify(habitos));
       renderHabitos();
     }
   }
