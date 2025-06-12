@@ -3,94 +3,70 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Nutrición – Olympus</title>
+  <title>Mi Cuerpo – Olympus</title>
   <link rel="stylesheet" href="navbar.css" />
   <link rel="stylesheet" href="cuerpo.css" />
 </head>
 <body>
-  <!-- Navbar dinámico -->
+  <!-- Navbar global -->
   <header id="navbar"></header>
 
-  <main class="cuerpo-wrapper">
-    <!-- FASE 1: Evaluación -->
-    <section class="evaluacion-section" id="evaluacion-section">
-      <h2>Calculá tu plan nutricional personalizado</h2>
-      <form id="evaluacion-form">
-        <div class="input-group">
-          <label for="sexo">Sexo</label>
-          <select id="sexo" required>
-            <option value="hombre">Hombre</option>
-            <option value="mujer">Mujer</option>
-          </select>
-        </div>
+  <!-- Navegación interna -->
+  <nav class="subnav">
+    <button class="tab-btn active" data-tab="resumen">🏠 Resumen</button>
+    <button class="tab-btn" data-tab="nutricion">🥗 Nutrición</button>
+    <button class="tab-btn" data-tab="entrenamiento">💪 Entrenamiento</button>
+    <button class="tab-btn" data-tab="seguimiento">📈 Seguimiento</button>
+    <button class="tab-btn" data-tab="revision">🔁 Revisión</button>
+  </nav>
 
-        <div class="input-group">
-          <label for="edad">Edad</label>
-          <input type="number" id="edad" required />
-        </div>
+  <main class="cuerpo-app">
 
-        <div class="input-group">
-          <label for="peso">Peso (kg)</label>
-          <input type="number" id="peso" required />
-        </div>
-
-        <div class="input-group">
-          <label for="altura">Altura (cm)</label>
-          <input type="number" id="altura" required />
-        </div>
-
-        <div class="input-group">
-          <label for="actividad">Nivel de actividad</label>
-          <select id="actividad" required>
-            <option value="1.2">Sedentario</option>
-            <option value="1.375">Ligera</option>
-            <option value="1.55">Moderada</option>
-            <option value="1.725">Alta</option>
-            <option value="1.9">Muy alta</option>
-          </select>
-        </div>
-
-        <div class="input-group">
-          <label for="objetivo">Objetivo</label>
-          <select id="objetivo" required>
-            <option value="bajar">Bajar grasa</option>
-            <option value="mantener">Mantener peso</option>
-            <option value="subir">Subir masa</option>
-          </select>
-        </div>
-
-        <button type="submit" class="btn-principal">Generar Plan</button>
-      </form>
-    </section>
-
-    <!-- FASE 2: Visualización del plan -->
-    <section class="plan-section oculto" id="plan-section">
-      <h2>Tu Plan Nutricional Diario</h2>
-      <div class="plan-card">
-        <p><strong>Calorías objetivo:</strong> <span id="plan-calorias"></span></p>
-        <p><strong>Proteínas:</strong> <span id="plan-proteinas"></span></p>
-        <p><strong>Carbohidratos:</strong> <span id="plan-carbohidratos"></span></p>
-        <p><strong>Grasas:</strong> <span id="plan-grasas"></span></p>
-        <button id="reiniciar-plan" class="btn-secundario">Reiniciar plan</button>
+    <!-- RESUMEN GENERAL -->
+    <section id="tab-resumen" class="tab-content active">
+      <h2>Resumen general</h2>
+      <div class="resumen-grid">
+        <div class="resumen-box"><h3>Peso actual</h3><p id="peso-actual">– kg</p></div>
+        <div class="resumen-box"><h3>Calorías/día</h3><p id="calorias-dia">– kcal</p></div>
+        <div class="resumen-box"><h3>Objetivo</h3><p id="objetivo-general">–</p></div>
+        <div class="resumen-box"><h3>Última revisión</h3><p id="ultima-revision">–</p></div>
       </div>
     </section>
 
-    <!-- FASE 3: Revisión mensual -->
-    <section class="revision-section oculto" id="revision-section">
-      <h2>Revisión mensual</h2>
-      <div id="estado-revision"></div>
-
-      <form id="revision-form" class="oculto">
-        <div class="input-group">
-          <label for="peso-actual">¿Cuál es tu peso actual?</label>
-          <input type="number" id="peso-actual" step="0.1" required />
-        </div>
-        <button type="submit" class="btn-principal">Guardar y ajustar plan</button>
-      </form>
+    <!-- PLAN DE NUTRICIÓN -->
+    <section id="tab-nutricion" class="tab-content oculto">
+      <h2>Plan Nutricional</h2>
+      <div id="contenedor-nutricion">
+        <!-- Aquí se carga o genera el plan con JS -->
+      </div>
     </section>
+
+    <!-- PLAN DE ENTRENAMIENTO -->
+    <section id="tab-entrenamiento" class="tab-content oculto">
+      <h2>Plan de Entrenamiento</h2>
+      <div id="contenedor-entrenamiento">
+        <!-- Aquí se genera el entrenamiento personalizado -->
+      </div>
+    </section>
+
+    <!-- SEGUIMIENTO -->
+    <section id="tab-seguimiento" class="tab-content oculto">
+      <h2>Seguimiento Diario</h2>
+      <div id="seguimiento-dia">
+        <!-- Registro de comidas, peso, entrenamientos -->
+      </div>
+    </section>
+
+    <!-- REVISIÓN MENSUAL -->
+    <section id="tab-revision" class="tab-content oculto">
+      <h2>Revisión Mensual</h2>
+      <div id="revision-mensual">
+        <!-- Evaluación del progreso -->
+      </div>
+    </section>
+
   </main>
 
-  <!-- Scripts -->
   <script src="navbar.js"></script>
   <script type="module" src="cuerpo.js"></script>
 </body>
