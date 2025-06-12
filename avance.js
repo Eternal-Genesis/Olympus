@@ -5,7 +5,6 @@ import {
   doc,
   getDoc,
   setDoc,
-  deleteDoc
 } from "./firebase.js";
 
 const hoy = new Date().toISOString().split("T")[0];
