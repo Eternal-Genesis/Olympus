@@ -1,80 +1,114 @@
-/* cuerpo.css – Estilos base para la vista de nutrición */
+:root {
+  --fondo: #121212;
+  --fondo-claro: #1e1e1e;
+  --primario: #00c3d6;
+  --texto: #f0f0f0;
+  --secundario: #888;
+  --borde: #333;
+  --error: #ff6060;
+}
+
 body {
-  background-color: #121212;
-  color: #f1f1f1;
-  font-family: 'Inter', sans-serif;
   margin: 0;
-  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: var(--fondo);
+  color: var(--texto);
+  line-height: 1.6;
 }
 
-.cuerpo-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 2rem;
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+.cuerpo-wrapper {
+  max-width: 600px;
+  margin: auto;
+  padding: 2rem 1rem;
 }
 
-h1, h2 {
+h2 {
   text-align: center;
-  color: #00f0ff;
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
+  font-size: 1.6rem;
+  color: var(--texto);
 }
 
-form {
-  display: grid;
-  gap: 1rem;
-  background-color: #1e1e1e;
-  padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.4);
-}
-
-form label {
+.input-group {
+  margin-bottom: 1.2rem;
   display: flex;
   flex-direction: column;
+}
+
+.input-group label {
+  margin-bottom: 0.4rem;
   font-weight: 600;
-  font-size: 0.95rem;
 }
 
-form input,
-form select {
-  padding: 0.5rem;
-  border-radius: 8px;
+.input-group input,
+.input-group select {
+  padding: 0.6rem;
+  border-radius: 6px;
+  border: 1px solid var(--borde);
+  background: var(--fondo-claro);
+  color: var(--texto);
+  font-size: 1rem;
+}
+
+.btn-principal {
+  background-color: var(--primario);
+  color: var(--fondo);
+  padding: 0.8rem;
   border: none;
-  background-color: #2a2a2a;
-  color: #f1f1f1;
-  margin-top: 0.25rem;
-}
-
-form button {
-  background-color: #00f0ff;
-  color: #121212;
-  padding: 0.7rem 1rem;
-  border-radius: 10px;
+  border-radius: 6px;
   font-weight: bold;
+  font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  border: none;
+  width: 100%;
+  transition: background 0.3s ease;
+  margin-top: 1rem;
 }
 
-form button:hover {
-  background-color: #00c3d6;
+.btn-principal:hover {
+  background-color: #00f0ff;
 }
 
-.resultado-plan {
-  background-color: #1e1e1e;
+.btn-secundario {
+  background: transparent;
+  border: 1px solid var(--primario);
+  color: var(--primario);
+  padding: 0.6rem;
+  border-radius: 6px;
+  font-weight: 600;
+  margin-top: 1.5rem;
+  cursor: pointer;
+  width: 100%;
+  transition: all 0.3s ease;
+}
+
+.btn-secundario:hover {
+  background-color: var(--primario);
+  color: var(--fondo);
+}
+
+.plan-card {
+  background: var(--fondo-claro);
   padding: 1.5rem;
-  border-radius: 12px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.4);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  text-align: left;
 }
 
-.resultado-plan p {
-  margin: 0.75rem 0;
-  font-size: 1.05rem;
+.plan-card p {
+  margin: 0.8rem 0;
+  font-size: 1.1rem;
 }
 
 .oculto {
   display: none;
+}
+
+@media (max-width: 480px) {
+  h2 {
+    font-size: 1.3rem;
+  }
+
+  .plan-card p {
+    font-size: 1rem;
+  }
 }
