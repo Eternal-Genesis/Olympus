@@ -1,4 +1,6 @@
-// avance.js con historial visual de los últimos 4 días y 6 días de ejemplo
+/* Chart.js para estadísticas */
+import { Chart, BarController, BarElement, CategoryScale, LinearScale, Tooltip } from 'https://cdn.skypack.dev/chart.js';
+Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip);
 
 import { auth, db, onAuthStateChanged, doc, getDoc, setDoc } from "./firebase.js";
 
@@ -23,6 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
     await cargarHabitos(uid);
     renderHabitos();
     await cargarHistorial(uid);
+    await cargarEstadisticas(uid);
   });
 
   async function cargarHabitos(uid) {
@@ -91,6 +94,53 @@ document.addEventListener("DOMContentLoaded", () => {
         contenedorHistorial.appendChild(card);
       }
     }
+  }
+
+  async function cargarEstadisticas(uid) {
+    const labels = [];
+    const datos = [];
+
+    for (let i = 30; i >= 1; i--) {
+      const fecha = new Date();
+      fecha.setDate(fecha.getDate() - i);
+      const fechaStr = fecha.toISOString().split("T")[0];
+      const ref = doc(db, "usuarios", uid, "historialHabitos", fechaStr);
+      const snap = await getDoc(ref);
+
+      labels.push(fecha.getDate());
+
+      if (snap.exists()) {
+        const items = snap.data().items;
+        const completados = items.filter(h => h.completado).length;
+        datos.push(completados);
+      } else {
+        datos.push(0);
+      }
+    }
+
+    const ctx = document.getElementById("grafico-habitos").getContext("2d");
+    new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: labels,
+        datasets: [{
+          label: "Hábitos completados",
+          data: datos,
+          backgroundColor: "#00f0ff"
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: ctx => `${ctx.raw} completados` } }
+        },
+        scales: {
+          x: { grid: { display: false } },
+          y: { beginAtZero: true }
+        }
+      }
+    });
   }
 
   function obtenerDiaSemana(fecha) {
