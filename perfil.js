@@ -1,3 +1,4 @@
+// perfil.js completo con caché diario inteligente, planes, experiencia y código de creador
 import { auth, onAuthStateChanged, signOut } from "./firebase.js";
 import { db } from "./firebase.js";
 import {
@@ -7,6 +8,12 @@ import {
   updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+const hoy = new Date().toISOString().split("T")[0];
+
+const cacheKey = (uid) => `perfil-${uid}`;
+const cacheSyncKey = (uid) => `perfil-sync-${uid}`;
+
+// DOM Ready
 document.addEventListener("DOMContentLoaded", () => {
   const subirFoto = document.getElementById("subirFoto");
   const fotoPerfil = document.getElementById("fotoPerfil");
@@ -25,7 +32,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let modoEdicion = false;
   let descuentoCodigo = false;
 
-  // Contador biografía
+  // Contador de biografía
   const contador = document.createElement("div");
   contador.style.textAlign = "right";
   contador.style.fontSize = "0.8rem";
@@ -50,8 +57,8 @@ document.addEventListener("DOMContentLoaded", () => {
       bioTextarea.disabled = true;
       btnEditar.textContent = "Editar";
       modoEdicion = false;
-      actualizarUI("apodo", apodoInput.value);
-      actualizarUI("biografia", bioTextarea.value);
+      actualizarCampo("apodo", apodoInput.value);
+      actualizarCampo("biografia", bioTextarea.value);
     }
   });
 
@@ -59,12 +66,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const codigo = inputCodigo.value.trim().toUpperCase();
     if (codigo === "MARPE") {
       descuentoCodigo = true;
-      precioPersonal.innerHTML = `<span class=\"tachado\">$5</span> $2 / mes`;
+      precioPersonal.innerHTML = `<span class="tachado">$5</span> $2 / mes`;
       inputCodigo.classList.add("valid");
       mensajeCodigo?.classList.remove("oculto");
     } else {
       descuentoCodigo = false;
-      precioPersonal.innerHTML = `<span class=\"tachado\">$5</span> $4 / mes`;
+      precioPersonal.innerHTML = `<span class="tachado">$5</span> $4 / mes`;
       inputCodigo.classList.remove("valid");
       mensajeCodigo?.classList.add("oculto");
     }
@@ -73,19 +80,17 @@ document.addEventListener("DOMContentLoaded", () => {
   subirFoto?.addEventListener("change", (e) => {
     const archivo = e.target.files[0];
     if (!archivo) return;
-
     const lector = new FileReader();
     lector.onload = () => {
       const imagen = lector.result;
       fotoPerfil.src = imagen;
-      actualizarUI("foto", imagen);
+      actualizarCampo("foto", imagen);
     };
     lector.readAsDataURL(archivo);
   });
 
   cerrarSesionBtn?.addEventListener("click", () => {
-    signOut(auth)
-      .then(() => window.location.href = "index.html")
+    signOut(auth).then(() => window.location.href = "index.html")
       .catch(err => console.error("Error al cerrar sesión:", err));
   });
 
@@ -105,6 +110,14 @@ document.addEventListener("DOMContentLoaded", () => {
           codigoCreador: descuentoCodigo ? "MARPE" : "",
           precioPagado: precio
         });
+        const actualizado = {
+          ...(JSON.parse(localStorage.getItem(cacheKey(user.uid))) || {}),
+          plan,
+          codigoCreador: descuentoCodigo ? "MARPE" : "",
+          precioPagado: precio
+        };
+        localStorage.setItem(cacheKey(user.uid), JSON.stringify(actualizado));
+        localStorage.setItem(cacheSyncKey(user.uid), hoy);
         alert(`Has adquirido el plan ${plan} por $${precio}/mes.`);
         location.reload();
       } catch (e) {
@@ -118,30 +131,34 @@ document.addEventListener("DOMContentLoaded", () => {
     const uid = user.uid;
     nombreUsuario.textContent = user.displayName || user.email.split("@")[0];
 
-    const ref = doc(db, "usuarios", uid);
-    const cacheKey = `perfil-${uid}`;
+    const cache = localStorage.getItem(cacheKey(uid));
+    const ultimaSync = localStorage.getItem(cacheSyncKey(uid));
 
-    const cache = localStorage.getItem(cacheKey);
-    if (cache) renderPerfil(JSON.parse(cache));
+    if (cache && ultimaSync === hoy) {
+      renderPerfil(JSON.parse(cache));
+    } else {
+      try {
+        let ref = doc(db, "usuarios", uid);
+        let snap = await getDoc(ref);
 
-    try {
-      let snap = await getDoc(ref);
-      if (!snap.exists()) {
-        await setDoc(ref, {
-          apodo: "",
-          biografia: "",
-          foto: "",
-          exp: 0,
-          plan: "Personal"
-        });
-        snap = await getDoc(ref);
+        if (!snap.exists()) {
+          await setDoc(ref, {
+            apodo: "",
+            biografia: "",
+            foto: "",
+            exp: 0,
+            plan: "Personal"
+          });
+          snap = await getDoc(ref);
+        }
+
+        const datos = snap.data();
+        localStorage.setItem(cacheKey(uid), JSON.stringify(datos));
+        localStorage.setItem(cacheSyncKey(uid), hoy);
+        renderPerfil(datos);
+      } catch (e) {
+        console.error("Error al cargar datos:", e);
       }
-
-      const datos = snap.data();
-      localStorage.setItem(cacheKey, JSON.stringify(datos));
-      renderPerfil(datos);
-    } catch (e) {
-      console.error("Error al cargar datos:", e);
     }
   });
 
@@ -174,15 +191,15 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  async function actualizarUI(campo, valor) {
+  async function actualizarCampo(campo, valor) {
     const user = auth.currentUser;
     if (!user) return;
     try {
       await updateDoc(doc(db, "usuarios", user.uid), { [campo]: valor });
-      const cacheKey = `perfil-${user.uid}`;
-      const cache = JSON.parse(localStorage.getItem(cacheKey)) || {};
+      const cache = JSON.parse(localStorage.getItem(cacheKey(user.uid))) || {};
       cache[campo] = valor;
-      localStorage.setItem(cacheKey, JSON.stringify(cache));
+      localStorage.setItem(cacheKey(user.uid), JSON.stringify(cache));
+      localStorage.setItem(cacheSyncKey(user.uid), hoy);
     } catch (e) {
       console.error("Error al actualizar campo:", campo, e);
     }
@@ -204,3 +221,4 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   }
 });
+
