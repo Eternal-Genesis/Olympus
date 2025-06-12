@@ -1,4 +1,4 @@
-// avance.js optimizado para localStorage completo incluyendo estadísticas
+// avance.js corregido: guarda correctamente hábitos y asegura que el gráfico se renderice
 import {
   auth,
   db,
@@ -55,7 +55,7 @@ async function cargarHabitos(uid) {
 async function guardarHabitos() {
   if (!uid) return;
   const ref = doc(db, "usuarios", uid, "historialHabitos", hoy);
-  await setDoc(ref, { items: habitos }, { merge: true });
+  await setDoc(ref, { items: habitos }); // sin merge para asegurar reemplazo total
   localStorage.setItem(habitosHoyKey(uid), JSON.stringify(habitos));
 }
 
@@ -158,6 +158,7 @@ async function cargarEstadisticas(uid) {
 function renderGrafico({ labels, porcentajes, detalles }) {
   const canvas = document.getElementById("grafico-habitos");
   if (!canvas) return;
+  canvas.style.display = "block"; // asegurar visibilidad
   const ctx = canvas.getContext("2d");
   new Chart(ctx, {
     type: "line",
