@@ -28,44 +28,41 @@ const btnCancelar = document.getElementById("btn-cancelar");
 const btnNuevo = document.getElementById("btn-crear-habito");
 
 onAuthStateChanged(auth, async (user) => {
-  if (!user) return;
-  uid = user.uid;
+  console.log("¿Usuario activo?", user);
+  if (!user) {
+    console.warn("⚠️ Usuario no logueado.");
+    return;
+  }
 
-  document.getElementById("loading")?.classList.remove("oculto");
+  try {
+    uid = user.uid;
+    document.getElementById("loading").textContent = "Cargando datos...";
 
-  const cacheLocal = localStorage.getItem(habitosHoyKey(uid));
-  if (cacheLocal) {
-    habitos = JSON.parse(cacheLocal);
+    const cacheLocal = localStorage.getItem(habitosHoyKey(uid));
+    console.log("Cache local de hábitos:", cacheLocal);
+
+    if (cacheLocal) {
+      habitos = JSON.parse(cacheLocal);
+      renderHabitos();
+      document.querySelector(".seccion-hoy")?.classList.remove("oculto");
+    }
+
+    await cargarHabitos(uid);
     renderHabitos();
-    document.querySelector(".seccion-hoy").classList.remove("oculto");
+    document.querySelector(".seccion-hoy")?.classList.remove("oculto");
+
+    await cargarHistorial(uid);
+    document.querySelector(".seccion-historial")?.classList.remove("oculto");
+
+    await cargarEstadisticas(uid);
+    document.querySelector(".estadisticas")?.classList.remove("oculto");
+
+    document.getElementById("loading")?.classList.add("oculto");
+    console.log("✅ Todo cargado");
+  } catch (error) {
+    console.error("❌ Error durante la carga:", error);
+    document.getElementById("loading").textContent = "Error al cargar los datos.";
   }
-
-  const cacheHistorial = localStorage.getItem(historialKey(uid));
-  if (cacheHistorial) {
-    renderHistorial(JSON.parse(cacheHistorial));
-    document.querySelector(".seccion-historial").classList.remove("oculto");
-  }
-
-  const cacheStats = localStorage.getItem(estadisticasKey(uid));
-  if (cacheStats) {
-    renderGrafico(JSON.parse(cacheStats));
-    contenedorEstadisticas.classList.remove("oculto");
-  }
-
-  await cargarHabitos(uid);
-  renderHabitos();
-  document.querySelector(".seccion-hoy").classList.remove("oculto");
-
-  await cargarHistorial(uid);
-  document.querySelector(".seccion-historial").classList.remove("oculto");
-
-  await cargarEstadisticas(uid);
-  contenedorEstadisticas.classList.remove("oculto");
-
-  document.getElementById("loading")?.classList.add("oculto");
-
-  // 🧹 Ejecutar solo una vez para eliminar historial de prueba:
-  // await eliminarHistorialDePrueba(uid);
 });
 
 async function cargarHabitos(uid) {
