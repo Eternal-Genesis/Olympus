@@ -1,4 +1,4 @@
-// firebase.js
+// firebase.js actualizado con módulos originales y soporte completo
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import {
@@ -40,4 +40,3 @@ export {
   updateDoc,
   collection
 };
-
