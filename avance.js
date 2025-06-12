@@ -1,8 +1,22 @@
-/* Chart.js para estadísticas */
-import { Chart, BarController, BarElement, CategoryScale, LinearScale, Tooltip } from 'https://cdn.skypack.dev/chart.js';
+// avance.js - Gestión de hábitos con gráfico mejorado
+import {
+  Chart,
+  BarController,
+  BarElement,
+  CategoryScale,
+  LinearScale,
+  Tooltip
+} from 'https://cdn.skypack.dev/chart.js';
 Chart.register(BarController, BarElement, CategoryScale, LinearScale, Tooltip);
 
-import { auth, db, onAuthStateChanged, doc, getDoc, setDoc } from "./firebase.js";
+import {
+  auth,
+  db,
+  onAuthStateChanged,
+  doc,
+  getDoc,
+  setDoc
+} from "./firebase.js";
 
 document.addEventListener("DOMContentLoaded", () => {
   let habitos = [];
@@ -21,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
   onAuthStateChanged(auth, async (user) => {
     if (!user) return;
     uid = user.uid;
-    await insertarHabitosEjemplo(uid); // Solo para demo visual
+    await insertarHabitosEjemplo(uid); // Solo para demo
     await cargarHabitos(uid);
     renderHabitos();
     await cargarHistorial(uid);
@@ -67,18 +81,16 @@ document.addEventListener("DOMContentLoaded", () => {
   async function cargarHistorial(uid) {
     const dias = 4;
     contenedorHistorial.innerHTML = "";
-
     for (let i = 1; i <= dias; i++) {
       const fecha = new Date();
       fecha.setDate(fecha.getDate() - i);
       const diaStr = fecha.toISOString().split("T")[0];
-
       const ref = doc(db, "usuarios", uid, "historialHabitos", diaStr);
       const snap = await getDoc(ref);
 
       if (snap.exists()) {
         const data = snap.data();
-        const fechaTexto = obtenerDiaSemana(fecha) + " " + fecha.getDate().toString().padStart(2, '0') + " " + obtenerMes(fecha);
+        const fechaTexto = `${obtenerDiaSemana(fecha)} ${fecha.getDate().toString().padStart(2, '0')} ${obtenerMes(fecha)}`;
 
         const card = document.createElement("div");
         card.className = "habito-dia";
@@ -107,48 +119,61 @@ document.addEventListener("DOMContentLoaded", () => {
       const ref = doc(db, "usuarios", uid, "historialHabitos", fechaStr);
       const snap = await getDoc(ref);
 
-      labels.push(fecha.getDate());
-
-      if (snap.exists()) {
-        const items = snap.data().items;
-        const completados = items.filter(h => h.completado).length;
-        datos.push(completados);
-      } else {
-        datos.push(0);
-      }
+      labels.push(fecha.getDate().toString().padStart(2, "0"));
+      datos.push(snap.exists() ? snap.data().items.filter(h => h.completado).length : 0);
     }
 
     const ctx = document.getElementById("grafico-habitos").getContext("2d");
     new Chart(ctx, {
       type: "bar",
       data: {
-        labels: labels,
+        labels,
         datasets: [{
           label: "Hábitos completados",
           data: datos,
-          backgroundColor: "#00f0ff"
+          backgroundColor: "rgba(0, 240, 255, 0.6)",
+          borderRadius: 6,
+          barThickness: 16
         }]
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           legend: { display: false },
-          tooltip: { callbacks: { label: ctx => `${ctx.raw} completados` } }
+          tooltip: {
+            backgroundColor: "#2a2a2a",
+            titleColor: "#00f0ff",
+            bodyColor: "#fff",
+            callbacks: {
+              label: ctx => `${ctx.raw} completado${ctx.raw !== 1 ? 's' : ''}`
+            }
+          }
         },
         scales: {
-          x: { grid: { display: false } },
-          y: { beginAtZero: true }
+          x: {
+            grid: { display: false },
+            ticks: { color: "#aaa" }
+          },
+          y: {
+            beginAtZero: true,
+            grid: {
+              color: "#333",
+              drawBorder: false
+            },
+            ticks: { color: "#aaa" }
+          }
         }
       }
     });
   }
 
-  function obtenerDiaSemana(fecha) {
-    return ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"][fecha.getDay()];
+  function obtenerDiaSemana(f) {
+    return ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"][f.getDay()];
   }
 
-  function obtenerMes(fecha) {
-    return ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"][fecha.getMonth()];
+  function obtenerMes(f) {
+    return ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"][f.getMonth()];
   }
 
   async function insertarHabitosEjemplo(uid) {
@@ -164,19 +189,17 @@ document.addEventListener("DOMContentLoaded", () => {
       const fecha = new Date();
       fecha.setDate(fecha.getDate() - i);
       const fechaStr = fecha.toISOString().split("T")[0];
-
       const ref = doc(db, "usuarios", uid, "historialHabitos", fechaStr);
       const items = ejemplos.map((e, index) => ({
         id: i * 100 + index,
         nombre: e.nombre,
         completado: Math.random() > 0.5
       }));
-
       await setDoc(ref, { items }, { merge: true });
-      console.log("Ejemplo insertado para:", fechaStr);
     }
   }
 
+  // Eventos UI
   document.addEventListener("click", (e) => {
     document.querySelectorAll(".menu-opciones").forEach(menu => {
       if (!menu.contains(e.target) && !menu.previousElementSibling.contains(e.target)) {
@@ -200,13 +223,10 @@ document.addEventListener("DOMContentLoaded", () => {
       const index = habitos.findIndex(h => h.id === id);
       if (index === -1) return;
 
-      if (accion === "editar") {
-        abrirModal(habitos[index]);
-      } else if (accion === "eliminar") {
-        if (confirm("¿Eliminar este hábito?")) {
-          habitos.splice(index, 1);
-          await guardarHabitos();
-        }
+      if (accion === "editar") abrirModal(habitos[index]);
+      if (accion === "eliminar" && confirm("¿Eliminar este hábito?")) {
+        habitos.splice(index, 1);
+        await guardarHabitos();
       }
 
       renderHabitos();
@@ -254,8 +274,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const index = habitos.findIndex(h => h.id === parseInt(id));
       if (index !== -1) habitos[index].nombre = nombre;
     } else {
-      const nuevo = { id: Date.now(), nombre, completado: false };
-      habitos.push(nuevo);
+      habitos.push({ id: Date.now(), nombre, completado: false });
     }
 
     await guardarHabitos();
