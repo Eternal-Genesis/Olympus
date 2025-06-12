@@ -1,4 +1,4 @@
-// avance.js - Gestión de hábitos con gráfico de porcentaje mejorado
+// avance.js - Gestión de hábitos optimizada con carga rápida
 import {
   Chart,
   LineController,
@@ -36,11 +36,21 @@ document.addEventListener("DOMContentLoaded", () => {
   onAuthStateChanged(auth, async (user) => {
     if (!user) return;
     uid = user.uid;
-    await insertarHabitosEjemplo(uid); // Solo para demo
-    await cargarHabitos(uid);
+
+    document.getElementById("loading")?.classList.remove("oculto");
+
+    const ref = doc(db, "usuarios", uid, "historialHabitos", hoy);
+    const snap = await getDoc(ref);
+    if (!snap.exists()) await insertarHabitosEjemplo(uid);
+
+    await Promise.all([
+      cargarHabitos(uid),
+      cargarHistorial(uid),
+      cargarEstadisticas(uid)
+    ]);
+
     renderHabitos();
-    await cargarHistorial(uid);
-    await cargarEstadisticas(uid);
+    document.getElementById("loading")?.classList.add("oculto");
   });
 
   async function cargarHabitos(uid) {
