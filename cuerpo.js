@@ -1,97 +1,78 @@
-// cuerpo.js – cálculo de plan nutricional personalizado con estado persistente
 import { auth, onAuthStateChanged } from "./firebase.js";
-
-const form = document.getElementById("form-datos");
-const edadInput = document.getElementById("edad");
-const alturaInput = document.getElementById("altura");
-const pesoInput = document.getElementById("peso");
-const sexoInput = document.getElementById("sexo");
-const actividadInput = document.getElementById("actividad");
-const objetivoInput = document.getElementById("objetivo");
-
-const seccionResultado = document.getElementById("seccion-resultado");
-const caloriasSpan = document.getElementById("calorias");
-const proteinasSpan = document.getElementById("proteinas");
-const carbohidratosSpan = document.getElementById("carbohidratos");
-const grasasSpan = document.getElementById("grasas");
 
 let uid = null;
 
-onAuthStateChanged(auth, user => {
-  if (!user) return;
-  uid = user.uid;
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("evaluacion-form");
+  const sectionEvaluacion = document.getElementById("evaluacion-section");
+  const sectionPlan = document.getElementById("plan-section");
 
-  // Intentar cargar el plan guardado
-  const cache = localStorage.getItem(`nutricion-${uid}`);
-  if (cache) {
-    const datos = JSON.parse(cache);
-    mostrarResultado(datos);
-    form.classList.add("oculto");
-    seccionResultado.classList.remove("oculto");
+  const spanCalorias = document.getElementById("plan-calorias");
+  const spanProteinas = document.getElementById("plan-proteinas");
+  const spanCarbohidratos = document.getElementById("plan-carbohidratos");
+  const spanGrasas = document.getElementById("plan-grasas");
+  const btnReiniciar = document.getElementById("reiniciar-plan");
 
-  // Mostrar botón de reinicio
-  const btnReiniciar = document.createElement("button");
-  btnReiniciar.textContent = "Reiniciar plan";
-  btnReiniciar.className = "btn-reiniciar";
-  btnReiniciar.addEventListener("click", () => {
-    localStorage.removeItem(`nutricion-${uid}`);
-    seccionResultado.classList.add("oculto");
-    form.classList.remove("oculto");
-    form.reset();
+  const planKey = (uid) => `plan-nutricional-${uid}`;
+
+  onAuthStateChanged(auth, (user) => {
+    if (!user) return;
+    uid = user.uid;
+
+    const cache = localStorage.getItem(planKey(uid));
+    if (cache) {
+      mostrarPlan(JSON.parse(cache));
+      sectionEvaluacion.classList.add("oculto");
+      sectionPlan.classList.remove("oculto");
+    }
   });
-  seccionResultado.appendChild(btnReiniciar);
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const sexo = document.getElementById("sexo").value;
+    const edad = parseInt(document.getElementById("edad").value);
+    const peso = parseFloat(document.getElementById("peso").value);
+    const altura = parseInt(document.getElementById("altura").value);
+    const actividad = parseFloat(document.getElementById("actividad").value);
+    const objetivo = document.getElementById("objetivo").value;
+
+    const plan = calcularPlanNutricional({ sexo, edad, peso, altura, actividad, objetivo });
+
+    localStorage.setItem(planKey(uid), JSON.stringify(plan));
+    mostrarPlan(plan);
+    sectionEvaluacion.classList.add("oculto");
+    sectionPlan.classList.remove("oculto");
+  });
+
+  btnReiniciar.addEventListener("click", () => {
+    if (!uid) return;
+    localStorage.removeItem(planKey(uid));
+    sectionPlan.classList.add("oculto");
+    sectionEvaluacion.classList.remove("oculto");
+    document.getElementById("evaluacion-form").reset();
+  });
+
+  function mostrarPlan(plan) {
+    spanCalorias.textContent = `${plan.calorias} kcal`;
+    spanProteinas.textContent = `${plan.proteinas} g`;
+    spanCarbohidratos.textContent = `${plan.carbohidratos} g`;
+    spanGrasas.textContent = `${plan.grasas} g`;
+  }
+
+  function calcularPlanNutricional({ sexo, edad, peso, altura, actividad, objetivo }) {
+    const tmb =
+      sexo === "hombre"
+        ? 10 * peso + 6.25 * altura - 5 * edad + 5
+        : 10 * peso + 6.25 * altura - 5 * edad - 161;
+
+    let calorias = Math.round(tmb * actividad);
+    if (objetivo === "bajar") calorias -= 300;
+    else if (objetivo === "subir") calorias += 300;
+
+    const proteinas = Math.round((calorias * 0.25) / 4);
+    const carbohidratos = Math.round((calorias * 0.5) / 4);
+    const grasas = Math.round((calorias * 0.25) / 9);
+
+    return { calorias, proteinas, carbohidratos, grasas };
   }
 });
-
-form.addEventListener("submit", (e) => {
-  e.preventDefault();
-
-  const edad = parseInt(edadInput.value);
-  const altura = parseInt(alturaInput.value);
-  const peso = parseInt(pesoInput.value);
-  const sexo = sexoInput.value;
-  const actividad = parseFloat(actividadInput.value);
-  const objetivo = objetivoInput.value;
-
-  if (!edad || !altura || !peso || !sexo || !actividad || !objetivo) return;
-
-  // Calcular TMB (Mifflin-St Jeor)
-  let tmb = sexo === "masculino"
-    ? 10 * peso + 6.25 * altura - 5 * edad + 5
-    : 10 * peso + 6.25 * altura - 5 * edad - 161;
-
-  // Ajustar por actividad
-  let calorias = tmb * actividad;
-
-  // Ajustar por objetivo
-  if (objetivo === "bajar") calorias -= 400;
-  if (objetivo === "subir") calorias += 300;
-
-  // Macronutrientes base
-  const proteinas = Math.round(peso * 2);
-  const grasas = Math.round(peso * 1);
-  const caloriasProteinas = proteinas * 4;
-  const caloriasGrasas = grasas * 9;
-  const caloriasCarbs = calorias - (caloriasProteinas + caloriasGrasas);
-  const carbohidratos = Math.round(caloriasCarbs / 4);
-
-  // Datos a guardar
-  const plan = {
-    edad, altura, peso, sexo, actividad, objetivo,
-    calorias: Math.round(calorias), proteinas, carbohidratos, grasas
-  };
-
-  localStorage.setItem(`nutricion-${uid}`, JSON.stringify(plan));
-  mostrarResultado(plan);
-  form.classList.add("oculto");
-  seccionResultado.classList.remove("oculto");
-});
-
-function mostrarResultado({ calorias, proteinas, carbohidratos, grasas }) {
-  caloriasSpan.textContent = calorias;
-  proteinasSpan.textContent = proteinas;
-  carbohidratosSpan.textContent = carbohidratos;
-  grasasSpan.textContent = grasas;
-}
-
-// 🚧 En desarrollo: función para agregar "Recalcular plan" y seguimiento diario
