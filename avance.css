@@ -49,9 +49,10 @@ h2 {
   transform: translateY(-2px);
 }
 
-.habito-item.completado {
+.habito-item strong.completado {
   opacity: 0.6;
   text-decoration: line-through;
+  color: #aaa;
 }
 
 .habito-item.completado::before {
