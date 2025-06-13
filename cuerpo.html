@@ -50,6 +50,14 @@
           <label for="peso-meta">Peso actual (kg):</label>
           <input type="number" id="peso-meta" min="30" max="200" required />
 
+          <label for="contextura">Tipo de cuerpo:</label>
+          <select id="contextura" required>
+            <option value="normal">Normal</option>
+            <option value="delgado">Delgado</option>
+            <option value="musculoso">Musculoso</option>
+            <option value="sobrepeso">Sobrepeso</option>
+          </select>
+
           <label for="actividad">Nivel de actividad:</label>
           <select id="actividad" required>
             <option value="">Selecciona</option>
@@ -82,6 +90,15 @@
         <form id="form-progreso">
           <label for="nuevo-peso">¿Cuál es tu peso actual?</label>
           <input type="number" id="nuevo-peso" min="30" max="200" required />
+
+          <label for="nueva-contextura">¿Tu tipo de cuerpo ha cambiado?</label>
+          <select id="nueva-contextura">
+            <option value="">No, sigue igual</option>
+            <option value="normal">Normal</option>
+            <option value="delgado">Delgado</option>
+            <option value="musculoso">Musculoso</option>
+            <option value="sobrepeso">Sobrepeso</option>
+          </select>
 
           <label for="nueva-actividad">¿Tu actividad ha cambiado?</label>
           <select id="nueva-actividad">
