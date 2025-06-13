@@ -132,7 +132,14 @@ form.addEventListener("submit", async e => {
   }
 
   localStorage.setItem(habitosBaseKey(uid), JSON.stringify(base));
+
+  // Refiltrar hábitos para hoy después de cambios
+  habitos = base
+    .filter(h => h.dias?.includes(diaSemana))
+    .map(h => ({ ...h, completado: false }));
+
   localStorage.setItem(habitosHoyKey(uid), JSON.stringify(habitos));
+
   cerrarModal();
   renderHabitos();
 });
@@ -205,6 +212,10 @@ contenedorHabitos.addEventListener("click", async e => {
       let base = JSON.parse(localStorage.getItem(habitosBaseKey(uid))) || [];
       base = base.filter(h => h.id !== eliminado.id);
       localStorage.setItem(habitosBaseKey(uid), JSON.stringify(base));
+
+      habitos = base
+        .filter(h => h.dias?.includes(diaSemana))
+        .map(h => ({ ...h, completado: false }));
     }
 
     localStorage.setItem(habitosHoyKey(uid), JSON.stringify(habitos));
@@ -223,4 +234,3 @@ contenedorHabitos.addEventListener("click", async e => {
     }
   }
 });
-
