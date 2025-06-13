@@ -1,4 +1,4 @@
-// cuerpo.js con fórmula Harris-Benedict para TMB
+// cuerpo.js con % grasa basado en IMC (fórmula de Deurenberg)
 import {
   auth,
   db,
@@ -30,7 +30,6 @@ const inputSexo = document.getElementById("sexo");
 const inputEdad = document.getElementById("edad");
 const inputAltura = document.getElementById("altura");
 const inputPesoMeta = document.getElementById("peso-meta");
-const inputCintura = document.getElementById("cintura");
 const inputActividad = document.getElementById("actividad");
 const inputObjetivo = document.getElementById("objetivo");
 
@@ -95,7 +94,6 @@ formPlan.addEventListener("submit", async e => {
     edad: parseInt(inputEdad.value),
     altura: parseInt(inputAltura.value),
     peso: parseFloat(inputPesoMeta.value),
-    cintura: parseFloat(inputCintura.value),
     actividad: parseFloat(inputActividad.value),
     objetivo: inputObjetivo.value
   });
@@ -137,10 +135,12 @@ function cerrarModal(modal) {
   modal.querySelector("form").reset();
 }
 
-function calcularPlanNutricional({ sexo, edad, altura, peso, cintura, actividad, objetivo }) {
-  const ratio = altura / cintura;
-  const baseGrasa = sexo === "mujer" ? 78 : 68;
-  const porcentajeGrasa = Math.min(50, Math.max(4, baseGrasa - 18 * ratio));
+function calcularPlanNutricional({ sexo, edad, altura, peso, actividad, objetivo }) {
+  const imc = peso / Math.pow(altura / 100, 2);
+  const sexoFactor = sexo === "hombre" ? 1 : 0;
+  const porcentajeGrasa = Math.min(50, Math.max(4,
+    1.20 * imc + 0.23 * edad - 10.8 * sexoFactor - 5.4));
+
   const pesoMagra = peso * (1 - porcentajeGrasa / 100);
 
   // Harris-Benedict TMB:
@@ -164,7 +164,7 @@ function calcularPlanNutricional({ sexo, edad, altura, peso, cintura, actividad,
   const carbos = Math.round((caloriasObjetivo - (proteinas * 4 + grasas * 9)) / 4);
 
   return {
-    sexo, edad, altura, peso, cintura, actividad, objetivo,
+    sexo, edad, altura, peso, actividad, objetivo,
     porcentajeGrasa,
     pesoMagra: Math.round(pesoMagra),
     tmb,
@@ -182,7 +182,6 @@ function cargarPlanEnFormulario() {
   inputEdad.value = plan.edad;
   inputAltura.value = plan.altura;
   inputPesoMeta.value = plan.peso;
-  inputCintura.value = plan.cintura;
   inputActividad.value = plan.actividad;
   inputObjetivo.value = plan.objetivo;
 }
