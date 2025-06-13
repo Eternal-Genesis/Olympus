@@ -1,3 +1,4 @@
+// avance.js completo y corregido
 import {
   auth,
   db,
@@ -133,7 +134,6 @@ form.addEventListener("submit", async e => {
 
   localStorage.setItem(habitosBaseKey(uid), JSON.stringify(base));
 
-  // Refiltrar hábitos para hoy después de cambios
   habitos = base
     .filter(h => h.dias?.includes(diaSemana))
     .map(h => ({ ...h, completado: false }));
@@ -193,7 +193,6 @@ contenedorHabitos.addEventListener("click", async e => {
         clearTimeout(timeout);
       });
     }
-
     return;
   }
 
