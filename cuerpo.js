@@ -1,4 +1,4 @@
-// cuerpo.js con cálculo de grasa usando abdomen y mejor lógica de calorías
+// cuerpo.js con fórmula Harris-Benedict para TMB
 import {
   auth,
   db,
@@ -30,7 +30,7 @@ const inputSexo = document.getElementById("sexo");
 const inputEdad = document.getElementById("edad");
 const inputAltura = document.getElementById("altura");
 const inputPesoMeta = document.getElementById("peso-meta");
-const inputAbdomen = document.getElementById("abdomen");
+const inputCintura = document.getElementById("cintura");
 const inputActividad = document.getElementById("actividad");
 const inputObjetivo = document.getElementById("objetivo");
 
@@ -95,7 +95,7 @@ formPlan.addEventListener("submit", async e => {
     edad: parseInt(inputEdad.value),
     altura: parseInt(inputAltura.value),
     peso: parseFloat(inputPesoMeta.value),
-    abdomen: parseFloat(inputAbdomen.value),
+    cintura: parseFloat(inputCintura.value),
     actividad: parseFloat(inputActividad.value),
     objetivo: inputObjetivo.value
   });
@@ -137,18 +137,23 @@ function cerrarModal(modal) {
   modal.querySelector("form").reset();
 }
 
-function calcularPlanNutricional({ sexo, edad, altura, peso, abdomen, actividad, objetivo }) {
-  const ratio = altura / abdomen;
-  const porcentajeGrasa = Math.min(50, Math.max(4, 76.5 - 20 * ratio));
+function calcularPlanNutricional({ sexo, edad, altura, peso, cintura, actividad, objetivo }) {
+  const ratio = altura / cintura;
+  const baseGrasa = sexo === "mujer" ? 78 : 68;
+  const porcentajeGrasa = Math.min(50, Math.max(4, baseGrasa - 18 * ratio));
   const pesoMagra = peso * (1 - porcentajeGrasa / 100);
 
-  let tmb = 370 + 21.6 * pesoMagra;
-  const tdee = Math.round(tmb * actividad);
+  // Harris-Benedict TMB:
+  const tmb = Math.round(
+    sexo === "mujer"
+      ? 655 + 9.563 * peso + 1.850 * altura - 4.676 * edad
+      : 66.5 + 13.75 * peso + 5.003 * altura - 6.775 * edad
+  );
 
+  const tdee = Math.round(tmb * actividad);
   const objetivoFactor = objetivo === "deficit" ? 0.9 : objetivo === "superavit" ? 1.1 : 1.0;
   let caloriasObjetivo = Math.round(tdee * objetivoFactor);
 
-  // Lógica de seguridad: evitar déficits o superávits extremos
   const minKcal = sexo === "mujer" ? 1300 : 1700;
   const maxKcal = 4200;
   caloriasObjetivo = Math.min(maxKcal, Math.max(minKcal, caloriasObjetivo));
@@ -159,10 +164,10 @@ function calcularPlanNutricional({ sexo, edad, altura, peso, abdomen, actividad,
   const carbos = Math.round((caloriasObjetivo - (proteinas * 4 + grasas * 9)) / 4);
 
   return {
-    sexo, edad, altura, peso, abdomen, actividad, objetivo,
+    sexo, edad, altura, peso, cintura, actividad, objetivo,
     porcentajeGrasa,
     pesoMagra: Math.round(pesoMagra),
-    tmb: Math.round(tmb),
+    tmb,
     tdee,
     caloriasObjetivo,
     macros: { proteinas, grasas, carbos }
@@ -177,7 +182,7 @@ function cargarPlanEnFormulario() {
   inputEdad.value = plan.edad;
   inputAltura.value = plan.altura;
   inputPesoMeta.value = plan.peso;
-  inputAbdomen.value = plan.abdomen;
+  inputCintura.value = plan.cintura;
   inputActividad.value = plan.actividad;
   inputObjetivo.value = plan.objetivo;
 }
