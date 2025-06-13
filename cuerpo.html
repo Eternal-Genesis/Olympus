@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Salud Corporal – Olympus</title>
+  <link rel="stylesheet" href="navbar.css" />
+  <link rel="stylesheet" href="cuerpo.css" />
+</head>
+<body>
+  <!-- Menú superior cargado dinámicamente -->
+  <header id="navbar"></header>
+
+  <!-- Contenido principal -->
+  <main class="cuerpo-container">
+
+    <!-- Panel de seguimiento físico -->
+    <section class="panel-seguimiento">
+      <h2>Seguimiento de Peso</h2>
+      <div class="peso-actual">
+        <p><strong>Peso actual:</strong> <span id="peso-actual">-- kg</span></p>
+        <button id="btn-registrar-peso">Registrar nuevo peso</button>
+      </div>
+      <canvas id="grafico-peso" width="100%" height="300"></canvas>
+    </section>
+
+    <!-- Panel de alimentación -->
+    <section class="panel-alimentacion">
+      <h2>Plan de Alimentación</h2>
+      <div id="plan-alimentacion">
+        <p>Tu plan personalizado aparecerá aquí.</p>
+        <button id="btn-editar-plan">Editar Plan</button>
+      </div>
+    </section>
+
+    <!-- Panel de entrenamiento -->
+    <section class="panel-entrenamiento">
+      <h2>Rutina de Entrenamiento</h2>
+      <div id="estado-rutina">
+        <p>Selecciona tu nivel y equipamiento para generar una rutina.</p>
+        <button id="btn-generar-rutina">Generar Rutina</button>
+      </div>
+    </section>
+
+    <!-- Modal para ingresar peso -->
+    <div class="modal" id="modal-peso">
+      <div class="modal-contenido">
+        <h3>Registrar nuevo peso</h3>
+        <form id="form-peso">
+          <label for="input-peso">Peso en kg:</label>
+          <input type="number" id="input-peso" min="20" max="300" required />
+          <div class="modal-acciones">
+            <button type="submit">Guardar</button>
+            <button type="button" id="btn-cancelar-peso">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Scripts -->
+  <script src="navbar.js"></script>
+  <script type="module" src="firebase.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script type="module" src="cuerpo.js"></script>
+</body>
+</html>
