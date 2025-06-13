@@ -14,7 +14,7 @@
   <!-- Contenido principal -->
   <main class="cuerpo-container">
 
-    <!-- Panel de seguimiento físico -->
+    <!-- Panel: Seguimiento de Peso -->
     <section class="panel-seguimiento">
       <h2>Seguimiento de Peso</h2>
       <div class="peso-actual">
@@ -24,16 +24,16 @@
       <canvas id="grafico-peso" width="100%" height="300"></canvas>
     </section>
 
-    <!-- Panel de alimentación -->
+    <!-- Panel: Configuración de Plan Nutricional -->
     <section class="panel-alimentacion">
-      <h2>Plan de Alimentación</h2>
+      <h2>Plan de Alimentación Personalizado</h2>
       <div id="plan-alimentacion">
-        <p>Tu plan personalizado aparecerá aquí.</p>
-        <button id="btn-editar-plan">Editar Plan</button>
+        <p id="info-plan">Tu plan personalizado aparecerá aquí.</p>
+        <button id="btn-configurar-plan">Configurar / Editar Plan</button>
       </div>
     </section>
 
-    <!-- Panel de entrenamiento -->
+    <!-- Panel: Entrenamiento (provisional) -->
     <section class="panel-entrenamiento">
       <h2>Rutina de Entrenamiento</h2>
       <div id="estado-rutina">
@@ -42,7 +42,7 @@
       </div>
     </section>
 
-    <!-- Modal para ingresar peso -->
+    <!-- Modal: Registro de Peso -->
     <div class="modal" id="modal-peso">
       <div class="modal-contenido">
         <h3>Registrar nuevo peso</h3>
@@ -52,6 +52,53 @@
           <div class="modal-acciones">
             <button type="submit">Guardar</button>
             <button type="button" id="btn-cancelar-peso">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Modal: Configuración Plan Nutricional -->
+    <div class="modal" id="modal-plan">
+      <div class="modal-contenido">
+        <h3>Configurar Plan Nutricional</h3>
+        <form id="form-plan">
+          <label for="sexo">Sexo:</label>
+          <select id="sexo" required>
+            <option value="">Selecciona</option>
+            <option value="hombre">Hombre</option>
+            <option value="mujer">Mujer</option>
+          </select>
+
+          <label for="edad">Edad:</label>
+          <input type="number" id="edad" min="10" max="100" required />
+
+          <label for="altura">Altura (cm):</label>
+          <input type="number" id="altura" min="100" max="250" required />
+
+          <label for="peso-meta">Peso actual (kg):</label>
+          <input type="number" id="peso-meta" min="30" max="200" required />
+
+          <label for="actividad">Nivel de actividad:</label>
+          <select id="actividad" required>
+            <option value="">Selecciona</option>
+            <option value="1.2">Sedentario</option>
+            <option value="1.375">Actividad ligera</option>
+            <option value="1.55">Moderado</option>
+            <option value="1.725">Intenso</option>
+            <option value="1.9">Muy intenso</option>
+          </select>
+
+          <label for="objetivo">Objetivo:</label>
+          <select id="objetivo" required>
+            <option value="">Selecciona</option>
+            <option value="deficit">Perder grasa</option>
+            <option value="mantenimiento">Mantener peso</option>
+            <option value="superavit">Ganar músculo</option>
+          </select>
+
+          <div class="modal-acciones">
+            <button type="submit">Guardar Plan</button>
+            <button type="button" id="btn-cancelar-plan">Cancelar</button>
           </div>
         </form>
       </div>
