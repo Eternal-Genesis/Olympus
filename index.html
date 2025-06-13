@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Olympus – Panel Principal</title>
+
+  <!-- Redirección si no hay usuario -->
+  <script type="module">
+    import { auth } from "./firebase.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.href = "bienvenida.html";
+      }
+    });
+  </script>
+
+  <!-- Estilos -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="navbar.css" />
+  <link rel="stylesheet" href="index.css" />
+</head>
+<body>
+  <header id="navbar"></header>
+
+  <main>
+    <h1>Panel Principal</h1>
+    <div class="panel-grid">
+      <a class="panel-link" href="avance.html">Avance</a>
+      <a class="panel-link" href="cuerpo.html">Cuerpo</a>
+      <a class="panel-link" href="mente.html">Mente</a>
+      <a class="panel-link" href="gestion.html">Gestión</a>
+      <a class="panel-link" href="negocio.html">Negocio</a>
+      <a class="panel-link" href="empresa.html">Empresa</a>
+      <a class="panel-link" href="escritorio.html">Escritorio</a>
+      <a class="panel-link" href="formacion.html">Formación</a>
+      <a class="panel-link" href="comunidad.html">Comunidad</a>
+      <a class="panel-link" href="perfil.html">Perfil</a>
+    </div>
+  </main>
+
+  <!-- Scripts -->
+  <script src="navbar.js"></script>
+  <script src="index.js"></script>
+</body>
+</html>
