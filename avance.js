@@ -30,16 +30,13 @@ onAuthStateChanged(auth, async (user) => {
   if (!user) return;
   uid = user.uid;
 
-  const cache = localStorage.getItem(habitosHoyKey(uid));
-  if (cache) {
-    habitos = JSON.parse(cache);
-  } else {
-    const base = JSON.parse(localStorage.getItem(habitosBaseKey(uid))) || [];
-    habitos = base
-      .filter(h => h.dias?.includes(diaSemana))
-      .map(h => ({ ...h, completado: false }));
-    localStorage.setItem(habitosHoyKey(uid), JSON.stringify(habitos));
-  }
+  // Obtener hábitos base y filtrar solo los del día actual
+  const base = JSON.parse(localStorage.getItem(habitosBaseKey(uid))) || [];
+  habitos = base
+    .filter(h => h.dias?.includes(diaSemana))
+    .map(h => ({ ...h, completado: false }));
+
+  localStorage.setItem(habitosHoyKey(uid), JSON.stringify(habitos));
 
   renderHabitos();
   document.querySelector(".seccion-hoy")?.classList.remove("oculto");
@@ -50,6 +47,10 @@ onAuthStateChanged(auth, async (user) => {
     actualizarHistorialLocal();
     localStorage.setItem(sincronizadoKey(uid), hoy);
   }
+
+  // Cambiar título dinámico según el día
+  const diasSemanaNombre = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
+  document.getElementById("titulo-dia").textContent = `Rutina - ${diasSemanaNombre[diaSemana]}`;
 
   document.getElementById("loading")?.classList.add("oculto");
 });
