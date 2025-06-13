@@ -30,7 +30,6 @@ onAuthStateChanged(auth, async (user) => {
   if (!user) return;
   uid = user.uid;
 
-  // Obtener hábitos base y filtrar solo los del día actual
   const base = JSON.parse(localStorage.getItem(habitosBaseKey(uid))) || [];
   habitos = base
     .filter(h => h.dias?.includes(diaSemana))
@@ -48,7 +47,6 @@ onAuthStateChanged(auth, async (user) => {
     localStorage.setItem(sincronizadoKey(uid), hoy);
   }
 
-  // Cambiar título dinámico según el día
   const diasSemanaNombre = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
   document.getElementById("titulo-dia").textContent = `Rutina - ${diasSemanaNombre[diaSemana]}`;
 
@@ -68,7 +66,6 @@ function renderHabitos() {
   contenedorHabitos.innerHTML = "";
   const diasTexto = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
 
-  // Ordenar por hora
   habitos.sort((a, b) => {
     const ha = a.hora || "00:00";
     const hb = b.hora || "00:00";
@@ -112,22 +109,29 @@ form.addEventListener("submit", async e => {
 
   if (!nombre || !uid || dias.length === 0 || !hora) return;
 
+  let base = JSON.parse(localStorage.getItem(habitosBaseKey(uid))) || [];
+
   if (id) {
     const index = habitos.findIndex(h => h.id === parseInt(id));
     if (index !== -1) {
       habitos[index].nombre = nombre;
       habitos[index].dias = dias;
       habitos[index].hora = hora;
+
+      const baseIndex = base.findIndex(h => h.id === parseInt(id));
+      if (baseIndex !== -1) {
+        base[baseIndex].nombre = nombre;
+        base[baseIndex].dias = dias;
+        base[baseIndex].hora = hora;
+      }
     }
   } else {
     const nuevo = { id: Date.now(), nombre, completado: false, dias, hora };
     habitos.push(nuevo);
-
-    const base = JSON.parse(localStorage.getItem(habitosBaseKey(uid))) || [];
     base.push({ id: nuevo.id, nombre: nuevo.nombre, dias, hora });
-    localStorage.setItem(habitosBaseKey(uid), JSON.stringify(base));
   }
 
+  localStorage.setItem(habitosBaseKey(uid), JSON.stringify(base));
   localStorage.setItem(habitosHoyKey(uid), JSON.stringify(habitos));
   cerrarModal();
   renderHabitos();
@@ -166,13 +170,11 @@ contenedorHabitos.addEventListener("click", async e => {
     const menu = btnMenu.nextElementSibling;
     const abierto = !menu.classList.contains("oculto");
 
-    // Cierra otros menús antes
     document.querySelectorAll(".menu-opciones").forEach(m => m.classList.add("oculto"));
 
     if (!abierto) {
       menu.classList.remove("oculto");
 
-      // Cierre automático tras salir del menú
       let timeout;
       menu.addEventListener("mouseleave", () => {
         timeout = setTimeout(() => {
@@ -196,8 +198,13 @@ contenedorHabitos.addEventListener("click", async e => {
     if (index === -1) return;
 
     if (accion === "editar") abrirModal(habitos[index]);
+
     if (accion === "eliminar" && confirm("¿Eliminar este hábito?")) {
-      habitos.splice(index, 1);
+      const eliminado = habitos.splice(index, 1)[0];
+
+      let base = JSON.parse(localStorage.getItem(habitosBaseKey(uid))) || [];
+      base = base.filter(h => h.id !== eliminado.id);
+      localStorage.setItem(habitosBaseKey(uid), JSON.stringify(base));
     }
 
     localStorage.setItem(habitosHoyKey(uid), JSON.stringify(habitos));
@@ -216,3 +223,4 @@ contenedorHabitos.addEventListener("click", async e => {
     }
   }
 });
+
