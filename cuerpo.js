@@ -1,4 +1,4 @@
-// cuerpo.js con almacenamiento híbrido local + Firestore y cálculos mejorados
+// cuerpo.js con cálculo por masa magra y % grasa corporal
 import {
   auth,
   db,
@@ -14,7 +14,6 @@ let uid = null;
 const planKey = uid => `plan-nutricional-${uid}`;
 const syncKey = uid => `ultima-sync-plan-${uid}`;
 
-// === Referencias UI ===
 const infoPlan = document.getElementById("info-plan");
 const btnConfigurarPlan = document.getElementById("btn-configurar-plan");
 const btnRevisarProgreso = document.getElementById("btn-revisar-progreso");
@@ -31,6 +30,8 @@ const inputSexo = document.getElementById("sexo");
 const inputEdad = document.getElementById("edad");
 const inputAltura = document.getElementById("altura");
 const inputPesoMeta = document.getElementById("peso-meta");
+const inputCuello = document.getElementById("cuello");
+const inputCintura = document.getElementById("cintura");
 const inputActividad = document.getElementById("actividad");
 const inputObjetivo = document.getElementById("objetivo");
 
@@ -67,9 +68,10 @@ onAuthStateChanged(auth, async user => {
 });
 
 function renderResumenPlan(plan) {
-  const { caloriasObjetivo, macros, objetivo, advertencia } = plan;
+  const { caloriasObjetivo, macros, objetivo, advertencia, porcentajeGrasa } = plan;
   infoPlan.innerHTML = `
     <p><strong>Objetivo:</strong> ${objetivo === "deficit" ? "Perder grasa" : objetivo === "superavit" ? "Ganar músculo" : "Mantener peso"}</p>
+    <p><strong>Grasa corporal estimada:</strong> ${porcentajeGrasa?.toFixed(1)}%</p>
     <p><strong>Calorías objetivo:</strong> ${caloriasObjetivo} kcal/día</p>
     <ul>
       <li>Proteínas: ${macros.proteinas} g</li>
@@ -90,19 +92,20 @@ formPlan.addEventListener("submit", async e => {
   e.preventDefault();
   if (!uid) return;
 
-  const plan = calcularPlanNutricional(
-    inputSexo.value,
-    parseInt(inputEdad.value),
-    parseInt(inputAltura.value),
-    parseFloat(inputPesoMeta.value),
-    parseFloat(inputActividad.value),
-    inputObjetivo.value
-  );
+  const plan = calcularPlanNutricional({
+    sexo: inputSexo.value,
+    edad: parseInt(inputEdad.value),
+    altura: parseInt(inputAltura.value),
+    peso: parseFloat(inputPesoMeta.value),
+    cuello: parseFloat(inputCuello.value),
+    cintura: parseFloat(inputCintura.value),
+    actividad: parseFloat(inputActividad.value),
+    objetivo: inputObjetivo.value
+  });
 
   localStorage.setItem(planKey(uid), JSON.stringify(plan));
   localStorage.setItem(syncKey(uid), hoy);
   await setDoc(doc(db, "usuarios", uid, "planNutricional", "datos"), { ...plan, actualizado: hoy });
-
   renderResumenPlan(plan);
   cerrarModal(modalPlan);
 });
@@ -122,7 +125,7 @@ formProgreso.addEventListener("submit", async e => {
   const actividad = parseFloat(inputNuevaActividad.value) || prev.actividad;
   const objetivo = inputNuevoObjetivo.value || prev.objetivo;
 
-  const plan = calcularPlanNutricional(prev.sexo, prev.edad, prev.altura, peso, actividad, objetivo);
+  const plan = calcularPlanNutricional({ ...prev, peso, actividad, objetivo });
 
   localStorage.setItem(planKey(uid), JSON.stringify(plan));
   localStorage.setItem(syncKey(uid), hoy);
@@ -137,14 +140,18 @@ function cerrarModal(modal) {
   modal.querySelector("form").reset();
 }
 
-function calcularPlanNutricional(sexo, edad, altura, peso, actividad, objetivo) {
-  let tmb = 10 * peso + 6.25 * altura - 5 * edad;
-  tmb += sexo === "hombre" ? 5 : -161;
+function calcularPlanNutricional({ sexo, edad, altura, peso, cuello, cintura, actividad, objetivo }) {
+  // % grasa corporal (U.S. Navy Method para hombres)
+  const log10 = Math.log10;
+  const porcentajeGrasa = Math.max(4, 86.01 * log10(cintura - cuello) - 70.041 * log10(altura) + 36.76);
 
+  const pesoMagra = peso * (1 - porcentajeGrasa / 100);
+
+  let tmb = 370 + 21.6 * pesoMagra;
   const tdee = Math.round(tmb * actividad);
+
   let factor = 1.0;
   let advertencia = "";
-
   if (objetivo === "deficit") factor = 0.85;
   if (objetivo === "superavit") factor = 1.1;
 
@@ -160,12 +167,14 @@ function calcularPlanNutricional(sexo, edad, altura, peso, actividad, objetivo) 
   }
 
   const proteinaFactor = objetivo === "superavit" ? 2.4 : objetivo === "deficit" ? 2.2 : 2.0;
-  const proteinas = Math.round(peso * proteinaFactor);
+  const proteinas = Math.round(pesoMagra * proteinaFactor);
   const grasas = Math.round((caloriasObjetivo * 0.25) / 9);
   const carbos = Math.round((caloriasObjetivo - (proteinas * 4 + grasas * 9)) / 4);
 
   return {
-    sexo, edad, altura, peso, actividad, objetivo,
+    sexo, edad, altura, peso, cuello, cintura, actividad, objetivo,
+    porcentajeGrasa,
+    pesoMagra: Math.round(pesoMagra),
     tmb: Math.round(tmb),
     tdee,
     caloriasObjetivo,
@@ -182,6 +191,8 @@ function cargarPlanEnFormulario() {
   inputEdad.value = plan.edad;
   inputAltura.value = plan.altura;
   inputPesoMeta.value = plan.peso;
+  inputCuello.value = plan.cuello;
+  inputCintura.value = plan.cintura;
   inputActividad.value = plan.actividad;
   inputObjetivo.value = plan.objetivo;
 }
