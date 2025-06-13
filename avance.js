@@ -1,4 +1,4 @@
-// avance.js – Rutina funcional sin gráficos, con hora y reinicio diario
+// avance.js – incluye botón de completar y menú de opciones por hábito
 import {
   auth,
   db,
@@ -76,7 +76,7 @@ formHabito.addEventListener("submit", async e => {
   const rutina = obtenerRutina();
 
   if (editando !== null) {
-    rutina[editando] = { nombre, hora, dias, completado: {} };
+    rutina[editando] = { nombre, hora, dias, completado: rutina[editando].completado || {} };
   } else {
     rutina.push({ nombre, hora, dias, completado: {} });
   }
@@ -101,27 +101,59 @@ async function guardarRutina(rutina) {
 function renderHabitos(rutina) {
   listaHabitos.innerHTML = "";
   const diaActual = new Date().getDay();
-  const habitosHoy = rutina.filter(h => h.dias.includes(diaActual));
-  habitosHoy.sort((a, b) => a.hora.localeCompare(b.hora));
+  const habitosHoy = rutina
+    .map((h, i) => ({ ...h, index: i }))
+    .filter(h => h.dias.includes(diaActual))
+    .sort((a, b) => a.hora.localeCompare(b.hora));
 
-  for (const [i, habito] of habitosHoy.entries()) {
+  for (const habito of habitosHoy) {
     const li = document.createElement("div");
     li.className = "habito-item";
 
     const key = HOY;
     const checked = habito.completado?.[key] || false;
 
-    const label = document.createElement("label");
-    label.innerHTML = `
-      <input type="checkbox" ${checked ? "checked" : ""}>
-      <span><strong>${habito.hora}</strong> – ${habito.nombre}</span>
-    `;
-    label.querySelector("input").addEventListener("change", e => {
-      habito.completado[key] = e.target.checked;
+    const izquierda = document.createElement("div");
+    izquierda.className = "habito-check";
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = checked;
+    checkbox.addEventListener("change", () => {
+      habito.completado[key] = checkbox.checked;
+      rutina[habito.index] = habito;
       guardarRutina(rutina);
     });
+    izquierda.appendChild(checkbox);
 
-    li.appendChild(label);
+    const centro = document.createElement("div");
+    centro.className = "habito-info";
+    centro.innerHTML = `<strong>${habito.hora}</strong> – ${habito.nombre}`;
+
+    const derecha = document.createElement("div");
+    derecha.className = "habito-menu";
+    const menu = document.createElement("button");
+    menu.textContent = "⋮";
+    menu.title = "Opciones";
+    menu.addEventListener("click", () => {
+      const opcion = prompt("Escribe 'editar' o 'eliminar'");
+      if (opcion === "editar") {
+        editando = habito.index;
+        inputNombre.value = habito.nombre;
+        inputHora.value = habito.hora;
+        checkboxesDias.forEach(c => c.checked = habito.dias.includes(parseInt(c.value)));
+        modalTitulo.textContent = "Editar Hábito";
+        modalHabito.classList.add("activo");
+      } else if (opcion === "eliminar") {
+        rutina.splice(habito.index, 1);
+        guardarRutina(rutina);
+        renderHabitos(rutina);
+      }
+    });
+    derecha.appendChild(menu);
+
+    li.appendChild(izquierda);
+    li.appendChild(centro);
+    li.appendChild(derecha);
     listaHabitos.appendChild(li);
   }
 }
