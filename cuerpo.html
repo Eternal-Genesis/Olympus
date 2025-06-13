@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -26,7 +26,7 @@
       </div>
     </section>
 
-    <!-- Panel: Rutina de Entrenamiento (estructura base) -->
+    <!-- Panel: Rutina de Entrenamiento -->
     <section class="panel-entrenamiento">
       <h2>Rutina de Entrenamiento</h2>
       <div id="estado-rutina">
@@ -55,6 +55,12 @@
 
           <label for="peso-meta">Peso actual (kg):</label>
           <input type="number" id="peso-meta" min="30" max="200" required />
+
+          <label for="cuello">Circunferencia del cuello (cm):</label>
+          <input type="number" id="cuello" min="20" max="60" required />
+
+          <label for="cintura">Circunferencia de la cintura (cm):</label>
+          <input type="number" id="cintura" min="40" max="200" required />
 
           <label for="actividad">Nivel de actividad:</label>
           <select id="actividad" required>
@@ -124,3 +130,4 @@
   <script type="module" src="cuerpo.js"></script>
 </body>
 </html>
+
