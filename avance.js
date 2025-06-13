@@ -161,7 +161,7 @@ contenedorHabitos.addEventListener("click", async e => {
       menu.addEventListener("mouseleave", () => {
         timeout = setTimeout(() => {
           menu.classList.add("oculto");
-        }, 2000);
+        }, 1000);
       });
 
       menu.addEventListener("mouseenter", () => {
