@@ -1,4 +1,4 @@
-/* avance.css - rutina diaria visual y funcional */
+/* avance.css - rutina diaria con menú de opciones */
 body {
   background-color: #121212;
   color: #f1f1f1;
@@ -46,17 +46,40 @@ h2 {
   border-radius: 10px;
   margin-bottom: 1rem;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
-}
-
-.habito-item label {
   display: flex;
   align-items: center;
-  gap: 0.8rem;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.habito-check {
+  flex-shrink: 0;
+}
+
+.habito-check input[type="checkbox"] {
+  transform: scale(1.2);
+  cursor: pointer;
+}
+
+.habito-info {
+  flex-grow: 1;
   font-size: 1rem;
 }
 
-input[type="checkbox"] {
-  transform: scale(1.2);
+.habito-menu button {
+  background: none;
+  border: none;
+  color: #aaa;
+  font-size: 1.4rem;
+  cursor: pointer;
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+}
+
+.habito-menu button:hover {
+  background-color: #333;
+  color: #00f0ff;
 }
 
 .modal {
