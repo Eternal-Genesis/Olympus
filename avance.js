@@ -154,18 +154,18 @@ form.addEventListener("submit", async e => {
   let base = JSON.parse(localStorage.getItem(habitosBaseKey(uid))) || [];
 
   if (id) {
-    const index = habitos.findIndex(h => h.id === parseInt(id));
-    if (index !== -1) {
-      habitos[index].nombre = nombre;
-      habitos[index].dias = dias;
-      habitos[index].hora = hora;
+    const idNum = parseInt(id);
 
-      const baseIndex = base.findIndex(h => h.id === parseInt(id));
-      if (baseIndex !== -1) {
-        base[baseIndex].nombre = nombre;
-        base[baseIndex].dias = dias;
-        base[baseIndex].hora = hora;
-      }
+    const baseIndex = base.findIndex(h => h.id === idNum);
+    if (baseIndex !== -1) {
+      base[baseIndex].nombre = nombre;
+      base[baseIndex].dias = dias;
+      base[baseIndex].hora = hora;
+    }
+
+    const index = habitos.findIndex(h => h.id === idNum);
+    if (index !== -1) {
+      habitos[index] = { ...base[baseIndex], completado: habitos[index].completado };
     }
   } else {
     const nuevo = { id: Date.now(), nombre, completado: false, dias, hora };
@@ -183,6 +183,7 @@ form.addEventListener("submit", async e => {
 
   cerrarModal();
   renderHabitos();
+  renderTodosLosHabitos();
 });
 
 btnCancelar.addEventListener("click", cerrarModal);
