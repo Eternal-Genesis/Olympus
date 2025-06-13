@@ -275,3 +275,57 @@ contenedorHabitos.addEventListener("click", async e => {
     }
   }
 });
+
+
+listaTodos.addEventListener("click", async e => {
+  const btnMenu = e.target.closest(".btn-menu");
+  if (btnMenu) {
+    const menu = btnMenu.nextElementSibling;
+    const abierto = !menu.classList.contains("oculto");
+
+    document.querySelectorAll(".menu-opciones").forEach(m => m.classList.add("oculto"));
+
+    if (!abierto) {
+      menu.classList.remove("oculto");
+
+      let timeout;
+      menu.addEventListener("mouseleave", () => {
+        timeout = setTimeout(() => {
+          menu.classList.add("oculto");
+        }, 2000);
+      });
+
+      menu.addEventListener("mouseenter", () => {
+        clearTimeout(timeout);
+      });
+    }
+    return;
+  }
+
+  const opcion = e.target.closest(".menu-opciones li");
+  if (opcion) {
+    const accion = opcion.dataset.accion;
+    const id = parseInt(opcion.parentElement.dataset.id);
+
+    const base = JSON.parse(localStorage.getItem(habitosBaseKey(uid))) || [];
+    const habito = base.find(h => h.id === id);
+    if (!habito) return;
+
+    if (accion === "editar") {
+      abrirModal(habito);
+    }
+
+    if (accion === "eliminar" && confirm("¿Eliminar este hábito?")) {
+      const nuevaBase = base.filter(h => h.id !== id);
+      localStorage.setItem(habitosBaseKey(uid), JSON.stringify(nuevaBase));
+
+      habitos = nuevaBase
+        .filter(h => h.dias?.includes(diaSemana))
+        .map(h => ({ ...h, completado: false }));
+      localStorage.setItem(habitosHoyKey(uid), JSON.stringify(habitos));
+
+      renderHabitos();
+      renderTodosLosHabitos();
+    }
+  }
+});
