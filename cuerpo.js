@@ -1,4 +1,4 @@
-// cuerpo.js con TMB de Katch-McArdle y % grasa con Deurenberg
+// cuerpo.js con ajuste de % grasa según contextura
 import {
   auth,
   db,
@@ -30,10 +30,12 @@ const inputSexo = document.getElementById("sexo");
 const inputEdad = document.getElementById("edad");
 const inputAltura = document.getElementById("altura");
 const inputPesoMeta = document.getElementById("peso-meta");
+const inputContextura = document.getElementById("contextura");
 const inputActividad = document.getElementById("actividad");
 const inputObjetivo = document.getElementById("objetivo");
 
 const inputNuevoPeso = document.getElementById("nuevo-peso");
+const inputNuevaContextura = document.getElementById("nueva-contextura");
 const inputNuevaActividad = document.getElementById("nueva-actividad");
 const inputNuevoObjetivo = document.getElementById("nuevo-objetivo");
 
@@ -94,6 +96,7 @@ formPlan.addEventListener("submit", async e => {
     edad: parseInt(inputEdad.value),
     altura: parseInt(inputAltura.value),
     peso: parseFloat(inputPesoMeta.value),
+    contextura: inputContextura.value,
     actividad: parseFloat(inputActividad.value),
     objetivo: inputObjetivo.value
   });
@@ -117,10 +120,11 @@ formProgreso.addEventListener("submit", async e => {
   const prev = JSON.parse(cache);
 
   const peso = parseFloat(inputNuevoPeso.value);
+  const contextura = inputNuevaContextura.value || prev.contextura;
   const actividad = parseFloat(inputNuevaActividad.value) || prev.actividad;
   const objetivo = inputNuevoObjetivo.value || prev.objetivo;
 
-  const plan = calcularPlanNutricional({ ...prev, peso, actividad, objetivo });
+  const plan = calcularPlanNutricional({ ...prev, peso, actividad, objetivo, contextura });
 
   localStorage.setItem(planKey(uid), JSON.stringify(plan));
   localStorage.setItem(syncKey(uid), hoy);
@@ -135,15 +139,22 @@ function cerrarModal(modal) {
   modal.querySelector("form").reset();
 }
 
-function calcularPlanNutricional({ sexo, edad, altura, peso, actividad, objetivo }) {
+function calcularPlanNutricional({ sexo, edad, altura, peso, contextura, actividad, objetivo }) {
   const imc = peso / Math.pow(altura / 100, 2);
   const sexoFactor = sexo === "hombre" ? 1 : 0;
-  const porcentajeGrasa = Math.min(50, Math.max(4,
-    1.20 * imc + 0.23 * edad - 10.8 * sexoFactor - 5.4));
+  let porcentajeGrasa = 1.20 * imc + 0.23 * edad - 10.8 * sexoFactor - 5.4;
+
+  // Ajuste por contextura
+  const ajustes = {
+    delgado: 2,
+    normal: 0,
+    musculoso: -3,
+    sobrepeso: 5
+  };
+  porcentajeGrasa += ajustes[contextura] || 0;
+  porcentajeGrasa = Math.min(50, Math.max(4, porcentajeGrasa));
 
   const pesoMagra = peso * (1 - porcentajeGrasa / 100);
-
-  // Katch-McArdle TMB:
   const tmb = Math.round(370 + 21.6 * pesoMagra);
   const tdee = Math.round(tmb * actividad);
 
@@ -160,7 +171,7 @@ function calcularPlanNutricional({ sexo, edad, altura, peso, actividad, objetivo
   const carbos = Math.round((caloriasObjetivo - (proteinas * 4 + grasas * 9)) / 4);
 
   return {
-    sexo, edad, altura, peso, actividad, objetivo,
+    sexo, edad, altura, peso, contextura, actividad, objetivo,
     porcentajeGrasa,
     pesoMagra: Math.round(pesoMagra),
     tmb,
@@ -178,6 +189,7 @@ function cargarPlanEnFormulario() {
   inputEdad.value = plan.edad;
   inputAltura.value = plan.altura;
   inputPesoMeta.value = plan.peso;
+  inputContextura.value = plan.contextura;
   inputActividad.value = plan.actividad;
   inputObjetivo.value = plan.objetivo;
 }
