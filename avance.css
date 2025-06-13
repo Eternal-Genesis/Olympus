@@ -1,4 +1,4 @@
-/* avance.css - estilo limpio y organizado */
+/* avance.css - rutina diaria visual y funcional */
 body {
   background-color: #121212;
   color: #f1f1f1;
@@ -19,25 +19,80 @@ h2 {
   margin-bottom: 1.5rem;
 }
 
-h3 {
-  font-size: 1.4rem;
-  margin: 1.5rem 0 1rem;
+#btn-nuevo-habito {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #00f0ff;
+  color: #121212;
+  border: none;
+  padding: 0.8rem 1.4rem;
+  border-radius: 50px;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  z-index: 1000;
+  box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+  transition: background-color 0.3s ease;
+}
+
+#btn-nuevo-habito:hover {
+  background-color: #00c3d6;
+}
+
+.habito-item {
+  background-color: #1e1e1e;
+  padding: 0.8rem;
+  border-radius: 10px;
+  margin-bottom: 1rem;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+}
+
+.habito-item label {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  font-size: 1rem;
+}
+
+input[type="checkbox"] {
+  transform: scale(1.2);
+}
+
+.modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 2000;
+}
+
+.modal.activo {
+  display: flex;
+}
+
+.modal-contenido {
+  background-color: #1e1e1e;
+  padding: 1.5rem;
+  border-radius: 10px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+}
+
+.modal-contenido h3 {
+  margin-top: 0;
   color: #00f0ff;
 }
 
-.crear-habito form {
-  background-color: #1e1e1e;
-  padding: 1.2rem;
-  border-radius: 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-}
-
-.crear-habito input[type="text"],
-.crear-habito input[type="time"] {
+.modal-contenido input[type="text"],
+.modal-contenido input[type="time"] {
+  width: 100%;
   padding: 0.6rem;
+  margin-bottom: 0.8rem;
   border: none;
   border-radius: 6px;
   background-color: #2a2a2a;
@@ -46,8 +101,8 @@ h3 {
 
 .dias-semana {
   display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-bottom: 1rem;
 }
 
 .dias-semana label {
@@ -56,46 +111,30 @@ h3 {
   border-radius: 6px;
   font-size: 0.9rem;
   cursor: pointer;
+  user-select: none;
 }
 
-.crear-habito button {
-  background-color: #00f0ff;
-  border: none;
-  padding: 0.6rem;
-  font-weight: bold;
-  border-radius: 6px;
-  color: #121212;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.crear-habito button:hover {
-  background-color: #00c3d6;
-}
-
-.lista-habitos ul {
-  list-style: none;
-  padding: 0;
-}
-
-.lista-habitos li {
-  background-color: #1e1e1e;
-  padding: 0.8rem;
-  border-radius: 8px;
-  margin-bottom: 0.6rem;
+.acciones-form {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  box-shadow: 0 0 5px rgba(0,0,0,0.2);
+  gap: 1rem;
 }
 
-.lista-habitos label {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  font-size: 0.95rem;
+.acciones-form button {
+  flex: 1;
+  padding: 0.6rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
 }
 
-input[type="checkbox"] {
-  transform: scale(1.2);
+.acciones-form button:first-child {
+  background-color: #00f0ff;
+  color: #121212;
+}
+
+.acciones-form button:last-child {
+  background-color: #444;
+  color: #ccc;
 }
