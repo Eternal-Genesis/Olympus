@@ -14,48 +14,26 @@
   <!-- Contenido principal -->
   <main class="cuerpo-container">
 
-    <!-- Panel: Seguimiento de Peso -->
-    <section class="panel-seguimiento">
-      <h2>Seguimiento de Peso</h2>
-      <div class="peso-actual">
-        <p><strong>Peso actual:</strong> <span id="peso-actual">-- kg</span></p>
-        <button id="btn-registrar-peso">Registrar nuevo peso</button>
-      </div>
-      <canvas id="grafico-peso" width="100%" height="300"></canvas>
-    </section>
-
-    <!-- Panel: Plan de Alimentación Personalizado -->
+    <!-- Panel: Plan de Alimentación Adaptativo -->
     <section class="panel-alimentacion">
-      <h2>Plan de Alimentación Personalizado</h2>
+      <h2>Tu Plan de Alimentación</h2>
       <div id="plan-alimentacion">
-        <p id="info-plan">Tu plan personalizado aparecerá aquí.</p>
-        <button id="btn-configurar-plan">Configurar / Editar Plan</button>
+        <p id="info-plan">Aún no has configurado tu plan personalizado.</p>
+        <div class="acciones-plan">
+          <button id="btn-configurar-plan">Configurar / Editar Plan</button>
+          <button id="btn-revisar-progreso">Actualizar Progreso</button>
+        </div>
       </div>
     </section>
 
-    <!-- Panel: Rutina de Entrenamiento -->
+    <!-- Panel: Rutina de Entrenamiento (estructura base) -->
     <section class="panel-entrenamiento">
       <h2>Rutina de Entrenamiento</h2>
       <div id="estado-rutina">
-        <p>Selecciona tu nivel y equipamiento para generar una rutina.</p>
+        <p>Podrás generar tu rutina personalizada según tu nivel y equipo disponible.</p>
         <button id="btn-generar-rutina">Generar Rutina</button>
       </div>
     </section>
-
-    <!-- Modal: Registrar Peso -->
-    <div class="modal" id="modal-peso">
-      <div class="modal-contenido">
-        <h3>Registrar nuevo peso</h3>
-        <form id="form-peso">
-          <label for="input-peso">Peso en kg:</label>
-          <input type="number" id="input-peso" min="20" max="300" required />
-          <div class="modal-acciones">
-            <button type="submit">Guardar</button>
-            <button type="button" id="btn-cancelar-peso">Cancelar</button>
-          </div>
-        </form>
-      </div>
-    </div>
 
     <!-- Modal: Configurar Plan Nutricional -->
     <div class="modal" id="modal-plan">
@@ -88,7 +66,7 @@
             <option value="1.9">Muy intenso</option>
           </select>
 
-          <label for="objetivo">Objetivo:</label>
+          <label for="objetivo">Objetivo actual:</label>
           <select id="objetivo" required>
             <option value="">Selecciona</option>
             <option value="deficit">Perder grasa</option>
@@ -104,12 +82,45 @@
       </div>
     </div>
 
+    <!-- Modal: Actualizar Progreso / Reajustar plan -->
+    <div class="modal" id="modal-progreso">
+      <div class="modal-contenido">
+        <h3>Actualizar Progreso</h3>
+        <form id="form-progreso">
+          <label for="nuevo-peso">¿Cuál es tu peso actual?</label>
+          <input type="number" id="nuevo-peso" min="30" max="200" required />
+
+          <label for="nueva-actividad">¿Tu actividad ha cambiado?</label>
+          <select id="nueva-actividad">
+            <option value="">No, sigue igual</option>
+            <option value="1.2">Sedentario</option>
+            <option value="1.375">Actividad ligera</option>
+            <option value="1.55">Moderado</option>
+            <option value="1.725">Intenso</option>
+            <option value="1.9">Muy intenso</option>
+          </select>
+
+          <label for="nuevo-objetivo">¿Tu objetivo ha cambiado?</label>
+          <select id="nuevo-objetivo">
+            <option value="">No, sigue igual</option>
+            <option value="deficit">Perder grasa</option>
+            <option value="mantenimiento">Mantener peso</option>
+            <option value="superavit">Ganar músculo</option>
+          </select>
+
+          <div class="modal-acciones">
+            <button type="submit">Actualizar Plan</button>
+            <button type="button" id="btn-cancelar-progreso">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
   </main>
 
   <!-- Scripts -->
   <script src="navbar.js"></script>
   <script type="module" src="firebase.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script type="module" src="cuerpo.js"></script>
 </body>
 </html>
