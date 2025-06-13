@@ -8,13 +8,9 @@
   <link rel="stylesheet" href="cuerpo.css" />
 </head>
 <body>
-  <!-- Menú superior cargado dinámicamente -->
   <header id="navbar"></header>
-
-  <!-- Contenido principal -->
   <main class="cuerpo-container">
 
-    <!-- Panel: Plan de Alimentación Adaptativo -->
     <section class="panel-alimentacion">
       <h2>Tu Plan de Alimentación</h2>
       <div id="plan-alimentacion">
@@ -26,7 +22,6 @@
       </div>
     </section>
 
-    <!-- Panel: Rutina de Entrenamiento -->
     <section class="panel-entrenamiento">
       <h2>Rutina de Entrenamiento</h2>
       <div id="estado-rutina">
@@ -35,7 +30,6 @@
       </div>
     </section>
 
-    <!-- Modal: Configurar Plan Nutricional -->
     <div class="modal" id="modal-plan">
       <div class="modal-contenido">
         <h3>Configurar Plan Nutricional</h3>
@@ -56,8 +50,8 @@
           <label for="peso-meta">Peso actual (kg):</label>
           <input type="number" id="peso-meta" min="30" max="200" required />
 
-          <label for="abdomen">Medida del abdomen (cm):</label>
-          <input type="number" id="abdomen" min="50" max="200" required />
+          <label for="cintura">Circunferencia de la cintura (cm):</label>
+          <input type="number" id="cintura" min="40" max="160" required />
 
           <label for="actividad">Nivel de actividad:</label>
           <select id="actividad" required>
@@ -85,7 +79,6 @@
       </div>
     </div>
 
-    <!-- Modal: Actualizar Progreso / Reajustar plan -->
     <div class="modal" id="modal-progreso">
       <div class="modal-contenido">
         <h3>Actualizar Progreso</h3>
@@ -118,10 +111,8 @@
         </form>
       </div>
     </div>
-
   </main>
 
-  <!-- Scripts -->
   <script src="navbar.js"></script>
   <script type="module" src="firebase.js"></script>
   <script type="module" src="cuerpo.js"></script>
