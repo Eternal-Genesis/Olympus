@@ -1,4 +1,3 @@
-// avance.js sin estadísticas
 import {
   auth,
   db,
@@ -149,7 +148,27 @@ contenedorHabitos.addEventListener("click", async e => {
   const btnMenu = e.target.closest(".btn-menu");
   if (btnMenu) {
     const menu = btnMenu.nextElementSibling;
-    menu.classList.toggle("oculto");
+    const abierto = !menu.classList.contains("oculto");
+
+    // Cierra otros menús antes
+    document.querySelectorAll(".menu-opciones").forEach(m => m.classList.add("oculto"));
+
+    if (!abierto) {
+      menu.classList.remove("oculto");
+
+      // Cierre automático tras salir del menú
+      let timeout;
+      menu.addEventListener("mouseleave", () => {
+        timeout = setTimeout(() => {
+          menu.classList.add("oculto");
+        }, 2000);
+      });
+
+      menu.addEventListener("mouseenter", () => {
+        clearTimeout(timeout);
+      });
+    }
+
     return;
   }
 
