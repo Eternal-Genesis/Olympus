@@ -1,4 +1,4 @@
-// avance.js sin renderizado de estadísticas
+// avance.js sin estadísticas
 import {
   auth,
   db,
