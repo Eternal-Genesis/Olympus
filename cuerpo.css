@@ -15,94 +15,65 @@ body {
   font-family: 'Segoe UI', sans-serif;
   background-color: var(--fondo);
   color: var(--texto);
+  line-height: 1.6;
 }
 
-.subnav {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
-  padding: 1rem;
+/* Navbar global */
+#navbar {
   background: var(--fondo-claro);
+  padding: 1rem;
   border-bottom: 1px solid var(--borde);
 }
 
-.tab-btn {
-  background: transparent;
-  color: var(--texto);
-  border: none;
-  padding: 0.6rem 1rem;
-  cursor: pointer;
-  font-weight: bold;
-  border-radius: 6px;
-  transition: background 0.3s ease, transform 0.2s ease;
+/* Main container */
+.cuerpo-wrapper {
+  max-width: 800px;
+  margin: auto;
+  padding: 2rem 1rem;
 }
 
-.tab-btn:hover,
-.tab-btn.active {
-  background-color: var(--btn-bg-color);
-  color: var(--fondo);
-  transform: scale(1.05);
-}
-
-/* Tarjetas resumen */
-.resumen-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 1rem;
-  margin-top: 1rem;
-}
-
-.resumen-box {
-  background: var(--fondo-claro);
-  padding: 1.2rem;
-  border-radius: 8px;
-  text-align: center;
-  box-shadow: 0 1px 6px rgba(0,0,0,0.3);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.resumen-box:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-}
-
-.resumen-box h3 {
-  margin: 0;
-  font-size: 1rem;
-  color: var(--gris);
-}
-
-.resumen-box p {
-  margin: 0.5rem 0 0;
-  font-size: 1.2rem;
-  font-weight: bold;
-}
-
+/* Alimentación y Entrenamiento */
 h2 {
   text-align: center;
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   margin-bottom: 1.5rem;
 }
 
-.btn-principal {
-  background-color: var(--btn-bg-color);
-  color: var(--fondo);
-  padding: 0.8rem;
-  border: none;
-  border-radius: 6px;
-  font-weight: bold;
+.alimentacion-section,
+.entrenamiento-section {
+  margin-bottom: 2rem;
+}
+
+.alimentacion-card, 
+.entrenamiento-card {
+  background: var(--fondo-claro);
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  margin-bottom: 1rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.alimentacion-card:hover,
+.entrenamiento-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+.alimentacion-card h3,
+.entrenamiento-card h3 {
+  font-size: 1.3rem;
+  color: var(--texto);
+  margin-bottom: 1rem;
+}
+
+.alimentacion-card p,
+.entrenamiento-card p {
   font-size: 1rem;
-  cursor: pointer;
-  width: 100%;
-  transition: background 0.3s ease, transform 0.2s ease;
-  margin-top: 1rem;
+  margin: 0.5rem 0;
 }
 
-.btn-principal:hover {
-  background-color: var(--btn-bg-hover);
-  transform: scale(1.05);
-}
-
+/* Botones */
 .btn-secundario {
   background: transparent;
   border: 1px solid var(--btn-bg-color);
@@ -122,39 +93,75 @@ h2 {
   transform: scale(1.05);
 }
 
-/* Revisión mensual */
-.revision-section {
-  background-color: var(--fondo-claro);
-  padding: 1.5rem;
-  margin-top: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+/* Formulario de comidas y entrenamientos */
+.input-group {
+  margin-bottom: 1.5rem;
 }
 
-.revision-section:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+.input-group label {
+  font-weight: bold;
+  margin-bottom: 0.5rem;
 }
 
-#estado-revision {
-  margin-bottom: 1rem;
+.input-group input {
+  width: 100%;
+  padding: 0.8rem;
+  border-radius: 6px;
+  border: 1px solid var(--borde);
+  background: var(--fondo-claro);
+  color: var(--texto);
   font-size: 1rem;
-  color: var(--gris);
-  text-align: center;
 }
 
-.oculto {
-  display: none;
+#registro-comidas,
+#registro-entrenamiento {
+  margin-top: 2rem;
 }
 
+#registro-comidas h3,
+#registro-entrenamiento h3 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+}
+
+#lista-comidas,
+#registro-entrenamiento {
+  margin-top: 1.5rem;
+}
+
+/* Progreso Diario */
+.progreso-info {
+  background: var(--fondo-claro);
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  margin-top: 1.5rem;
+}
+
+.progreso-info p {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0.8rem 0;
+}
+
+/* Responsividad */
 @media (max-width: 480px) {
-  .tab-btn {
-    font-size: 0.9rem;
-    padding: 0.5rem 0.8rem;
+  h2 {
+    font-size: 1.3rem;
   }
 
-  .resumen-box p {
+  .alimentacion-card,
+  .entrenamiento-card {
+    padding: 1rem;
+  }
+
+  .alimentacion-card p,
+  .entrenamiento-card p {
     font-size: 1rem;
   }
+
+  .btn-secundario {
+    padding: 0.8rem;
+  }
 }
+
