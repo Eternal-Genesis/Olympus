@@ -1,41 +1,46 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Avance – Rutina Diaria</title>
-  <link rel="stylesheet" href="navbar.css">
-  <link rel="stylesheet" href="avance.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Avance – Rutina</title>
+  <link rel="stylesheet" href="navbar.css" />
+  <link rel="stylesheet" href="avance.css" />
 </head>
 <body>
   <header id="navbar"></header>
+
   <main class="avance-container">
-    <h2>Rutina</h2>
+    <h2>Rutina Diaria</h2>
+    <div id="lista-habitos"></div>
 
-    <section class="crear-habito">
-      <h3>Agregar Hábito</h3>
-      <form id="form-habito">
-        <input type="text" id="nombre-habito" placeholder="Nombre del hábito" required>
-        <input type="time" id="hora-habito" required>
+    <button id="btn-nuevo-habito" title="Nuevo hábito">＋ Añadir Hábito</button>
 
-        <div class="dias-semana">
-          <label><input type="checkbox" name="dias" value="0">L</label>
-          <label><input type="checkbox" name="dias" value="1">M</label>
-          <label><input type="checkbox" name="dias" value="2">X</label>
-          <label><input type="checkbox" name="dias" value="3">J</label>
-          <label><input type="checkbox" name="dias" value="4">V</label>
-          <label><input type="checkbox" name="dias" value="5">S</label>
-          <label><input type="checkbox" name="dias" value="6">D</label>
-        </div>
+    <div class="modal" id="modal-habito">
+      <div class="modal-contenido">
+        <h3 id="modal-titulo">Nuevo Hábito</h3>
+        <form id="form-habito">
+          <input type="text" id="nombre-habito" placeholder="Nombre del hábito" required />
+          <input type="time" id="hora-habito" required />
 
-        <button type="submit">Agregar</button>
-      </form>
-    </section>
+          <label>Días de la semana:</label>
+          <div class="dias-semana">
+            <label><input type="checkbox" value="0">L</label>
+            <label><input type="checkbox" value="1">M</label>
+            <label><input type="checkbox" value="2">X</label>
+            <label><input type="checkbox" value="3">J</label>
+            <label><input type="checkbox" value="4">V</label>
+            <label><input type="checkbox" value="5">S</label>
+            <label><input type="checkbox" value="6">D</label>
+          </div>
 
-    <section class="lista-habitos">
-      <h3>Hábitos de Hoy</h3>
-      <ul id="habitos-hoy"></ul>
-    </section>
+          <div class="acciones-form">
+            <button type="submit">Guardar</button>
+            <button type="button" id="cancelar-habito">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
   </main>
 
   <script src="navbar.js"></script>
