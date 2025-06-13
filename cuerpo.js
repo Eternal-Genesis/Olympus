@@ -1,4 +1,4 @@
-// cuerpo.js con cálculo por masa magra y % grasa corporal
+// cuerpo.js con cálculo de grasa corporal sin cuello, adaptado por sexo
 import {
   auth,
   db,
@@ -30,7 +30,6 @@ const inputSexo = document.getElementById("sexo");
 const inputEdad = document.getElementById("edad");
 const inputAltura = document.getElementById("altura");
 const inputPesoMeta = document.getElementById("peso-meta");
-const inputCuello = document.getElementById("cuello");
 const inputCintura = document.getElementById("cintura");
 const inputActividad = document.getElementById("actividad");
 const inputObjetivo = document.getElementById("objetivo");
@@ -97,7 +96,6 @@ formPlan.addEventListener("submit", async e => {
     edad: parseInt(inputEdad.value),
     altura: parseInt(inputAltura.value),
     peso: parseFloat(inputPesoMeta.value),
-    cuello: parseFloat(inputCuello.value),
     cintura: parseFloat(inputCintura.value),
     actividad: parseFloat(inputActividad.value),
     objetivo: inputObjetivo.value
@@ -140,10 +138,10 @@ function cerrarModal(modal) {
   modal.querySelector("form").reset();
 }
 
-function calcularPlanNutricional({ sexo, edad, altura, peso, cuello, cintura, actividad, objetivo }) {
-  // % grasa corporal (U.S. Navy Method para hombres)
-  const log10 = Math.log10;
-  const porcentajeGrasa = Math.max(4, 86.01 * log10(cintura - cuello) - 70.041 * log10(altura) + 36.76);
+function calcularPlanNutricional({ sexo, edad, altura, peso, cintura, actividad, objetivo }) {
+  // % grasa corporal estimado por sexo
+  const ratio = altura / cintura;
+  const porcentajeGrasa = sexo === "mujer" ? 76 - 20 * ratio : 64 - 20 * ratio;
 
   const pesoMagra = peso * (1 - porcentajeGrasa / 100);
 
@@ -172,8 +170,8 @@ function calcularPlanNutricional({ sexo, edad, altura, peso, cuello, cintura, ac
   const carbos = Math.round((caloriasObjetivo - (proteinas * 4 + grasas * 9)) / 4);
 
   return {
-    sexo, edad, altura, peso, cuello, cintura, actividad, objetivo,
-    porcentajeGrasa,
+    sexo, edad, altura, peso, cintura, actividad, objetivo,
+    porcentajeGrasa: Math.max(4, porcentajeGrasa),
     pesoMagra: Math.round(pesoMagra),
     tmb: Math.round(tmb),
     tdee,
@@ -191,8 +189,8 @@ function cargarPlanEnFormulario() {
   inputEdad.value = plan.edad;
   inputAltura.value = plan.altura;
   inputPesoMeta.value = plan.peso;
-  inputCuello.value = plan.cuello;
   inputCintura.value = plan.cintura;
   inputActividad.value = plan.actividad;
   inputObjetivo.value = plan.objetivo;
 }
+
