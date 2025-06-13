@@ -1,4 +1,4 @@
-// cuerpo.js con ajuste de % grasa según contextura
+// cuerpo.js con seguridad para evitar objetivos peligrosos
 import {
   auth,
   db,
@@ -68,7 +68,7 @@ onAuthStateChanged(auth, async user => {
 });
 
 function renderResumenPlan(plan) {
-  const { caloriasObjetivo, macros, objetivo, porcentajeGrasa } = plan;
+  const { caloriasObjetivo, macros, objetivo, porcentajeGrasa, advertencia } = plan;
   infoPlan.innerHTML = `
     <p><strong>Objetivo:</strong> ${objetivo === "deficit" ? "Perder grasa" : objetivo === "superavit" ? "Ganar músculo" : "Mantener peso"}</p>
     <p><strong>Grasa corporal estimada:</strong> ${porcentajeGrasa?.toFixed(1)}%</p>
@@ -78,6 +78,7 @@ function renderResumenPlan(plan) {
       <li>Grasas: ${macros.grasas} g</li>
       <li>Carbohidratos: ${macros.carbos} g</li>
     </ul>
+    ${advertencia ? `<p class="alerta">⚠️ ${advertencia}</p>` : ""}
   `;
 }
 
@@ -144,7 +145,6 @@ function calcularPlanNutricional({ sexo, edad, altura, peso, contextura, activid
   const sexoFactor = sexo === "hombre" ? 1 : 0;
   let porcentajeGrasa = 1.20 * imc + 0.23 * edad - 10.8 * sexoFactor - 5.4;
 
-  // Ajuste por contextura
   const ajustes = {
     delgado: 2,
     normal: 0,
@@ -157,6 +157,15 @@ function calcularPlanNutricional({ sexo, edad, altura, peso, contextura, activid
   const pesoMagra = peso * (1 - porcentajeGrasa / 100);
   const tmb = Math.round(370 + 21.6 * pesoMagra);
   const tdee = Math.round(tmb * actividad);
+
+  let advertencia = null;
+  const grasaBaja = (sexo === "hombre" && porcentajeGrasa < 15) || (sexo === "mujer" && porcentajeGrasa < 22);
+  const imcBajo = imc < 21;
+
+  if (objetivo === "deficit" && grasaBaja && imcBajo) {
+    objetivo = "mantenimiento";
+    advertencia = "Tu nivel de grasa corporal es bajo. Se ha ajustado tu objetivo por seguridad.";
+  }
 
   const objetivoFactor = objetivo === "deficit" ? 0.9 : objetivo === "superavit" ? 1.1 : 1.0;
   let caloriasObjetivo = Math.round(tdee * objetivoFactor);
@@ -177,7 +186,8 @@ function calcularPlanNutricional({ sexo, edad, altura, peso, contextura, activid
     tmb,
     tdee,
     caloriasObjetivo,
-    macros: { proteinas, grasas, carbos }
+    macros: { proteinas, grasas, carbos },
+    advertencia
   };
 }
 
