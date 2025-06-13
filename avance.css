@@ -1,0 +1,285 @@
+/* === ESTILOS BASE === */
+body {
+  background-color: #121212;
+  color: #f1f1f1;
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+h2, h3, label {
+  color: #f1f1f1;
+}
+
+h2 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+/* === CONTENEDOR GENERAL === */
+.avance-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+/* === SECCIÓN DE HÁBITOS DEL DÍA === */
+.habitos-hoy {
+  display: grid;
+  gap: 1rem;
+}
+
+.habito-item {
+  background-color: #1e1e1e;
+  padding: 1rem 1.2rem;
+  border-left: 4px solid #00f0ff;
+  border-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.2s ease;
+}
+
+.habito-item:hover {
+  background-color: #2a2a2a;
+}
+
+.habito-item.completado {
+  opacity: 0.6;
+  text-decoration: line-through;
+}
+
+.habito-item.completado::before {
+  content: "✔ ";
+  color: #00ff88;
+}
+
+.habito-item strong {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.dias-programados {
+  font-size: 0.8rem;
+  color: #aaa;
+  margin-top: 0.25rem;
+}
+
+/* === MENÚ CONTEXTUAL === */
+.acciones-habito {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-menu {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 1.4rem;
+  cursor: pointer;
+  padding: 0 0.5rem;
+  line-height: 1;
+}
+
+.menu-container {
+  position: relative;
+  display: inline-block;
+}
+
+.menu-opciones {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background-color: #2a2a2a;
+  border-radius: 6px;
+  padding: 0.25rem 0;
+  list-style: none;
+  margin: 0.25rem 0 0 0;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+  z-index: 10;
+  min-width: 110px;
+  font-size: 0.9rem;
+}
+
+.menu-opciones li {
+  padding: 0.4rem 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.menu-opciones li:hover {
+  background-color: #444;
+}
+
+.oculto {
+  display: none;
+}
+
+/* === BOTONES === */
+button {
+  background-color: #00f0ff;
+  color: #121212;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #00c3d6;
+}
+
+/* === ACCIONES RÁPIDAS === */
+.acciones-rapidas {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* === MODAL === */
+.modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1000;
+}
+
+.modal.activo {
+  display: flex;
+}
+
+.modal-contenido {
+  background-color: #1e1e1e;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 400px;
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.modal-contenido h3 {
+  margin-top: 0;
+  font-size: 1.4rem;
+}
+
+.modal-contenido label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.modal-contenido input[type="text"] {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: none;
+  margin-bottom: 1rem;
+  background-color: #2a2a2a;
+  color: #f0f0f0;
+}
+
+.dias-semana {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.dias-semana input[type="checkbox"] {
+  display: none;
+}
+
+.dias-semana label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #2a2a2a;
+  border-radius: 6px;
+  padding: 0.4rem;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.3s ease;
+  border: 1px solid #444;
+}
+
+.dias-semana input[type="checkbox"]:checked + label {
+  background-color: #00f0ff;
+  color: #121212;
+  font-weight: bold;
+  border-color: #00c3d6;
+}
+
+.modal-acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.modal-contenido button {
+  min-width: 80px;
+}
+
+/* === GRÁFICO DE ESTADÍSTICAS === */
+.estadisticas {
+  padding: 2.5rem 1rem 3rem;
+  background-color: #181818;
+  border-radius: 12px;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
+}
+
+.estadisticas h2 {
+  margin-bottom: 0.5rem;
+  text-align: center;
+  font-size: 1.5rem;
+  color: #00f0ff;
+}
+
+.estadisticas canvas {
+  margin-top: 1.5rem;
+  width: 100% !important;
+  height: 300px !important;
+  background-color: #1e1e1e;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  border: 1px solid #2a2a2a;
+  transition: box-shadow 0.3s ease;
+}
+
+.estadisticas canvas:hover {
+  box-shadow: 0 0 0 2px #00f0ff;
+}
+
+@media (max-width: 600px) {
+  .avance-container {
+    padding: 1.5rem 1rem;
+  }
+
+  .modal-contenido {
+    padding: 1.5rem;
+  }
+
+  .estadisticas {
+    padding: 2rem 1rem;
+  }
+
+  .estadisticas h2 {
+    font-size: 1.3rem;
+  }
+
+  .dias-semana {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
