@@ -1,4 +1,4 @@
-// cuerpo.js con ajustes de calorías mínimas y % grasa más realista
+// cuerpo.js con cálculo de grasa usando abdomen y mejor lógica de calorías
 import {
   auth,
   db,
@@ -30,7 +30,7 @@ const inputSexo = document.getElementById("sexo");
 const inputEdad = document.getElementById("edad");
 const inputAltura = document.getElementById("altura");
 const inputPesoMeta = document.getElementById("peso-meta");
-const inputCintura = document.getElementById("cintura");
+const inputAbdomen = document.getElementById("abdomen");
 const inputActividad = document.getElementById("actividad");
 const inputObjetivo = document.getElementById("objetivo");
 
@@ -67,7 +67,7 @@ onAuthStateChanged(auth, async user => {
 });
 
 function renderResumenPlan(plan) {
-  const { caloriasObjetivo, macros, objetivo, advertencia, porcentajeGrasa } = plan;
+  const { caloriasObjetivo, macros, objetivo, porcentajeGrasa } = plan;
   infoPlan.innerHTML = `
     <p><strong>Objetivo:</strong> ${objetivo === "deficit" ? "Perder grasa" : objetivo === "superavit" ? "Ganar músculo" : "Mantener peso"}</p>
     <p><strong>Grasa corporal estimada:</strong> ${porcentajeGrasa?.toFixed(1)}%</p>
@@ -77,7 +77,6 @@ function renderResumenPlan(plan) {
       <li>Grasas: ${macros.grasas} g</li>
       <li>Carbohidratos: ${macros.carbos} g</li>
     </ul>
-    ${advertencia ? `<p class="alerta">⚠️ ${advertencia}</p>` : ""}
   `;
 }
 
@@ -96,7 +95,7 @@ formPlan.addEventListener("submit", async e => {
     edad: parseInt(inputEdad.value),
     altura: parseInt(inputAltura.value),
     peso: parseFloat(inputPesoMeta.value),
-    cintura: parseFloat(inputCintura.value),
+    abdomen: parseFloat(inputAbdomen.value),
     actividad: parseFloat(inputActividad.value),
     objetivo: inputObjetivo.value
   });
@@ -138,33 +137,21 @@ function cerrarModal(modal) {
   modal.querySelector("form").reset();
 }
 
-function calcularPlanNutricional({ sexo, edad, altura, peso, cintura, actividad, objetivo }) {
-  // Ajuste de % grasa corporal base (más preciso)
-  const ratio = altura / cintura;
-  const base = sexo === "mujer" ? 76 : 68;
-  const porcentajeGrasa = Math.max(4, base - 20 * ratio);
-
+function calcularPlanNutricional({ sexo, edad, altura, peso, abdomen, actividad, objetivo }) {
+  const ratio = altura / abdomen;
+  const porcentajeGrasa = Math.min(50, Math.max(4, 76.5 - 20 * ratio));
   const pesoMagra = peso * (1 - porcentajeGrasa / 100);
 
   let tmb = 370 + 21.6 * pesoMagra;
   const tdee = Math.round(tmb * actividad);
 
-  let factor = 1.0;
-  let advertencia = "";
-  if (objetivo === "deficit") factor = 0.85;
-  if (objetivo === "superavit") factor = 1.1;
+  const objetivoFactor = objetivo === "deficit" ? 0.9 : objetivo === "superavit" ? 1.1 : 1.0;
+  let caloriasObjetivo = Math.round(tdee * objetivoFactor);
 
-  let caloriasObjetivo = Math.round(tdee * factor);
-
-  const minCalorias = sexo === "mujer" ? 1200 : 1600;
-  if (caloriasObjetivo < minCalorias) {
-    caloriasObjetivo = minCalorias;
-    advertencia = "El déficit es demasiado agresivo. Se ha ajustado por seguridad.";
-  }
-  if (caloriasObjetivo > 4000) {
-    caloriasObjetivo = 4000;
-    advertencia = "El superávit es muy alto. Se ha ajustado para evitar exceso calórico.";
-  }
+  // Lógica de seguridad: evitar déficits o superávits extremos
+  const minKcal = sexo === "mujer" ? 1300 : 1700;
+  const maxKcal = 4200;
+  caloriasObjetivo = Math.min(maxKcal, Math.max(minKcal, caloriasObjetivo));
 
   const proteinaFactor = objetivo === "superavit" ? 2.4 : objetivo === "deficit" ? 2.2 : 2.0;
   const proteinas = Math.round(pesoMagra * proteinaFactor);
@@ -172,14 +159,13 @@ function calcularPlanNutricional({ sexo, edad, altura, peso, cintura, actividad,
   const carbos = Math.round((caloriasObjetivo - (proteinas * 4 + grasas * 9)) / 4);
 
   return {
-    sexo, edad, altura, peso, cintura, actividad, objetivo,
-    porcentajeGrasa: porcentajeGrasa,
+    sexo, edad, altura, peso, abdomen, actividad, objetivo,
+    porcentajeGrasa,
     pesoMagra: Math.round(pesoMagra),
     tmb: Math.round(tmb),
     tdee,
     caloriasObjetivo,
-    macros: { proteinas, grasas, carbos },
-    advertencia
+    macros: { proteinas, grasas, carbos }
   };
 }
 
@@ -191,7 +177,7 @@ function cargarPlanEnFormulario() {
   inputEdad.value = plan.edad;
   inputAltura.value = plan.altura;
   inputPesoMeta.value = plan.peso;
-  inputCintura.value = plan.cintura;
+  inputAbdomen.value = plan.abdomen;
   inputActividad.value = plan.actividad;
   inputObjetivo.value = plan.objetivo;
 }
