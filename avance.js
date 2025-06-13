@@ -1,4 +1,4 @@
-// avance.js completo y corregido
+// avance.js completo y corregido con vista de todos los hábitos
 import {
   auth,
   db,
@@ -26,6 +26,9 @@ const inputHora = document.getElementById("habito-hora");
 const inputId = document.getElementById("habito-id");
 const btnCancelar = document.getElementById("btn-cancelar");
 const btnNuevo = document.getElementById("btn-crear-habito");
+const btnVerTodos = document.getElementById("btn-ver-todos");
+const contenedorTodos = document.querySelector(".seccion-todos");
+const listaTodos = document.querySelector(".habitos-todos");
 
 onAuthStateChanged(auth, async (user) => {
   if (!user) return;
@@ -97,6 +100,44 @@ function renderHabitos() {
       </div>
     `;
     contenedorHabitos.appendChild(div);
+  });
+}
+
+btnVerTodos?.addEventListener("click", () => {
+  contenedorTodos.classList.toggle("oculto");
+  if (!contenedorTodos.classList.contains("oculto")) {
+    renderTodosLosHabitos();
+  }
+});
+
+function renderTodosLosHabitos() {
+  listaTodos.innerHTML = "";
+  const base = JSON.parse(localStorage.getItem(habitosBaseKey(uid))) || [];
+  const diasTexto = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+
+  base.sort((a, b) => (a.hora || "00:00").localeCompare(b.hora || "00:00"));
+
+  base.forEach(h => {
+    const dias = h.dias?.map(d => diasTexto[d]).join(" - ") || "";
+    const hora = h.hora ? ` | ${h.hora}` : "";
+    const div = document.createElement("div");
+    div.className = "habito-item";
+    div.innerHTML = `
+      <div>
+        <strong>${h.nombre}</strong>
+        <div class="dias-programados">${dias}${hora}</div>
+      </div>
+      <div class="acciones-habito">
+        <div class="menu-container">
+          <button class="btn-menu" data-id="${h.id}">⋯</button>
+          <ul class="menu-opciones oculto" data-id="${h.id}">
+            <li data-accion="editar">Editar</li>
+            <li data-accion="eliminar">Eliminar</li>
+          </ul>
+        </div>
+      </div>
+    `;
+    listaTodos.appendChild(div);
   });
 }
 
@@ -219,6 +260,7 @@ contenedorHabitos.addEventListener("click", async e => {
 
     localStorage.setItem(habitosHoyKey(uid), JSON.stringify(habitos));
     renderHabitos();
+    renderTodosLosHabitos();
     return;
   }
 
