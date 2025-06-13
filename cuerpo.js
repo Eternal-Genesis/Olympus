@@ -1,4 +1,4 @@
-// cuerpo.js con cálculo de grasa corporal sin cuello, adaptado por sexo
+// cuerpo.js con ajustes de calorías mínimas y % grasa más realista
 import {
   auth,
   db,
@@ -139,9 +139,10 @@ function cerrarModal(modal) {
 }
 
 function calcularPlanNutricional({ sexo, edad, altura, peso, cintura, actividad, objetivo }) {
-  // % grasa corporal estimado por sexo
+  // Ajuste de % grasa corporal base (más preciso)
   const ratio = altura / cintura;
-  const porcentajeGrasa = sexo === "mujer" ? 76 - 20 * ratio : 64 - 20 * ratio;
+  const base = sexo === "mujer" ? 76 : 68;
+  const porcentajeGrasa = Math.max(4, base - 20 * ratio);
 
   const pesoMagra = peso * (1 - porcentajeGrasa / 100);
 
@@ -155,8 +156,9 @@ function calcularPlanNutricional({ sexo, edad, altura, peso, cintura, actividad,
 
   let caloriasObjetivo = Math.round(tdee * factor);
 
-  if (caloriasObjetivo < 1200) {
-    caloriasObjetivo = 1200;
+  const minCalorias = sexo === "mujer" ? 1200 : 1600;
+  if (caloriasObjetivo < minCalorias) {
+    caloriasObjetivo = minCalorias;
     advertencia = "El déficit es demasiado agresivo. Se ha ajustado por seguridad.";
   }
   if (caloriasObjetivo > 4000) {
@@ -171,7 +173,7 @@ function calcularPlanNutricional({ sexo, edad, altura, peso, cintura, actividad,
 
   return {
     sexo, edad, altura, peso, cintura, actividad, objetivo,
-    porcentajeGrasa: Math.max(4, porcentajeGrasa),
+    porcentajeGrasa: porcentajeGrasa,
     pesoMagra: Math.round(pesoMagra),
     tmb: Math.round(tmb),
     tdee,
@@ -193,4 +195,3 @@ function cargarPlanEnFormulario() {
   inputActividad.value = plan.actividad;
   inputObjetivo.value = plan.objetivo;
 }
-
