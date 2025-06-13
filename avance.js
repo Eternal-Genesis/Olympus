@@ -77,31 +77,30 @@ function renderHabitos() {
   });
 
   habitos.forEach(h => {
-    const dias = h.dias?.map(d => diasTexto[d]).join(" - ") || "";
-    const hora = h.hora ? ` | ${h.hora}` : "";
-    const div = document.createElement("div");
-    div.className = "habito-item" + (h.completado ? " completado" : "");
-    div.innerHTML = `
-      <div>
-        <strong>${h.nombre}</strong>
-        <div class="dias-programados">${dias}${hora}</div>
+  const dias = h.dias?.map(d => diasTexto[d]).join(" - ") || "";
+  const hora = h.hora ? ` | ${h.hora}` : "";
+  const div = document.createElement("div");
+  div.className = "habito-item";
+  div.innerHTML = `
+    <div>
+      <strong class="${h.completado ? "completado" : ""}">${h.nombre}</strong>
+      <div class="dias-programados">${dias}${hora}</div>
+    </div>
+    <div class="acciones-habito">
+      <button data-accion="completar" data-id="${h.id}">
+        ${h.completado ? "✓" : "Marcar"}
+      </button>
+      <div class="menu-container">
+        <button class="btn-menu" data-id="${h.id}">⋯</button>
+        <ul class="menu-opciones oculto" data-id="${h.id}">
+          <li data-accion="editar">Editar</li>
+          <li data-accion="eliminar">Eliminar</li>
+        </ul>
       </div>
-      <div class="acciones-habito">
-        <button data-accion="completar" data-id="${h.id}">
-          ${h.completado ? "✓" : "Marcar"}
-        </button>
-        <div class="menu-container">
-          <button class="btn-menu" data-id="${h.id}">⋯</button>
-          <ul class="menu-opciones oculto" data-id="${h.id}">
-            <li data-accion="editar">Editar</li>
-            <li data-accion="eliminar">Eliminar</li>
-          </ul>
-        </div>
-      </div>
-    `;
-    contenedorHabitos.appendChild(div);
-  });
-}
+    </div>
+  `;
+  contenedorHabitos.appendChild(div);
+});
 
 btnVerTodos?.addEventListener("click", () => {
   contenedorTodos.classList.toggle("oculto");
