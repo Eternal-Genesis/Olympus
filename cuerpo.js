@@ -1,4 +1,4 @@
-// cuerpo.js con seguridad para evitar objetivos peligrosos
+// cuerpo.js con objetivo recomposición corporal integrado
 import {
   auth,
   db,
@@ -69,8 +69,13 @@ onAuthStateChanged(auth, async user => {
 
 function renderResumenPlan(plan) {
   const { caloriasObjetivo, macros, objetivo, porcentajeGrasa, advertencia } = plan;
+  const objetivoTexto = objetivo === "deficit" ? "Perder grasa"
+    : objetivo === "superavit" ? "Ganar músculo"
+    : objetivo === "recomposicion" ? "Recomposición corporal"
+    : "Mantener peso";
+
   infoPlan.innerHTML = `
-    <p><strong>Objetivo:</strong> ${objetivo === "deficit" ? "Perder grasa" : objetivo === "superavit" ? "Ganar músculo" : "Mantener peso"}</p>
+    <p><strong>Objetivo:</strong> ${objetivoTexto}</p>
     <p><strong>Grasa corporal estimada:</strong> ${porcentajeGrasa?.toFixed(1)}%</p>
     <p><strong>Calorías objetivo:</strong> ${caloriasObjetivo} kcal/día</p>
     <ul>
@@ -167,14 +172,19 @@ function calcularPlanNutricional({ sexo, edad, altura, peso, contextura, activid
     advertencia = "Tu nivel de grasa corporal es bajo. Se ha ajustado tu objetivo por seguridad.";
   }
 
-  const objetivoFactor = objetivo === "deficit" ? 0.9 : objetivo === "superavit" ? 1.1 : 1.0;
-  let caloriasObjetivo = Math.round(tdee * objetivoFactor);
+  let caloriasObjetivo;
+  if (objetivo === "recomposicion") {
+    caloriasObjetivo = tdee;
+  } else {
+    const objetivoFactor = objetivo === "deficit" ? 0.9 : objetivo === "superavit" ? 1.1 : 1.0;
+    caloriasObjetivo = Math.round(tdee * objetivoFactor);
+  }
 
   const minKcal = sexo === "mujer" ? 1300 : 1700;
   const maxKcal = 4200;
   caloriasObjetivo = Math.min(maxKcal, Math.max(minKcal, caloriasObjetivo));
 
-  const proteinaFactor = objetivo === "superavit" ? 2.4 : objetivo === "deficit" ? 2.2 : 2.0;
+  const proteinaFactor = objetivo === "superavit" || objetivo === "recomposicion" ? 2.4 : objetivo === "deficit" ? 2.2 : 2.0;
   const proteinas = Math.round(pesoMagra * proteinaFactor);
   const grasas = Math.round((caloriasObjetivo * 0.25) / 9);
   const carbos = Math.round((caloriasObjetivo - (proteinas * 4 + grasas * 9)) / 4);
