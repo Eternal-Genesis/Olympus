@@ -21,6 +21,7 @@ const contenedorHabitos = document.querySelector(".habitos-hoy");
 const modal = document.getElementById("modal-habito");
 const form = document.getElementById("form-habito");
 const inputNombre = document.getElementById("habito-nombre");
+const inputHora = document.getElementById("habito-hora");
 const inputId = document.getElementById("habito-id");
 const btnCancelar = document.getElementById("btn-cancelar");
 const btnNuevo = document.getElementById("btn-crear-habito");
@@ -65,14 +66,23 @@ function actualizarHistorialLocal() {
 function renderHabitos() {
   contenedorHabitos.innerHTML = "";
   const diasTexto = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+
+  // Ordenar por hora
+  habitos.sort((a, b) => {
+    const ha = a.hora || "00:00";
+    const hb = b.hora || "00:00";
+    return ha.localeCompare(hb);
+  });
+
   habitos.forEach(h => {
     const dias = h.dias?.map(d => diasTexto[d]).join(" - ") || "";
+    const hora = h.hora ? ` | ${h.hora}` : "";
     const div = document.createElement("div");
     div.className = "habito-item" + (h.completado ? " completado" : "");
     div.innerHTML = `
       <div>
         <strong>${h.nombre}</strong>
-        <div class="dias-programados">${dias}</div>
+        <div class="dias-programados">${dias}${hora}</div>
       </div>
       <div class="acciones-habito">
         <button data-accion="completar" data-id="${h.id}">
@@ -94,24 +104,26 @@ function renderHabitos() {
 form.addEventListener("submit", async e => {
   e.preventDefault();
   const nombre = inputNombre.value.trim();
+  const hora = inputHora.value;
   const id = inputId.value;
   const dias = Array.from(form.querySelectorAll("input[name='dias']:checked"))
     .map(input => parseInt(input.value));
 
-  if (!nombre || !uid || dias.length === 0) return;
+  if (!nombre || !uid || dias.length === 0 || !hora) return;
 
   if (id) {
     const index = habitos.findIndex(h => h.id === parseInt(id));
     if (index !== -1) {
       habitos[index].nombre = nombre;
       habitos[index].dias = dias;
+      habitos[index].hora = hora;
     }
   } else {
-    const nuevo = { id: Date.now(), nombre, completado: false, dias };
+    const nuevo = { id: Date.now(), nombre, completado: false, dias, hora };
     habitos.push(nuevo);
 
     const base = JSON.parse(localStorage.getItem(habitosBaseKey(uid))) || [];
-    base.push({ id: nuevo.id, nombre: nuevo.nombre, dias });
+    base.push({ id: nuevo.id, nombre: nuevo.nombre, dias, hora });
     localStorage.setItem(habitosBaseKey(uid), JSON.stringify(base));
   }
 
@@ -128,12 +140,14 @@ function abrirModal(habito = null) {
   if (habito) {
     document.getElementById("modal-titulo").textContent = "Editar Hábito";
     inputNombre.value = habito.nombre;
+    inputHora.value = habito.hora || "";
     inputId.value = habito.id;
     const checks = form.querySelectorAll("input[name='dias']");
     checks.forEach(c => c.checked = habito.dias?.includes(parseInt(c.value)));
   } else {
     document.getElementById("modal-titulo").textContent = "Nuevo Hábito";
     form.reset();
+    inputHora.value = "";
     inputId.value = "";
   }
 }
@@ -141,6 +155,7 @@ function abrirModal(habito = null) {
 function cerrarModal() {
   modal.classList.remove("activo");
   form.reset();
+  inputHora.value = "";
   inputId.value = "";
 }
 
@@ -161,7 +176,7 @@ contenedorHabitos.addEventListener("click", async e => {
       menu.addEventListener("mouseleave", () => {
         timeout = setTimeout(() => {
           menu.classList.add("oculto");
-        }, 1000);
+        }, 2000);
       });
 
       menu.addEventListener("mouseenter", () => {
