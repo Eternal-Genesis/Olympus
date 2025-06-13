@@ -61,6 +61,13 @@ h3 {
   gap: 1rem;
 }
 
+/* === ADVERTENCIAS === */
+.alerta {
+  color: #ffc107;
+  font-weight: bold;
+  margin-top: 1rem;
+}
+
 /* === ENTRENAMIENTO BASE === */
 #estado-rutina {
   padding: 1rem;
