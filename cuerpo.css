@@ -113,10 +113,10 @@ button:hover {
 
 .modal-contenido {
   background-color: #1e1e1e;
-  padding: 2rem;
+  padding: 1.5rem;
   border-radius: 12px;
   width: 100%;
-  max-width: 460px;
+  max-width: 440px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
 }
 
