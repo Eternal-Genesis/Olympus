@@ -1,159 +1,183 @@
-// avance.js – incluye botón de completar y menú de opciones por hábito
+// avance.js sin renderizado de estadísticas
 import {
   auth,
   db,
+  onAuthStateChanged,
   doc,
   getDoc,
-  setDoc,
-  onAuthStateChanged
+  setDoc
 } from "./firebase.js";
 
-const listaHabitos = document.getElementById("lista-habitos");
-const btnNuevoHabito = document.getElementById("btn-nuevo-habito");
-const modalHabito = document.getElementById("modal-habito");
-const formHabito = document.getElementById("form-habito");
-const cancelarHabito = document.getElementById("cancelar-habito");
-const modalTitulo = document.getElementById("modal-titulo");
+const hoy = new Date().toISOString().split("T")[0];
+const diaSemana = new Date().getDay();
+const habitosHoyKey = (uid) => `habitos-hoy-${uid}`;
+const habitosBaseKey = (uid) => `habitos-base-${uid}`;
+const historialKey = (uid) => `historial-${uid}`;
+const sincronizadoKey = (uid) => `ultima-sincronizacion-${uid}`;
 
-const inputNombre = document.getElementById("nombre-habito");
-const inputHora = document.getElementById("hora-habito");
-const checkboxesDias = [...formHabito.querySelectorAll(".dias-semana input")];
-
-let editando = null;
 let uid = null;
+let habitos = [];
 
-const KEY_RUTINA = uid => `rutina-${uid}`;
-const KEY_FECHA = uid => `fecha-${uid}`;
-const HOY = new Date().toISOString().split("T")[0];
+const contenedorHabitos = document.querySelector(".habitos-hoy");
+const modal = document.getElementById("modal-habito");
+const form = document.getElementById("form-habito");
+const inputNombre = document.getElementById("habito-nombre");
+const inputId = document.getElementById("habito-id");
+const btnCancelar = document.getElementById("btn-cancelar");
+const btnNuevo = document.getElementById("btn-crear-habito");
 
-onAuthStateChanged(auth, async user => {
+onAuthStateChanged(auth, async (user) => {
   if (!user) return;
   uid = user.uid;
-  const cache = localStorage.getItem(KEY_RUTINA(uid));
-  const fecha = localStorage.getItem(KEY_FECHA(uid));
 
-  if (cache && fecha === HOY) {
-    renderHabitos(JSON.parse(cache));
+  const cache = localStorage.getItem(habitosHoyKey(uid));
+  if (cache) {
+    habitos = JSON.parse(cache);
   } else {
-    try {
-      const ref = doc(db, "usuarios", uid, "avance", "rutina");
-      const snap = await getDoc(ref);
-      if (snap.exists()) {
-        const data = snap.data().habitos || [];
-        localStorage.setItem(KEY_RUTINA(uid), JSON.stringify(data));
-        localStorage.setItem(KEY_FECHA(uid), HOY);
-        renderHabitos(data);
-      } else {
-        renderHabitos([]);
-      }
-    } catch (err) {
-      console.error("Error al cargar rutina:", err);
+    const base = JSON.parse(localStorage.getItem(habitosBaseKey(uid))) || [];
+    habitos = base
+      .filter(h => h.dias?.includes(diaSemana))
+      .map(h => ({ ...h, completado: false }));
+    localStorage.setItem(habitosHoyKey(uid), JSON.stringify(habitos));
+  }
+
+  renderHabitos();
+  document.querySelector(".seccion-hoy")?.classList.remove("oculto");
+
+  const ultimaSync = localStorage.getItem(sincronizadoKey(uid));
+  if (ultimaSync !== hoy) {
+    await setDoc(doc(db, "usuarios", uid, "historialHabitos", hoy), { items: habitos });
+    actualizarHistorialLocal();
+    localStorage.setItem(sincronizadoKey(uid), hoy);
+  }
+
+  document.getElementById("loading")?.classList.add("oculto");
+});
+
+function actualizarHistorialLocal() {
+  let historial = JSON.parse(localStorage.getItem(historialKey(uid))) || {};
+  historial[hoy] = habitos;
+  const fechas = Object.keys(historial).sort().slice(-30);
+  const limpio = {};
+  fechas.forEach(f => limpio[f] = historial[f]);
+  localStorage.setItem(historialKey(uid), JSON.stringify(limpio));
+}
+
+function renderHabitos() {
+  contenedorHabitos.innerHTML = "";
+  const diasTexto = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"];
+  habitos.forEach(h => {
+    const dias = h.dias?.map(d => diasTexto[d]).join(" - ") || "";
+    const div = document.createElement("div");
+    div.className = "habito-item" + (h.completado ? " completado" : "");
+    div.innerHTML = `
+      <div>
+        <strong>${h.nombre}</strong>
+        <div class="dias-programados">${dias}</div>
+      </div>
+      <div class="acciones-habito">
+        <button data-accion="completar" data-id="${h.id}">
+          ${h.completado ? "✓" : "Marcar"}
+        </button>
+        <div class="menu-container">
+          <button class="btn-menu" data-id="${h.id}">⋯</button>
+          <ul class="menu-opciones oculto" data-id="${h.id}">
+            <li data-accion="editar">Editar</li>
+            <li data-accion="eliminar">Eliminar</li>
+          </ul>
+        </div>
+      </div>
+    `;
+    contenedorHabitos.appendChild(div);
+  });
+}
+
+form.addEventListener("submit", async e => {
+  e.preventDefault();
+  const nombre = inputNombre.value.trim();
+  const id = inputId.value;
+  const dias = Array.from(form.querySelectorAll("input[name='dias']:checked"))
+    .map(input => parseInt(input.value));
+
+  if (!nombre || !uid || dias.length === 0) return;
+
+  if (id) {
+    const index = habitos.findIndex(h => h.id === parseInt(id));
+    if (index !== -1) {
+      habitos[index].nombre = nombre;
+      habitos[index].dias = dias;
+    }
+  } else {
+    const nuevo = { id: Date.now(), nombre, completado: false, dias };
+    habitos.push(nuevo);
+
+    const base = JSON.parse(localStorage.getItem(habitosBaseKey(uid))) || [];
+    base.push({ id: nuevo.id, nombre: nuevo.nombre, dias });
+    localStorage.setItem(habitosBaseKey(uid), JSON.stringify(base));
+  }
+
+  localStorage.setItem(habitosHoyKey(uid), JSON.stringify(habitos));
+  cerrarModal();
+  renderHabitos();
+});
+
+btnCancelar.addEventListener("click", cerrarModal);
+btnNuevo.addEventListener("click", () => abrirModal());
+
+function abrirModal(habito = null) {
+  modal.classList.add("activo");
+  if (habito) {
+    document.getElementById("modal-titulo").textContent = "Editar Hábito";
+    inputNombre.value = habito.nombre;
+    inputId.value = habito.id;
+    const checks = form.querySelectorAll("input[name='dias']");
+    checks.forEach(c => c.checked = habito.dias?.includes(parseInt(c.value)));
+  } else {
+    document.getElementById("modal-titulo").textContent = "Nuevo Hábito";
+    form.reset();
+    inputId.value = "";
+  }
+}
+
+function cerrarModal() {
+  modal.classList.remove("activo");
+  form.reset();
+  inputId.value = "";
+}
+
+contenedorHabitos.addEventListener("click", async e => {
+  const btnMenu = e.target.closest(".btn-menu");
+  if (btnMenu) {
+    const menu = btnMenu.nextElementSibling;
+    menu.classList.toggle("oculto");
+    return;
+  }
+
+  const opcion = e.target.closest(".menu-opciones li");
+  if (opcion) {
+    const accion = opcion.dataset.accion;
+    const id = parseInt(opcion.parentElement.dataset.id);
+    const index = habitos.findIndex(h => h.id === id);
+    if (index === -1) return;
+
+    if (accion === "editar") abrirModal(habitos[index]);
+    if (accion === "eliminar" && confirm("¿Eliminar este hábito?")) {
+      habitos.splice(index, 1);
+    }
+
+    localStorage.setItem(habitosHoyKey(uid), JSON.stringify(habitos));
+    renderHabitos();
+    return;
+  }
+
+  const completar = e.target.closest("button[data-accion='completar']");
+  if (completar) {
+    const id = parseInt(completar.dataset.id);
+    const index = habitos.findIndex(h => h.id === id);
+    if (index !== -1) {
+      habitos[index].completado = !habitos[index].completado;
+      localStorage.setItem(habitosHoyKey(uid), JSON.stringify(habitos));
+      renderHabitos();
     }
   }
 });
-
-btnNuevoHabito.addEventListener("click", () => {
-  modalTitulo.textContent = "Nuevo Hábito";
-  editando = null;
-  formHabito.reset();
-  modalHabito.classList.add("activo");
-});
-
-cancelarHabito.addEventListener("click", () => {
-  modalHabito.classList.remove("activo");
-});
-
-formHabito.addEventListener("submit", async e => {
-  e.preventDefault();
-  if (!uid) return;
-
-  const nombre = inputNombre.value.trim();
-  const hora = inputHora.value;
-  const dias = checkboxesDias.filter(c => c.checked).map(c => parseInt(c.value));
-
-  if (!nombre || !hora || dias.length === 0) return;
-
-  const rutina = obtenerRutina();
-
-  if (editando !== null) {
-    rutina[editando] = { nombre, hora, dias, completado: rutina[editando].completado || {} };
-  } else {
-    rutina.push({ nombre, hora, dias, completado: {} });
-  }
-
-  await guardarRutina(rutina);
-  renderHabitos(rutina);
-  modalHabito.classList.remove("activo");
-});
-
-function obtenerRutina() {
-  const cache = localStorage.getItem(KEY_RUTINA(uid));
-  return cache ? JSON.parse(cache) : [];
-}
-
-async function guardarRutina(rutina) {
-  const ref = doc(db, "usuarios", uid, "avance", "rutina");
-  await setDoc(ref, { habitos: rutina });
-  localStorage.setItem(KEY_RUTINA(uid), JSON.stringify(rutina));
-  localStorage.setItem(KEY_FECHA(uid), HOY);
-}
-
-function renderHabitos(rutina) {
-  listaHabitos.innerHTML = "";
-  const diaActual = new Date().getDay();
-  const habitosHoy = rutina
-    .map((h, i) => ({ ...h, index: i }))
-    .filter(h => h.dias.includes(diaActual))
-    .sort((a, b) => a.hora.localeCompare(b.hora));
-
-  for (const habito of habitosHoy) {
-    const li = document.createElement("div");
-    li.className = "habito-item";
-
-    const key = HOY;
-    const checked = habito.completado?.[key] || false;
-
-    const izquierda = document.createElement("div");
-    izquierda.className = "habito-check";
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.checked = checked;
-    checkbox.addEventListener("change", () => {
-      habito.completado[key] = checkbox.checked;
-      rutina[habito.index] = habito;
-      guardarRutina(rutina);
-    });
-    izquierda.appendChild(checkbox);
-
-    const centro = document.createElement("div");
-    centro.className = "habito-info";
-    centro.innerHTML = `<strong>${habito.hora}</strong> – ${habito.nombre}`;
-
-    const derecha = document.createElement("div");
-    derecha.className = "habito-menu";
-    const menu = document.createElement("button");
-    menu.textContent = "⋮";
-    menu.title = "Opciones";
-    menu.addEventListener("click", () => {
-      const opcion = prompt("Escribe 'editar' o 'eliminar'");
-      if (opcion === "editar") {
-        editando = habito.index;
-        inputNombre.value = habito.nombre;
-        inputHora.value = habito.hora;
-        checkboxesDias.forEach(c => c.checked = habito.dias.includes(parseInt(c.value)));
-        modalTitulo.textContent = "Editar Hábito";
-        modalHabito.classList.add("activo");
-      } else if (opcion === "eliminar") {
-        rutina.splice(habito.index, 1);
-        guardarRutina(rutina);
-        renderHabitos(rutina);
-      }
-    });
-    derecha.appendChild(menu);
-
-    li.appendChild(izquierda);
-    li.appendChild(centro);
-    li.appendChild(derecha);
-    listaHabitos.appendChild(li);
-  }
-}
