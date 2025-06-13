@@ -1,4 +1,4 @@
-// cuerpo.js con almacenamiento híbrido local + Firestore estilo avance.js
+// cuerpo.js con almacenamiento híbrido local + Firestore y cálculos mejorados
 import {
   auth,
   db,
@@ -11,7 +11,6 @@ import {
 const hoy = new Date().toISOString().split("T")[0];
 let uid = null;
 
-// Keys para almacenamiento local
 const planKey = uid => `plan-nutricional-${uid}`;
 const syncKey = uid => `ultima-sync-plan-${uid}`;
 
@@ -20,7 +19,6 @@ const infoPlan = document.getElementById("info-plan");
 const btnConfigurarPlan = document.getElementById("btn-configurar-plan");
 const btnRevisarProgreso = document.getElementById("btn-revisar-progreso");
 
-// Modales y formularios
 const modalPlan = document.getElementById("modal-plan");
 const formPlan = document.getElementById("form-plan");
 const btnCancelarPlan = document.getElementById("btn-cancelar-plan");
@@ -29,7 +27,6 @@ const modalProgreso = document.getElementById("modal-progreso");
 const formProgreso = document.getElementById("form-progreso");
 const btnCancelarProgreso = document.getElementById("btn-cancelar-progreso");
 
-// Inputs Plan
 const inputSexo = document.getElementById("sexo");
 const inputEdad = document.getElementById("edad");
 const inputAltura = document.getElementById("altura");
@@ -37,12 +34,10 @@ const inputPesoMeta = document.getElementById("peso-meta");
 const inputActividad = document.getElementById("actividad");
 const inputObjetivo = document.getElementById("objetivo");
 
-// Inputs Progreso
 const inputNuevoPeso = document.getElementById("nuevo-peso");
 const inputNuevaActividad = document.getElementById("nueva-actividad");
 const inputNuevoObjetivo = document.getElementById("nuevo-objetivo");
 
-// === AUTENTICACIÓN Y CARGA ===
 onAuthStateChanged(auth, async user => {
   if (!user) return;
   uid = user.uid;
@@ -71,9 +66,8 @@ onAuthStateChanged(auth, async user => {
   }
 });
 
-// === MOSTRAR PLAN ===
 function renderResumenPlan(plan) {
-  const { caloriasObjetivo, macros, objetivo } = plan;
+  const { caloriasObjetivo, macros, objetivo, advertencia } = plan;
   infoPlan.innerHTML = `
     <p><strong>Objetivo:</strong> ${objetivo === "deficit" ? "Perder grasa" : objetivo === "superavit" ? "Ganar músculo" : "Mantener peso"}</p>
     <p><strong>Calorías objetivo:</strong> ${caloriasObjetivo} kcal/día</p>
@@ -82,10 +76,10 @@ function renderResumenPlan(plan) {
       <li>Grasas: ${macros.grasas} g</li>
       <li>Carbohidratos: ${macros.carbos} g</li>
     </ul>
+    ${advertencia ? `<p class="alerta">⚠️ ${advertencia}</p>` : ""}
   `;
 }
 
-// === CONFIGURAR PLAN ===
 btnConfigurarPlan.addEventListener("click", () => {
   modalPlan.classList.add("activo");
   cargarPlanEnFormulario();
@@ -96,7 +90,7 @@ formPlan.addEventListener("submit", async e => {
   e.preventDefault();
   if (!uid) return;
 
-  const plan = recolectarDatosPlan(
+  const plan = calcularPlanNutricional(
     inputSexo.value,
     parseInt(inputEdad.value),
     parseInt(inputAltura.value),
@@ -113,7 +107,6 @@ formPlan.addEventListener("submit", async e => {
   cerrarModal(modalPlan);
 });
 
-// === ACTUALIZAR PLAN ===
 btnRevisarProgreso.addEventListener("click", () => modalProgreso.classList.add("activo"));
 btnCancelarProgreso.addEventListener("click", () => cerrarModal(modalProgreso));
 
@@ -129,7 +122,7 @@ formProgreso.addEventListener("submit", async e => {
   const actividad = parseFloat(inputNuevaActividad.value) || prev.actividad;
   const objetivo = inputNuevoObjetivo.value || prev.objetivo;
 
-  const plan = recolectarDatosPlan(prev.sexo, prev.edad, prev.altura, peso, actividad, objetivo);
+  const plan = calcularPlanNutricional(prev.sexo, prev.edad, prev.altura, peso, actividad, objetivo);
 
   localStorage.setItem(planKey(uid), JSON.stringify(plan));
   localStorage.setItem(syncKey(uid), hoy);
@@ -139,22 +132,35 @@ formProgreso.addEventListener("submit", async e => {
   cerrarModal(modalProgreso);
 });
 
-// === UTILIDADES ===
 function cerrarModal(modal) {
   modal.classList.remove("activo");
   modal.querySelector("form").reset();
 }
 
-function recolectarDatosPlan(sexo, edad, altura, peso, actividad, objetivo) {
+function calcularPlanNutricional(sexo, edad, altura, peso, actividad, objetivo) {
   let tmb = 10 * peso + 6.25 * altura - 5 * edad;
   tmb += sexo === "hombre" ? 5 : -161;
 
   const tdee = Math.round(tmb * actividad);
-  let caloriasObjetivo = tdee;
-  if (objetivo === "deficit") caloriasObjetivo = Math.round(tdee * 0.8);
-  if (objetivo === "superavit") caloriasObjetivo = Math.round(tdee * 1.15);
+  let factor = 1.0;
+  let advertencia = "";
 
-  const proteinas = Math.round(peso * 2);
+  if (objetivo === "deficit") factor = 0.85;
+  if (objetivo === "superavit") factor = 1.1;
+
+  let caloriasObjetivo = Math.round(tdee * factor);
+
+  if (caloriasObjetivo < 1200) {
+    caloriasObjetivo = 1200;
+    advertencia = "El déficit es demasiado agresivo. Se ha ajustado por seguridad.";
+  }
+  if (caloriasObjetivo > 4000) {
+    caloriasObjetivo = 4000;
+    advertencia = "El superávit es muy alto. Se ha ajustado para evitar exceso calórico.";
+  }
+
+  const proteinaFactor = objetivo === "superavit" ? 2.4 : objetivo === "deficit" ? 2.2 : 2.0;
+  const proteinas = Math.round(peso * proteinaFactor);
   const grasas = Math.round((caloriasObjetivo * 0.25) / 9);
   const carbos = Math.round((caloriasObjetivo - (proteinas * 4 + grasas * 9)) / 4);
 
@@ -163,7 +169,8 @@ function recolectarDatosPlan(sexo, edad, altura, peso, actividad, objetivo) {
     tmb: Math.round(tmb),
     tdee,
     caloriasObjetivo,
-    macros: { proteinas, grasas, carbos }
+    macros: { proteinas, grasas, carbos },
+    advertencia
   };
 }
 
