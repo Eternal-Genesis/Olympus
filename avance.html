@@ -1,71 +1,45 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Rutina</title>
-  <link rel="stylesheet" href="navbar.css" />
-  <link rel="stylesheet" href="avance.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Avance – Rutina Diaria</title>
+  <link rel="stylesheet" href="navbar.css">
+  <link rel="stylesheet" href="avance.css">
 </head>
 <body>
-  <!-- Menú superior cargado dinámicamente -->
   <header id="navbar"></header>
-
-  <!-- Contenido principal -->
   <main class="avance-container">
-    <!-- Sección de hábitos del día -->
-    <section class="seccion-hoy">
-      <h2>Resumen de Hoy</h2>
-      <div class="habitos-hoy"></div>
+    <h2>Rutina</h2>
+
+    <section class="crear-habito">
+      <h3>Agregar Hábito</h3>
+      <form id="form-habito">
+        <input type="text" id="nombre-habito" placeholder="Nombre del hábito" required>
+        <input type="time" id="hora-habito" required>
+
+        <div class="dias-semana">
+          <label><input type="checkbox" name="dias" value="0">L</label>
+          <label><input type="checkbox" name="dias" value="1">M</label>
+          <label><input type="checkbox" name="dias" value="2">X</label>
+          <label><input type="checkbox" name="dias" value="3">J</label>
+          <label><input type="checkbox" name="dias" value="4">V</label>
+          <label><input type="checkbox" name="dias" value="5">S</label>
+          <label><input type="checkbox" name="dias" value="6">D</label>
+        </div>
+
+        <button type="submit">Agregar</button>
+      </form>
     </section>
 
-    <!-- Sección de acciones rápidas -->
-    <section class="gestion-habitos">
-      <div class="acciones-rapidas">
-        <button id="btn-crear-habito">+ Nuevo Hábito</button>
-      </div>
+    <section class="lista-habitos">
+      <h3>Hábitos de Hoy</h3>
+      <ul id="habitos-hoy"></ul>
     </section>
-
-    <!-- Sección de estadísticas -->
-    <section class="estadisticas">
-      <h2>Estadísticas de los Últimos 30 Días</h2>
-      <canvas id="grafico-habitos" width="100%" height="300"></canvas>
-    </section>
-
-    <!-- Modal para crear/editar hábitos -->
-    <div class="modal" id="modal-habito">
-      <div class="modal-contenido">
-        <h3 id="modal-titulo">Nuevo Hábito</h3>
-        <form id="form-habito">
-          <input type="hidden" id="habito-id" />
-
-          <label for="habito-nombre">Nombre del hábito:</label>
-          <input type="text" id="habito-nombre" required />
-
-          <label>Días activos:</label>
-          <div class="dias-semana">
-            <input type="checkbox" id="dia-1" name="dias" value="1"><label for="dia-1">Lun</label>
-            <input type="checkbox" id="dia-2" name="dias" value="2"><label for="dia-2">Mar</label>
-            <input type="checkbox" id="dia-3" name="dias" value="3"><label for="dia-3">Mié</label>
-            <input type="checkbox" id="dia-4" name="dias" value="4"><label for="dia-4">Jue</label>
-            <input type="checkbox" id="dia-5" name="dias" value="5"><label for="dia-5">Vie</label>
-            <input type="checkbox" id="dia-6" name="dias" value="6"><label for="dia-6">Sáb</label>
-            <input type="checkbox" id="dia-0" name="dias" value="0"><label for="dia-0">Dom</label>
-          </div>
-
-          <div class="modal-acciones">
-            <button type="submit">Guardar</button>
-            <button type="button" id="btn-cancelar">Cancelar</button>
-          </div>
-        </form>
-      </div>
-    </div>
   </main>
 
-  <!-- Scripts -->
   <script src="navbar.js"></script>
   <script type="module" src="firebase.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script type="module" src="avance.js"></script>
 </body>
 </html>
