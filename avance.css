@@ -26,8 +26,9 @@ h2 {
   gap: 2.5rem;
 }
 
-/* === SECCIÓN DE HÁBITOS DEL DÍA === */
-.habitos-hoy {
+/* === SECCIONES DE HÁBITOS === */
+.habitos-hoy,
+.habitos-todos {
   display: grid;
   gap: 1rem;
 }
@@ -40,11 +41,12 @@ h2 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .habito-item:hover {
   background-color: #2a2a2a;
+  transform: translateY(-2px);
 }
 
 .habito-item.completado {
@@ -53,7 +55,7 @@ h2 {
 }
 
 .habito-item.completado::before {
-  content: "✔ ";
+  content: "\2714 ";
   color: #00ff88;
 }
 
@@ -124,6 +126,17 @@ h2 {
 
 .oculto {
   display: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.seccion-todos {
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 /* === BOTONES === */
@@ -146,6 +159,7 @@ button:hover {
 .acciones-rapidas {
   display: flex;
   justify-content: flex-end;
+  gap: 1rem;
 }
 
 /* === MODAL === */
@@ -174,6 +188,7 @@ button:hover {
   max-width: 400px;
   color: #fff;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  animation: fadeIn 0.3s ease;
 }
 
 .modal-contenido h3 {
