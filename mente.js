@@ -1,19 +1,34 @@
 // mente.js - Funciones para desarrollo mental diario
 
 import { db, auth } from "./firebase.js";
-import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
+import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 
 let uid = null;
-onAuthStateChanged(auth, user => {
-  if (user) uid = user.uid;
+const hoy = new Date().toISOString().split("T")[0];
+const identidad = document.getElementById("identidad-meta");
+
+onAuthStateChanged(auth, async user => {
+  if (user) {
+    uid = user.uid;
+
+    // Cargar identidad guardada si existe
+    const local = localStorage.getItem(`identidad-${uid}-${hoy}`);
+    if (local) {
+      identidad.value = local;
+    } else {
+      const snap = await getDoc(doc(db, "mente", uid));
+      const data = snap.exists() ? snap.data() : {};
+      if (data[`identidad-${hoy}`]) {
+        identidad.value = data[`identidad-${hoy}`];
+      }
+    }
+  }
 });
 
-const hoy = new Date().toISOString().split("T")[0];
-
 // Guardar identidad
-const identidad = document.getElementById("identidad-meta");
-document.getElementById("guardar-identidad").onclick = async () => {
+const btnIdentidad = document.getElementById("guardar-identidad");
+btnIdentidad.onclick = async () => {
   const valor = identidad.value.trim();
   if (!valor || !uid) return;
   localStorage.setItem(`identidad-${uid}-${hoy}`, valor);
@@ -42,8 +57,9 @@ botonMeditar.onclick = () => {
   }, 1000);
 };
 
-// Guardar gratitud (3 entradas)
-document.getElementById("guardar-gratitud").onclick = async () => {
+// Guardar gratitud
+const btnGratitud = document.getElementById("guardar-gratitud");
+btnGratitud.onclick = async () => {
   const entradas = Array.from(document.querySelectorAll("#lista-gratitud input"))
     .map(i => i.value.trim()).filter(Boolean);
   if (!uid || entradas.length === 0) return;
@@ -52,8 +68,9 @@ document.getElementById("guardar-gratitud").onclick = async () => {
   document.getElementById("estado-gratitud").classList.remove("oculto");
 };
 
-// Guardar pensamiento negativo y reformulado (1 par)
-document.getElementById("guardar-pensamientos").onclick = async () => {
+// Guardar pensamientos
+const btnPensamientos = document.getElementById("guardar-pensamientos");
+btnPensamientos.onclick = async () => {
   const inputs = document.querySelectorAll(".pensamiento input");
   const negativo = inputs[0].value.trim();
   const positivo = inputs[1].value.trim();
