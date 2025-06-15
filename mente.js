@@ -4,6 +4,7 @@ import { db, auth } from "./firebase.js";
 import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
 
+// Obtener UID del usuario
 let uid = null;
 onAuthStateChanged(auth, user => {
   if (user) uid = user.uid;
@@ -21,7 +22,7 @@ document.getElementById("guardar-identidad").onclick = async () => {
   document.getElementById("estado-identidad").classList.remove("oculto");
 };
 
-// Meditación simple
+// Meditación
 const botonMeditar = document.getElementById("iniciar-meditacion");
 const temporizador = document.getElementById("temporizador");
 
@@ -43,8 +44,7 @@ botonMeditar.onclick = () => {
 };
 
 // Guardar gratitud
-const btnGratitud = document.getElementById("guardar-gratitud");
-btnGratitud.onclick = async () => {
+document.getElementById("guardar-gratitud").onclick = async () => {
   const entradas = Array.from(document.querySelectorAll("#lista-gratitud input"))
     .map(i => i.value.trim()).filter(Boolean);
   if (!uid || entradas.length === 0) return;
@@ -54,8 +54,7 @@ btnGratitud.onclick = async () => {
 };
 
 // Guardar pensamientos
-const btnPensamientos = document.getElementById("guardar-pensamientos");
-btnPensamientos.onclick = async () => {
+document.getElementById("guardar-pensamientos").onclick = async () => {
   const pares = Array.from(document.querySelectorAll(".pensamiento")).map(div => {
     const inputs = div.querySelectorAll("input");
     return {
