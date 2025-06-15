@@ -1,0 +1,75 @@
+body {
+  font-family: sans-serif;
+  background: #f6f8fa;
+  margin: 0;
+  padding: 0;
+  color: #333;
+}
+
+.mente-container {
+  max-width: 700px;
+  margin: auto;
+  padding: 2rem;
+}
+
+h1, h2 {
+  text-align: center;
+  color: #444;
+}
+
+.tarjeta {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  padding: 1.5rem;
+  margin: 1rem 0;
+}
+
+textarea, input[type="text"] {
+  width: 100%;
+  padding: 0.7rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  margin-bottom: 1rem;
+  box-sizing: border-box;
+}
+
+button {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 0.7rem 1.2rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background: #45a049;
+}
+
+#temporizador {
+  text-align: center;
+  font-size: 2rem;
+  margin-top: 1rem;
+  font-weight: bold;
+}
+
+.pensamiento {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.oculto {
+  display: none;
+}
+
+#estado-identidad, #estado-gratitud, #estado-pensamientos {
+  color: green;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
