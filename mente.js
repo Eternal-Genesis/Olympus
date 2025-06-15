@@ -1,6 +1,5 @@
-// mente.js - Maneja las funciones de escritura mental
+// mente.js - Funciones para desarrollo mental diario
 
-// Firebase imports si ya tenés configurado firebase.js
 import { db, auth } from "./firebase.js";
 import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
@@ -12,7 +11,7 @@ onAuthStateChanged(auth, user => {
 
 const hoy = new Date().toISOString().split("T")[0];
 
-// Guardar identidad deseada
+// Guardar identidad
 const identidad = document.getElementById("identidad-meta");
 document.getElementById("guardar-identidad").onclick = async () => {
   const valor = identidad.value.trim();
@@ -22,7 +21,7 @@ document.getElementById("guardar-identidad").onclick = async () => {
   document.getElementById("estado-identidad").classList.remove("oculto");
 };
 
-// Meditación simple de 60 segundos
+// Meditación simple
 const botonMeditar = document.getElementById("iniciar-meditacion");
 const temporizador = document.getElementById("temporizador");
 
@@ -31,6 +30,7 @@ botonMeditar.onclick = () => {
   temporizador.textContent = segundos;
   temporizador.classList.remove("oculto");
   botonMeditar.disabled = true;
+
   const intervalo = setInterval(() => {
     segundos--;
     temporizador.textContent = segundos;
@@ -53,17 +53,16 @@ btnGratitud.onclick = async () => {
   document.getElementById("estado-gratitud").classList.remove("oculto");
 };
 
-// Guardar pensamientos reescritos
+// Guardar pensamientos
 const btnPensamientos = document.getElementById("guardar-pensamientos");
 btnPensamientos.onclick = async () => {
-  const pares = Array.from(document.querySelectorAll(".pensamiento"))
-    .map(div => {
-      const inputs = div.querySelectorAll("input");
-      return {
-        negativo: inputs[0].value.trim(),
-        positivo: inputs[1].value.trim()
-      };
-    }).filter(p => p.negativo && p.positivo);
+  const pares = Array.from(document.querySelectorAll(".pensamiento")).map(div => {
+    const inputs = div.querySelectorAll("input");
+    return {
+      negativo: inputs[0].value.trim(),
+      positivo: inputs[1].value.trim()
+    };
+  }).filter(p => p.negativo && p.positivo);
   if (!uid || pares.length === 0) return;
   localStorage.setItem(`pensamientos-${uid}-${hoy}`, JSON.stringify(pares));
   await setDoc(doc(db, "mente", uid), { [`pensamientos-${hoy}`]: pares }, { merge: true });
