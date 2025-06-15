@@ -30,7 +30,8 @@ h1, h2 {
   transform: translateY(-3px);
 }
 
-textarea, input[type="text"] {
+textarea,
+input[type="text"] {
   width: 100%;
   padding: 0.8rem;
   font-size: 1rem;
