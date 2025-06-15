@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sección Mente</title>
+  <link rel="stylesheet" href="mente.css">
+</head>
+<body>
+  <main class="mente-container">
+    <h1>Tu Desarrollo Mental</h1>
+
+    <!-- Identidad deseada -->
+    <section class="tarjeta">
+      <h2>🌱 ¿En quién te querés convertir?</h2>
+      <textarea id="identidad-meta" placeholder="Escribí la mejor versión de vos mismo..." rows="6"></textarea>
+      <button id="guardar-identidad">Guardar</button>
+      <p id="estado-identidad" class="oculto">✅ Guardado</p>
+    </section>
+
+    <!-- Meditación simple -->
+    <section class="tarjeta">
+      <h2>🧘 Meditación</h2>
+      <p>Tomate unos minutos para respirar profundamente y observar tus pensamientos sin juzgar.</p>
+      <button id="iniciar-meditacion">Iniciar 1 minuto</button>
+      <div id="temporizador" class="oculto">60</div>
+    </section>
+
+    <!-- Gratitud -->
+    <section class="tarjeta">
+      <h2>🙏 Gratitud diaria</h2>
+      <p>Escribí 5 cosas por las que estás agradecido hoy:</p>
+      <ul id="lista-gratitud">
+        <li><input type="text" placeholder="1. ..."></li>
+        <li><input type="text" placeholder="2. ..."></li>
+        <li><input type="text" placeholder="3. ..."></li>
+        <li><input type="text" placeholder="4. ..."></li>
+        <li><input type="text" placeholder="5. ..."></li>
+      </ul>
+      <button id="guardar-gratitud">Guardar gratitud</button>
+      <p id="estado-gratitud" class="oculto">✅ Guardado</p>
+    </section>
+
+    <!-- Pensamientos negativos y reencuadre -->
+    <section class="tarjeta">
+      <h2>🧠 Reescribí tus pensamientos</h2>
+      <p>Identificá 2 pensamientos negativos y escribí su versión positiva:</p>
+      <div class="pensamiento">
+        <input type="text" placeholder="Pensamiento negativo 1">
+        <input type="text" placeholder="Reformulación positiva 1">
+      </div>
+      <div class="pensamiento">
+        <input type="text" placeholder="Pensamiento negativo 2">
+        <input type="text" placeholder="Reformulación positiva 2">
+      </div>
+      <button id="guardar-pensamientos">Guardar</button>
+      <p id="estado-pensamientos" class="oculto">✅ Guardado</p>
+    </section>
+
+    <!-- Placeholder para futuro: test mentales, reflejos, etc. -->
+    <section class="tarjeta">
+      <h2>🧩 Entrenamiento mental (próximamente)</h2>
+      <p>Pruebas para mejorar memoria, atención y reflejos mentales.</p>
+    </section>
+  </main>
+
+  <script src="mente.js"></script>
+</body>
+</html>
