@@ -1,84 +1,66 @@
 body {
-  font-family: sans-serif;
-  background: #f6f8fa;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   margin: 0;
   padding: 0;
+  background-color: #f3f4f6;
   color: #333;
 }
 
-nav {
-  background-color: #333;
-  padding: 1rem;
-  color: white;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-nav h1 {
-  margin: 0;
-  font-size: 1.2rem;
-}
-
-nav a {
-  color: white;
-  text-decoration: none;
-  margin-left: 1rem;
-}
-
-nav a:hover {
-  text-decoration: underline;
-}
-
-.mente-container {
-  max-width: 700px;
-  margin: auto;
+.container {
+  max-width: 800px;
+  margin: 0 auto;
   padding: 2rem;
 }
 
 h1, h2 {
+  color: #222;
   text-align: center;
-  color: #444;
 }
 
 .tarjeta {
-  background: white;
+  background-color: #fff;
   border-radius: 12px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
   padding: 1.5rem;
-  margin: 1rem 0;
+  margin-bottom: 2rem;
+  transition: transform 0.2s;
+}
+
+.tarjeta:hover {
+  transform: translateY(-3px);
 }
 
 textarea, input[type="text"] {
   width: 100%;
-  padding: 0.7rem;
+  padding: 0.8rem;
   font-size: 1rem;
-  border-radius: 6px;
-  border: 1px solid #ccc;
   margin-bottom: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
   box-sizing: border-box;
 }
 
 button {
-  background: #4CAF50;
+  background-color: #2563eb;
   color: white;
+  padding: 0.6rem 1.2rem;
   border: none;
-  padding: 0.7rem 1.2rem;
-  font-size: 1rem;
   border-radius: 6px;
+  font-size: 1rem;
   cursor: pointer;
-  transition: background 0.3s ease;
+  transition: background-color 0.2s ease-in-out;
 }
 
 button:hover {
-  background: #45a049;
+  background-color: #1d4ed8;
 }
 
 #temporizador {
-  text-align: center;
   font-size: 2rem;
-  margin-top: 1rem;
   font-weight: bold;
+  text-align: center;
+  margin-top: 1rem;
+  color: #16a34a;
 }
 
 .pensamiento {
@@ -88,12 +70,23 @@ button:hover {
   margin-bottom: 1rem;
 }
 
+ul#lista-gratitud {
+  list-style: none;
+  padding: 0;
+}
+
+ul#lista-gratitud li {
+  margin-bottom: 0.5rem;
+}
+
 .oculto {
   display: none;
 }
 
-#estado-identidad, #estado-gratitud, #estado-pensamientos {
-  color: green;
-  font-size: 0.9rem;
+#estado-identidad,
+#estado-gratitud,
+#estado-pensamientos {
+  color: #22c55e;
+  font-size: 0.95rem;
   margin-top: 0.5rem;
 }
