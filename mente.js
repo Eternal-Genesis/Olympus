@@ -1,9 +1,6 @@
 // mente.js - Funciones para desarrollo mental diario
 
 import { db, auth } from "./firebase.js";
-import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-auth.js";
-
 let uid = null;
 const hoy = new Date().toISOString().split("T")[0];
 const identidad = document.getElementById("identidad-meta");
