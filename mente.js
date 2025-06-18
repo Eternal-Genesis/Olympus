@@ -10,7 +10,7 @@ const identidad = document.getElementById("identidad-meta");
 const btnIdentidad = document.getElementById("guardar-identidad");
 let modoEditar = false;
 
-// Autenticación y carga de identidad persistente
+// Autenticación y carga de identidad y estado diario
 onAuthStateChanged(auth, async user => {
   if (user) {
     uid = user.uid;
@@ -33,17 +33,26 @@ onAuthStateChanged(auth, async user => {
       }
     }
 
-    // Estado inicial para gratitud
+    // Verificar gratitud guardada
     const gratitudHoy = localStorage.getItem(`gratitud-${uid}-${hoy}`);
     if (gratitudHoy) {
+      const entradas = JSON.parse(gratitudHoy);
+      const inputs = document.querySelectorAll("#lista-gratitud input");
+      entradas.forEach((valor, i) => {
+        if (inputs[i]) inputs[i].value = valor;
+      });
       const btn = document.getElementById("guardar-gratitud");
       btn.textContent = "Terminado";
       btn.disabled = true;
     }
 
-    // Estado inicial para pensamientos
+    // Verificar pensamientos guardados
     const pensamientoHoy = localStorage.getItem(`pensamiento-${uid}-${hoy}`);
     if (pensamientoHoy) {
+      const { negativo, positivo } = JSON.parse(pensamientoHoy);
+      const inputs = document.querySelectorAll(".pensamiento input");
+      inputs[0].value = negativo;
+      inputs[1].value = positivo;
       const btn = document.getElementById("guardar-pensamientos");
       btn.textContent = "Terminado";
       btn.disabled = true;
