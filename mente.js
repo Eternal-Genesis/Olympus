@@ -7,6 +7,8 @@ import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.1/f
 let uid = null;
 const hoy = new Date().toISOString().split("T")[0];
 const identidad = document.getElementById("identidad-meta");
+const btnIdentidad = document.getElementById("guardar-identidad");
+let modoEditar = false;
 
 // Autenticación y carga de identidad persistente
 onAuthStateChanged(auth, async user => {
@@ -17,24 +19,40 @@ onAuthStateChanged(auth, async user => {
     const local = localStorage.getItem(`identidad-${uid}`);
     if (local) {
       identidad.value = local;
+      identidad.setAttribute("disabled", true);
+      btnIdentidad.textContent = "Editar";
+      modoEditar = true;
     } else {
       const snap = await getDoc(doc(db, "mente", uid));
       const data = snap.exists() ? snap.data() : {};
       if (data["identidad"]) {
         identidad.value = data["identidad"];
+        identidad.setAttribute("disabled", true);
+        btnIdentidad.textContent = "Editar";
+        modoEditar = true;
       }
     }
   }
 });
 
-// Guardar identidad (no se borra cada día)
-const btnIdentidad = document.getElementById("guardar-identidad");
+// Guardar o editar identidad
 btnIdentidad.onclick = async () => {
-  const valor = identidad.value.trim();
-  if (!valor || !uid) return;
-  localStorage.setItem(`identidad-${uid}`, valor);
-  await setDoc(doc(db, "mente", uid), { identidad: valor }, { merge: true });
-  document.getElementById("estado-identidad").classList.remove("oculto");
+  if (!uid) return;
+
+  if (!modoEditar) {
+    const valor = identidad.value.trim();
+    if (!valor) return;
+    localStorage.setItem(`identidad-${uid}`, valor);
+    await setDoc(doc(db, "mente", uid), { identidad: valor }, { merge: true });
+    document.getElementById("estado-identidad").classList.remove("oculto");
+    btnIdentidad.textContent = "Editar";
+    identidad.setAttribute("disabled", true);
+    modoEditar = true;
+  } else {
+    identidad.removeAttribute("disabled");
+    btnIdentidad.textContent = "Guardar";
+    modoEditar = false;
+  }
 };
 
 // Meditación de 1 minuto
@@ -66,7 +84,10 @@ btnGratitud.onclick = async () => {
   if (!uid || entradas.length === 0) return;
   localStorage.setItem(`gratitud-${uid}-${hoy}`, JSON.stringify(entradas));
   await setDoc(doc(db, "mente", uid), { [`gratitud-${hoy}`]: entradas }, { merge: true });
-  document.getElementById("estado-gratitud").classList.remove("oculto");
+  const estado = document.getElementById("estado-gratitud");
+  estado.classList.remove("oculto");
+  btnGratitud.textContent = "Guardado";
+  btnGratitud.disabled = true;
 };
 
 // Guardar pensamiento negativo y reformulación diaria
@@ -79,5 +100,8 @@ btnPensamientos.onclick = async () => {
   const pensamiento = { negativo, positivo };
   localStorage.setItem(`pensamiento-${uid}-${hoy}`, JSON.stringify(pensamiento));
   await setDoc(doc(db, "mente", uid), { [`pensamiento-${hoy}`]: pensamiento }, { merge: true });
-  document.getElementById("estado-pensamientos").classList.remove("oculto");
+  const estado = document.getElementById("estado-pensamientos");
+  estado.classList.remove("oculto");
+  btnPensamientos.textContent = "Guardado";
+  btnPensamientos.disabled = true;
 };
