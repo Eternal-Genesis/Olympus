@@ -32,6 +32,22 @@ onAuthStateChanged(auth, async user => {
         modoEditar = true;
       }
     }
+
+    // Estado inicial para gratitud
+    const gratitudHoy = localStorage.getItem(`gratitud-${uid}-${hoy}`);
+    if (gratitudHoy) {
+      const btn = document.getElementById("guardar-gratitud");
+      btn.textContent = "Terminado";
+      btn.disabled = true;
+    }
+
+    // Estado inicial para pensamientos
+    const pensamientoHoy = localStorage.getItem(`pensamiento-${uid}-${hoy}`);
+    if (pensamientoHoy) {
+      const btn = document.getElementById("guardar-pensamientos");
+      btn.textContent = "Terminado";
+      btn.disabled = true;
+    }
   }
 });
 
@@ -86,7 +102,7 @@ btnGratitud.onclick = async () => {
   await setDoc(doc(db, "mente", uid), { [`gratitud-${hoy}`]: entradas }, { merge: true });
   const estado = document.getElementById("estado-gratitud");
   estado.classList.remove("oculto");
-  btnGratitud.textContent = "Guardado";
+  btnGratitud.textContent = "Terminado";
   btnGratitud.disabled = true;
 };
 
@@ -102,6 +118,6 @@ btnPensamientos.onclick = async () => {
   await setDoc(doc(db, "mente", uid), { [`pensamiento-${hoy}`]: pensamiento }, { merge: true });
   const estado = document.getElementById("estado-pensamientos");
   estado.classList.remove("oculto");
-  btnPensamientos.textContent = "Guardado";
+  btnPensamientos.textContent = "Terminado";
   btnPensamientos.disabled = true;
 };
