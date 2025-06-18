@@ -45,13 +45,21 @@ input[type="text"] {
   border-radius: 8px;
   box-sizing: border-box;
   resize: none;
-  transition: border-color 0.2s ease-in-out;
+  transition: border-color 0.2s ease-in-out, background-color 0.2s ease-in-out;
 }
 
 textarea:focus,
 input[type="text"]:focus {
   border-color: #00f0ff;
   outline: none;
+  background-color: #1f1f1f;
+}
+
+textarea[disabled],
+input[disabled] {
+  background-color: #222;
+  color: #aaa;
+  cursor: not-allowed;
 }
 
 button {
@@ -69,6 +77,13 @@ button {
 button:hover {
   background-color: #00c0cc;
   transform: scale(1.02);
+}
+
+button:disabled {
+  background-color: #444;
+  color: #aaa;
+  cursor: default;
+  transform: none;
 }
 
 #temporizador {
