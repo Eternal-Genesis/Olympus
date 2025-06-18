@@ -1,39 +1,43 @@
 // mente.js - Funciones para desarrollo mental diario
 
 import { db, auth } from "./firebase.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-auth.js";
+import { doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+
 let uid = null;
 const hoy = new Date().toISOString().split("T")[0];
 const identidad = document.getElementById("identidad-meta");
 
+// Autenticación y carga de identidad persistente
 onAuthStateChanged(auth, async user => {
   if (user) {
     uid = user.uid;
 
-    // Cargar identidad guardada si existe
-    const local = localStorage.getItem(`identidad-${uid}-${hoy}`);
+    // Cargar identidad persistente
+    const local = localStorage.getItem(`identidad-${uid}`);
     if (local) {
       identidad.value = local;
     } else {
       const snap = await getDoc(doc(db, "mente", uid));
       const data = snap.exists() ? snap.data() : {};
-      if (data[`identidad-${hoy}`]) {
-        identidad.value = data[`identidad-${hoy}`];
+      if (data["identidad"]) {
+        identidad.value = data["identidad"];
       }
     }
   }
 });
 
-// Guardar identidad
+// Guardar identidad (no se borra cada día)
 const btnIdentidad = document.getElementById("guardar-identidad");
 btnIdentidad.onclick = async () => {
   const valor = identidad.value.trim();
   if (!valor || !uid) return;
-  localStorage.setItem(`identidad-${uid}-${hoy}`, valor);
-  await setDoc(doc(db, "mente", uid), { [`identidad-${hoy}`]: valor }, { merge: true });
+  localStorage.setItem(`identidad-${uid}`, valor);
+  await setDoc(doc(db, "mente", uid), { identidad: valor }, { merge: true });
   document.getElementById("estado-identidad").classList.remove("oculto");
 };
 
-// Meditación
+// Meditación de 1 minuto
 const botonMeditar = document.getElementById("iniciar-meditacion");
 const temporizador = document.getElementById("temporizador");
 
@@ -54,7 +58,7 @@ botonMeditar.onclick = () => {
   }, 1000);
 };
 
-// Guardar gratitud
+// Guardar gratitud diaria
 const btnGratitud = document.getElementById("guardar-gratitud");
 btnGratitud.onclick = async () => {
   const entradas = Array.from(document.querySelectorAll("#lista-gratitud input"))
@@ -65,7 +69,7 @@ btnGratitud.onclick = async () => {
   document.getElementById("estado-gratitud").classList.remove("oculto");
 };
 
-// Guardar pensamientos
+// Guardar pensamiento negativo y reformulación diaria
 const btnPensamientos = document.getElementById("guardar-pensamientos");
 btnPensamientos.onclick = async () => {
   const inputs = document.querySelectorAll(".pensamiento input");
