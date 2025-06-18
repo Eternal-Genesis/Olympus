@@ -80,7 +80,7 @@ button:hover {
 }
 
 button:disabled {
-  background-color: #444;
+  background-color: #444 !important;
   color: #aaa;
   cursor: default;
   transform: none;
